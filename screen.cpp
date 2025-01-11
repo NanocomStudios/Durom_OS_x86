@@ -1,13 +1,12 @@
 #include "screen.h"
 char* screenRam;
-int currentRow;
-int currentCol;
+int currentCursorLoc;
 
 void clrScr(){
     moveCsr(0,0);
-    for(currentRow = 0; currentRow < screenHeight; currentRow++){
-        for(currentCol = 0; currentCol < screenWidth; currentCol++){
-            *(screenRam + currentCol + (currentRow * screenWidth)) = ' ';
+    for(int row = 0; row < screenHeight; row++){
+        for(int col = 0; col < screenWidth; col++){
+            *(screenRam + col + (row * screenWidth)) = ' ';
         }
     }
     moveCsr(0,0);
@@ -19,16 +18,16 @@ void initScreen(){
 }
 
 void print(const char* inp){
-    for(int i = 0; *(inp + i) != 0; i++){
-        *(screenRam + i * 2) = *(inp + i);//65 + i;
+    for(int i = 0;*(inp + i) != 0; i++){
+        printChar(*(inp + i));
     }
 }
 
 void printChar(char inp){
-    *(screenRam + (currentCol + (currentRow * screenWidth)) * 2) = inp;
+    *(screenRam + currentCursorLoc * 2) = inp;
+    currentCursorLoc++;
 }
 
-void moveCsr(int x, int y){
-    currentRow = y;
-    currentCol = x;
+void moveCsr(int col, int row){
+    currentCursorLoc = currentCursorLoc + col + (row * screenWidth);
 }

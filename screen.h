@@ -7,7 +7,7 @@
 void clrScr();
 void initScreen();
 void print(const char* inp);
-void moveCsr(int x, int y);
+void moveCsr(int col, int row);
 void printChar(char inp);
 
 #endif
