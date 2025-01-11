@@ -10,5 +10,7 @@ void print(const char* inp);
 void moveCsr(int col, int row);
 void print(char inp);
 void printInt(long inp);
+void printHex(long inp);
+int len(long inp);
 
 #endif

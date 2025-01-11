@@ -1,4 +1,6 @@
 #include "screen.h"
+#include "malloc.h"
+
 char* screenRam;
 int currentCursorLoc;
 
@@ -24,16 +26,39 @@ void print(const char* inp){
 }
 
 void printInt(long inp){
-    int length = 0;
+    long length = len(inp);
+    char* charBuffer = (char*)malloc(length);
     if(inp < 0){
         print('-');
         inp *= -1;
     }
+    long i = 0;
+    for(long i = 0; i < length; i++){
+        *(charBuffer + i) = (inp % 10) + 0x30;
+        inp = inp / 10;
+    }
+    for(long i = length - 1; i >= 0; i--){
+        print(*(charBuffer + i));
+    }
+
+    free(charBuffer);
+
+}
+
+void printHex(long inp){
+    
+}
+
+int len(long inp){
+    long length = 0;
+    if(inp < 0){
+        inp *= -1;
+    }
     do{
-        print((inp % 10) + 0x30);
         inp = inp / 10;
         length ++;
     }while(inp > 0);
+    return length;
 }
 
 void print(char inp){
