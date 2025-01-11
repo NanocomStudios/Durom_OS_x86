@@ -5,8 +5,9 @@ int main(){
     char name[] = "Durom v1.0\nNanocom mini Operating System.\nC:>";
     print(name);
     print("Hello world\n");
-
-    printInt(123456789);
+    printInt(12457);
+    print('\n');
+    printHex(0x75FA);
 
     return 0;
 }

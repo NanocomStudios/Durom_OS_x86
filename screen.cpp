@@ -46,7 +46,30 @@ void printInt(long inp){
 }
 
 void printHex(long inp){
-    
+
+    long length = lenH(inp);
+    char* charBuffer = (char*)malloc(length * 2);
+
+    for(short i = 0; i < length; i ++){
+        *(charBuffer + (i * 2)) = hexToAscii((*(unsigned char*)((char*)&inp + i)) % 16);
+        *(charBuffer + (i * 2) + 1) = hexToAscii((*(unsigned char*)((char*)&inp + i)) / 16);
+    }
+
+    print("0x");
+
+    for(long i = (length * 2) - 1; i >= 0; i--){
+        print(*(charBuffer + i));
+    }
+    free(charBuffer);
+}
+
+char hexToAscii(char inp){
+    if(inp < 10){
+        return (inp + 0x30);
+    }else if(inp < 16){
+        return (inp - 9 + 0x40);
+    }
+    return 0;
 }
 
 int len(long inp){
@@ -56,6 +79,18 @@ int len(long inp){
     }
     do{
         inp = inp / 10;
+        length ++;
+    }while(inp > 0);
+    return length;
+}
+
+int lenH(long inp){
+    long length = 0;
+    if(inp < 0){
+        inp *= -1;
+    }
+    do{
+        inp = inp / 256;
         length ++;
     }while(inp > 0);
     return length;
