@@ -1,5 +1,5 @@
 section .text
     [bits 32]
-    [extern main]
-    call main
+    [extern init]
+    call init
     jmp $

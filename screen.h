@@ -8,6 +8,7 @@ void clrScr();
 void initScreen();
 void print(const char* inp);
 void moveCsr(int col, int row);
-void printChar(char inp);
+void print(char inp);
+void printInt(long inp);
 
 #endif
