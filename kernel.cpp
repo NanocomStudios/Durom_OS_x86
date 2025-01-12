@@ -3,21 +3,49 @@
 #include "io.h"
 #include "keyboard.h"
 
+typedef char * string;
+
 int main(){
-    char name[] = "Durom v1.0\nNanocom mini Operating System.\nC:>";
-    print(name);
-    print("Hello world\n");
-    printInt(12457);
-    print('\n');
-    printHex(0x75FA);
+    print("DuRom x86 V1.0\n#>");
     
+    string inpBuffer = (string)malloc(255);
+    int inpBufferPtr = 0;
+
     unsigned char lastKey = 0;
     unsigned char key;
+    outb(0x42, 255);
     while(1){
         key = inb(0x60);
+        
         if((key < 128) && (key != lastKey)){
-            //print(toAscii(key));
-            printHex(key);
+            
+            switch (key){
+                case 0x1c:
+                    print('\n');
+                    inpBuffer[inpBufferPtr] = 0;
+
+                    //print(inpBuffer);
+
+                    // if (inpBuffer == "clear"){
+                    //     clrScr();
+                    // }
+
+                    inpBufferPtr = 0;
+                    print("#>");
+                    break;
+
+                default:
+                    print(toAscii(key));
+                    inpBuffer[inpBufferPtr++] = toAscii(key);
+
+                    if(inpBufferPtr > 255){
+                        print("Input Buffer Exceeded!\n#>");
+                        inpBufferPtr = 0;
+                    }
+
+                    //printHex(key);
+                    break;
+            }
             lastKey = key;
 
         }else if((key > 127) && (key = lastKey + 128)){

@@ -5,7 +5,7 @@ char* ram;
 char isInit;
 
 void mallocInit(){
-        ram = (char*)0x007e00;
+        ram = (char*)0x7e00;
         isInit = 0;
 }
 
