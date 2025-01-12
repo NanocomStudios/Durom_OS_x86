@@ -1,5 +1,5 @@
 #include "malloc.h"
-#include "screen.h"
+#include "CGA.h"
 
 char* ram;
 char isInit;

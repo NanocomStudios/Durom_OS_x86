@@ -1,5 +1,6 @@
-#include "screen.h"
+#include "CGA.h"
 #include "malloc.h"
+#include "io.h"
 
 char* screenRam;
 int currentCursorLoc;
@@ -96,20 +97,50 @@ int lenH(long inp){
     return length;
 }
 
+void scrollScreen(){
+            for(int i = 0; i < ((screenWidth * (screenHeight - 1)) * 2); i++){
+                *(screenRam + i) = *(screenRam + i + screenWidth * 2);
+            }
+            for(int i = ((screenWidth * (screenHeight - 1)) * 2); i < ((screenWidth * screenHeight) * 2); i += 2){
+                *(screenRam + i) = ' ';
+            }
+            moveCsr(0, screenHeight - 1);
+}
+
 void print(char inp){
     switch (inp)
     {
     case '\n':
-        moveCsr(0, (currentCursorLoc / screenWidth) + 1);
+        if(((currentCursorLoc / screenWidth) + 1) >= screenHeight){
+            scrollScreen();
+        }else{
+            moveCsr(0, (currentCursorLoc / screenWidth) + 1);
+        }
         break;
     
     default:
         *(screenRam + currentCursorLoc * 2) = inp;
-        currentCursorLoc++;
+        csrInc();
         break;
     }
 }
 
 void moveCsr(int col, int row){
     currentCursorLoc = col + (row * screenWidth);
+    outb(0x3D4, 0xf);
+    outb(0x3D5, (unsigned char)(currentCursorLoc & 0xff));
+    outb(0x3D4, 0xe);
+    outb(0x3D5, (unsigned char)((currentCursorLoc >> 8) & 0xff));
+}
+
+void csrInc(){
+    currentCursorLoc++;
+
+    if(currentCursorLoc >= screenWidth * (screenHeight)){
+            scrollScreen();
+    }
+    outb(0x3D4, 0xf);
+    outb(0x3D5, (unsigned char)(currentCursorLoc & 0xff));
+    outb(0x3D4, 0xe);
+    outb(0x3D5, (unsigned char)((currentCursorLoc >> 8) & 0xff));
 }
