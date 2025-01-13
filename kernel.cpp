@@ -2,6 +2,8 @@
 #include "malloc.h"
 #include "io.h"
 #include "keyboard.h"
+#include "Nstring.h"
+
 
 typedef char * string;
 
@@ -26,9 +28,13 @@ int main(){
 
                     //print(inpBuffer);
 
-                    // if (inpBuffer == "clear"){
-                    //     clrScr();
-                    // }
+                     if (!strcpy(inpBuffer, 255, "clear", 6)){
+                        clrScr();
+                     }else if(!strcpy(inpBuffer, 255, "help", 5)){
+                        print("Showing help.\n");
+                     }else{
+                        print("Command not available.\n");
+                     }
 
                     inpBufferPtr = 0;
                     print("#>");
