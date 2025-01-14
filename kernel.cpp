@@ -12,9 +12,9 @@ int main(){
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-    
-    while(1){
 
+    while(1){
+        
         char key = getChar();
 
         switch (key){
@@ -28,6 +28,8 @@ int main(){
                     clrScr();
                 }else if(!strcpy(inpBuffer, 255, "help", 5)){
                     print("Showing help.\n");
+                }else if(inpBufferPtr == 0){
+
                 }else{
                     print("Command not available.\n");
                 }
