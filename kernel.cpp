@@ -1,4 +1,4 @@
-#include "CGA.h"
+#include "VGA.h"
 #include "malloc.h"
 #include "io.h"
 #include "keyboard.h"
@@ -8,6 +8,7 @@
 typedef char * string;
 
 int main(){
+
     print("DuRom x86 V1.0\n#>");
     
     string inpBuffer = (string)malloc(255);

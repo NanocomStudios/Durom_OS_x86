@@ -1,6 +1,6 @@
 #include "keyboard.h"
 #include "io.h"
-#include "CGA.h"
+#include "VGA.h"
 
 
 #define CAPS 0x3A

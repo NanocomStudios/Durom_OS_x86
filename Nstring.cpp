@@ -1,5 +1,5 @@
 #include "Nstring.h"
-#include "CGA.h"
+#include "VGA.h"
 
 long strcpy(const char * inp1, long length1, const char * inp2, long length2){
     

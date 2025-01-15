@@ -1,9 +1,11 @@
-#include "CGA.h"
+#include "VGA.h"
 #include "malloc.h"
 #include "io.h"
 
 char* screenRam;
 int currentCursorLoc;
+char foreColor;
+char backColor;
 
 void clrScr(){
     moveCsr(0,0);
@@ -16,7 +18,9 @@ void clrScr(){
 }
 
 void initScreen(){
-    screenRam = (char*)(0xb8000);
+
+    screenRam = (char*)(0xB8000);
+
     clrScr();
 }
 

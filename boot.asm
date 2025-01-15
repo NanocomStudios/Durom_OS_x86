@@ -28,6 +28,8 @@ FileSystem		db "FAT32   "	; File system type: don't change!
 
 
 START:
+mov ax, 19
+int 16
 
 mov [BOOT_DISK], dl                 
 
