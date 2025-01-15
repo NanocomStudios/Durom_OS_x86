@@ -12,7 +12,7 @@ int main(){
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-
+    
     while(1){
         
         char key = getChar();
@@ -31,13 +31,22 @@ int main(){
                 }else if(inpBufferPtr == 0){
 
                 }else{
-                    print("Command not available.\n");
+                    print('\'');
+                    print(inpBuffer);
+                    print("\' is not a valid Command.\n");
                 }
 
                 inpBufferPtr = 0;
                 print("#>");
                 break;
+            case '\b':
 
+                if(inpBufferPtr > 0){
+                    inpBufferPtr --;
+                    print('\b');
+                }
+
+                break;
             default:
                 print(key);
                 inpBuffer[inpBufferPtr++] = key;

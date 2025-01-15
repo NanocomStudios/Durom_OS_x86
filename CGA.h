@@ -16,5 +16,6 @@ int lenH(long inp);
 char hexToAscii(char inp);
 void csrInc();
 void scrollScreen();
+void csrDec();
 
 #endif

@@ -118,6 +118,16 @@ void print(char inp){
         }
         break;
     
+    case '\b':
+
+        if(currentCursorLoc > 0){
+            csrDec();
+            print(' ');
+            csrDec();
+        }
+
+        break;
+    
     default:
         *(screenRam + currentCursorLoc * 2) = inp;
         csrInc();
@@ -143,4 +153,17 @@ void csrInc(){
     outb(0x3D5, (unsigned char)(currentCursorLoc & 0xff));
     outb(0x3D4, 0xe);
     outb(0x3D5, (unsigned char)((currentCursorLoc >> 8) & 0xff));
+}
+
+void csrDec(){
+
+    if(currentCursorLoc > 0){
+        currentCursorLoc--;
+
+        outb(0x3D4, 0xf);
+        outb(0x3D5, (unsigned char)(currentCursorLoc & 0xff));
+        outb(0x3D4, 0xe);
+        outb(0x3D5, (unsigned char)((currentCursorLoc >> 8) & 0xff));
+    }
+    
 }
