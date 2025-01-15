@@ -12,6 +12,7 @@ void clrScr(){
     for(int row = 0; row < screenHeight; row++){
         for(int col = 0; col < screenWidth; col++){
             *(screenRam + (col + (row * screenWidth)) * 2) = ' ';
+            *((screenRam + (col + (row * screenWidth)) * 2) + 1) = foreColor + (backColor << 4);
         }
     }
     moveCsr(0,0);
@@ -20,7 +21,8 @@ void clrScr(){
 void initScreen(){
 
     screenRam = (char*)(0xB8000);
-
+    foreColor = LIGHT_WHITE;
+    backColor = BLACK;
     clrScr();
 }
 
@@ -134,6 +136,7 @@ void print(char inp){
     
     default:
         *(screenRam + currentCursorLoc * 2) = inp;
+        *((screenRam + currentCursorLoc * 2) + 1) = foreColor + (backColor << 4);
         csrInc();
         break;
     }
