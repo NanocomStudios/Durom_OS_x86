@@ -174,3 +174,23 @@ void csrDec(){
     }
     
 }
+
+void setForeColor(char color){
+    foreColor = color;
+}
+
+void setBackColor(char color){
+    backColor = color;
+}
+
+void setColor(int col, int row, char fgC = -1, char bgC = -1){
+    if (fgC == -1){
+        fgC = foreColor;
+    }
+    if(bgC == -1){
+        bgC = backColor;
+    }
+
+    *((screenRam + (col + (row * screenWidth)) * 2) + 1) = fgC + (bgC << 4);
+
+}

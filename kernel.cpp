@@ -15,6 +15,13 @@ int main(){
     int inpBufferPtr = 0;
     
     while(1){
+        for(int i = 0; i < 16; i++){
+            setBackColor(i);
+            print(' ');
+        }
+    }
+
+    while(1){
         
         char key = getChar();
 

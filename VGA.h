@@ -35,5 +35,8 @@ char hexToAscii(char inp);
 void csrInc();
 void scrollScreen();
 void csrDec();
+void setForeColor(char color);
+void setBackColor(char color);
+void setColor(int col, int row, char fgC, char bgC);
 
 #endif
