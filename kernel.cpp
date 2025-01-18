@@ -7,19 +7,27 @@
 
 typedef char * string;
 
+unsigned short Kheight;
+unsigned short Kwidth;
+
+Pixal* KscreenRam;
+
 int main(){
 
     print("DuRom x86 V1.0\n#>");
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-    
-    // while(1){
-    //     for(int i = 0; i < 16; i++){
-    //         setBackColor(i);
-    //         print(' ');
-    //     }
-    // }
+
+    while(1){
+        for(int i = 0; i < 256; i+=1){
+            for(int j = 0; j < (Kheight * Kwidth); j++){
+                (*(Pixal*)(KscreenRam + j)).R = ((j % 256) + i) % 256;
+                (*(Pixal*)(KscreenRam + j)).G = ((j % 256) + i) % 256;
+                (*(Pixal*)(KscreenRam + j)).B = ((j % 256) + i) % 256;
+            }
+        }
+    }
 
     while(1){
         
@@ -74,6 +82,11 @@ int main(){
 extern "C" void init(){
     initScreen();
     mallocInit();
+
+    Kheight = (*(VesaInfoBlock*)0x500).height;
+    Kwidth = (*(VesaInfoBlock*)0x500).width;
+    KscreenRam = (Pixal*)(*(VesaInfoBlock*)0x500).framebuffer;
+
     main();
     return;
 }

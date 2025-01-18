@@ -2,25 +2,45 @@
 #include "malloc.h"
 #include "io.h"
 
-char* screenRam;
 int currentCursorLoc;
 char foreColor;
 char backColor;
 
+unsigned short height;
+unsigned short width;
+
+char* screenRam;
+char graphicMode;
+
+VesaInfoBlock* vesaInfoBlock;
+
 void clrScr(){
-    moveCsr(0,0);
-    for(int row = 0; row < screenHeight; row++){
-        for(int col = 0; col < screenWidth; col++){
-            *(screenRam + (col + (row * screenWidth)) * 2) = ' ';
-            *((screenRam + (col + (row * screenWidth)) * 2) + 1) = foreColor + (backColor << 4);
+
+    if(graphicMode == 'T'){
+        moveCsr(0,0);
+        for(int row = 0; row < screenHeight; row++){
+            for(int col = 0; col < screenWidth; col++){
+                *(screenRam + (col + (row * screenWidth)) * 2) = ' ';
+                *((screenRam + (col + (row * screenWidth)) * 2) + 1) = foreColor + (backColor << 4);
+            }
         }
+        moveCsr(0,0);
     }
-    moveCsr(0,0);
 }
 
 void initScreen(){
 
-    screenRam = (char*)(0xB8000);
+    vesaInfoBlock = (VesaInfoBlock*)0x500;
+    
+    if(vesaInfoBlock -> framebuffer){
+        screenRam = (char*)vesaInfoBlock -> framebuffer;
+        height = vesaInfoBlock -> height;
+        width = vesaInfoBlock -> width;
+        graphicMode ='G';
+    }else{
+        screenRam = (char*)(0xB8000);
+        graphicMode = 'T';
+    }
     foreColor = LIGHT_WHITE;
     backColor = BLACK;
     clrScr();
