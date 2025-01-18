@@ -9,7 +9,7 @@ char backColor;
 unsigned short height;
 unsigned short width;
 
-char* screenRam;
+Color* screenRam;
 char graphicMode;
 
 VesaInfoBlock* vesaInfoBlock;
@@ -20,8 +20,8 @@ void clrScr(){
         moveCsr(0,0);
         for(int row = 0; row < screenHeight; row++){
             for(int col = 0; col < screenWidth; col++){
-                *(screenRam + (col + (row * screenWidth)) * 2) = ' ';
-                *((screenRam + (col + (row * screenWidth)) * 2) + 1) = foreColor + (backColor << 4);
+                //*(screenRam + (col + (row * screenWidth)) * 2) = ' ';
+                //*((screenRam + (col + (row * screenWidth)) * 2) + 1) = foreColor + (backColor << 4);
             }
         }
         moveCsr(0,0);
@@ -33,12 +33,12 @@ void initScreen(){
     vesaInfoBlock = (VesaInfoBlock*)0x500;
     
     if(vesaInfoBlock -> framebuffer){
-        screenRam = (char*)vesaInfoBlock -> framebuffer;
+        screenRam = (Color*)vesaInfoBlock -> framebuffer;
         height = vesaInfoBlock -> height;
         width = vesaInfoBlock -> width;
         graphicMode ='G';
     }else{
-        screenRam = (char*)(0xB8000);
+        screenRam = (Color*)(0xB8000);
         graphicMode = 'T';
     }
     foreColor = LIGHT_WHITE;
@@ -128,7 +128,7 @@ void scrollScreen(){
                 *(screenRam + i) = *(screenRam + i + screenWidth * 2);
             }
             for(int i = ((screenWidth * (screenHeight - 1)) * 2); i < ((screenWidth * screenHeight) * 2); i += 2){
-                *(screenRam + i) = ' ';
+               //*(screenRam + i) = ' ';
             }
             moveCsr(0, screenHeight - 1);
 }
@@ -155,8 +155,8 @@ void print(char inp){
         break;
     
     default:
-        *(screenRam + currentCursorLoc * 2) = inp;
-        *((screenRam + currentCursorLoc * 2) + 1) = foreColor + (backColor << 4);
+        //*(screenRam + currentCursorLoc * 2) = inp;
+        //*((screenRam + currentCursorLoc * 2) + 1) = foreColor + (backColor << 4);
         csrInc();
         break;
     }
@@ -211,6 +211,72 @@ void setColor(int col, int row, char fgC = -1, char bgC = -1){
         bgC = backColor;
     }
 
-    *((screenRam + (col + (row * screenWidth)) * 2) + 1) = fgC + (bgC << 4);
+    //*((screenRam + (col + (row * screenWidth)) * 2) + 1) = fgC + (bgC << 4);
 
+}
+
+void drawLine(short x1, short y1, short x2, short y2, Color color){
+    float x;
+	float y;
+	if (x1 > x2) {
+		for (x = x2; x <= x1; x++) {
+			y = y1 + (((y1 - y2) / (float)(x1 - x2)) * (x - x1));
+			*(screenRam + (int)x + ((int)y * width)) = color;
+		}
+	}
+	else if (x1 < x2) {
+		for (x = x1; x <= x2; x++) {
+			y = y1 + (((y1 - y2) / (float)(x1 - x2)) * (x - x1));
+			*(screenRam + (int)x + ((int)y * width)) = color;
+		}
+	}
+
+	if (y1 > y2) {
+		for (y = y2; y <= y1; y++) {
+			x = (((y - y1) / (float)(y1 - y2)) * (x1 - x2)) + x1;
+			*(screenRam + (int)x + ((int)y * width)) = color;
+		}
+	}
+	else if (y1 < y2) {
+		for (y = y1; y <= y2; y++) {
+			x = (((y - y1) / (float)(y1 - y2)) * (x1 - x2)) + x1;
+			*(screenRam + (int)x + ((int)y * width)) = color;
+		}
+	}
+}
+
+void drawRectangle(short x1, short y1, short x2, short y2, Color color){
+    drawLine(x1, y1, x2, y1, color);
+    drawLine(x1, y1, x1, y2, color);
+    drawLine(x2, y1, x2, y2, color);
+    drawLine(x1, y2, x2, y2, color);
+}
+
+void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
+    if(y1 < y2){
+        for(short y = y1; y <= y2; y++){
+            drawLine(x1, y, x2, y, fillColor);
+        }
+    }else{
+        for(short y = y2; y <= y1; y++){
+            drawLine(x1, y, x2, y, fillColor);
+        }
+    }
+}
+
+Color antiAliasing(float inp, Color color){
+    double val;
+
+    if(inp == (int)inp){
+        val = 0;
+    }else{
+        val = inp - (int)inp;
+    }
+    val = 1 - val;
+
+    color.R = (int)(val * color.R);
+    color.G = (int)(val * color.G);
+    color.B = (int)(val * color.B);
+
+    return color;
 }

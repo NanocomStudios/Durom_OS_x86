@@ -22,6 +22,12 @@
 #define LIGHT_BROWN 0xE
 #define LIGHT_WHITE 0xF
 
+struct Color{
+    unsigned char B;
+    unsigned char G;
+    unsigned char R;
+};
+
 void clrScr();
 void initScreen();
 void print(const char* inp);
@@ -38,6 +44,10 @@ void csrDec();
 void setForeColor(char color);
 void setBackColor(char color);
 void setColor(int col, int row, char fgC, char bgC);
+void drawLine(short x1, short y1, short x2, short y2, Color color);
+void drawRectangle(short x1, short y1, short x2, short y2, Color color);
+void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor);
+Color antiAliasing(float inp, Color color);
 
 struct VesaInfoBlock{
     unsigned short attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -76,10 +86,6 @@ struct VesaInfoBlock{
 	unsigned short off_screen_mem_size;	// size of memory in the framebuffer but not being displayed on the screen
 };
 
-struct Pixal{
-    unsigned char B;
-    unsigned char G;
-    unsigned char R;
-};
+
 
 #endif
