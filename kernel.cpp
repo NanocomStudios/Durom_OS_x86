@@ -3,7 +3,6 @@
 #include "io.h"
 #include "keyboard.h"
 #include "Nstring.h"
-#include "font.h"
 
 typedef char * string;
 
@@ -22,8 +21,7 @@ int main(){
     fillC.R = 255;
     fillC.G = 255;
     fillC.B = 0;
-    drawRectangle(10,10,20,20,color);
-    drawChar('A', 30,30,10,fillC);
+    drawRectangle(10,10,18,24,color);
     char step = 0;
     
     print("DuRom x86 V1.0\n#>");
