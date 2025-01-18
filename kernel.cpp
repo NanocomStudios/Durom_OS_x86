@@ -4,7 +4,6 @@
 #include "keyboard.h"
 #include "Nstring.h"
 
-
 typedef char * string;
 
 unsigned short Kheight;
@@ -14,6 +13,10 @@ Pixal* KscreenRam;
 
 int main(){
 
+    
+
+    char step = 0;
+    
     print("DuRom x86 V1.0\n#>");
     
     string inpBuffer = (string)malloc(255);
@@ -21,10 +24,103 @@ int main(){
 
     while(1){
         for(int i = 0; i < 256; i+=1){
+            unsigned char red = 255;
+            unsigned char green = 0;
+            unsigned char blue = 0;
+            step = 0;
             for(int j = 0; j < (Kheight * Kwidth); j++){
-                (*(Pixal*)(KscreenRam + j)).R = ((j % 256) + i) % 256;
-                (*(Pixal*)(KscreenRam + j)).G = ((j % 256) + i) % 256;
-                (*(Pixal*)(KscreenRam + j)).B = ((j % 256) + i) % 256;
+                for(int k = 0; k < 10; k++){
+                    (*(Pixal*)((KscreenRam + j) + (k * Kwidth))).R = red;
+                    (*(Pixal*)((KscreenRam + j) + (k * Kwidth))).G = green;
+                    (*(Pixal*)((KscreenRam + j) + (k * Kwidth))).B = blue;   
+                }
+
+                if(step == 0){
+                    if(green == 255){
+                        step = 1;
+                    }else{
+                        green++;
+                    }
+                }else if(step == 1){
+                    if(red == 0){
+                        step = 2;
+                    }else{
+                        red--;
+                    }
+                }else if(step == 2){
+                    if(blue == 255){
+                        step = 3;
+                    }else{
+                        blue++;
+                    }
+                }else if(step == 3){
+                    if(green == 0){
+                        step = 4;
+                    }else{
+                        green--;
+                    }
+                }else if(step == 4){
+                    if(red == 255){
+                        step = 5;
+                    }else{
+                        red++;
+                    }
+                }else if(step == 5){
+                    if(blue == 0){
+                        step = 0;
+                        
+                        j = (((j / Kwidth) + 10) * Kwidth) - 1;
+                        continue;
+                    }else{
+                        blue--;
+                    }
+                }
+
+                if(step == 0){
+                    if(green == 255){
+                        //step = 1;
+                    }else{
+                        green++;
+                    }
+                }else if(step == 1){
+                    if(red == 0){
+                        //step = 2;
+                    }else{
+                        red--;
+                    }
+                }else if(step == 2){
+                    if(blue == 255){
+                        //step = 3;
+                    }else{
+                        blue++;
+                    }
+                }else if(step == 3){
+                    if(green == 0){
+                        //step = 4;
+                    }else{
+                        green--;
+                    }
+                }else if(step == 4){
+                    if(red == 255){
+                        //step = 5;
+                    }else{
+                        red++;
+                    }
+                }else if(step == 5){
+                    if(blue == 0){
+                        // step = 0;
+                        // j = (((j / Kwidth) + 10) * Kwidth) - 1;
+                        // continue;
+                    }else{
+                        blue--;
+                    }
+                }
+
+                if(((j + 1) % Kwidth) == 0){
+                    j = ((j / Kwidth) + 10) * Kwidth;
+                    j--;
+                }
+
             }
         }
     }
