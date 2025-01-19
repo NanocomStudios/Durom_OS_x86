@@ -12,22 +12,17 @@ unsigned short Kwidth;
 Color* KscreenRam;
 
 int main(){
-    Color color;
-    color.R = 255;
-    color.G = 0;
-    color.B = 0;
+    Color border = {0,255,0};
 
-    Color fillC;
-    fillC.R = 255;
-    fillC.G = 255;
-    fillC.B = 0;
-    drawRectangle(10,10,18,24,color);
-    char step = 0;
-    
     print("DuRom x86 V1.0\n#>");
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
+    print('\n');
+    
+        for(int i = 0; i < 128; i++){
+            print(i);   
+        }
 
     while(1){
         
@@ -41,7 +36,7 @@ int main(){
                 //print(inpBuffer);
 
                 if (!strcpy(inpBuffer, 255, "clear", 6)){
-                    clrScr();
+                    clearConsole();
                 }else if(!strcpy(inpBuffer, 255, "help", 5)){
                     print("Showing help.\n");
                 }else if(inpBufferPtr == 0){

@@ -1,4 +1,3 @@
-section .text
 [bits 16]
 CODE_SEG equ GDT_code - GDT_start
 DATA_SEG equ GDT_data - GDT_start

@@ -1,8 +1,8 @@
 #ifndef SCREEN
 #define SCREEN
 
-#define screenWidth 80
-#define screenHeight 25
+#define consoleWidth 80
+#define consoleHeight 42
 
 #define BLACK 0x0
 #define BLUE 0x1
@@ -28,7 +28,8 @@ struct Color{
     unsigned char R;
 };
 
-void clrScr();
+void clearScreen();
+void clearConsole();
 void initScreen();
 void print(const char* inp);
 void moveCsr(int col, int row);
@@ -48,6 +49,7 @@ void drawLine(short x1, short y1, short x2, short y2, Color color);
 void drawRectangle(short x1, short y1, short x2, short y2, Color color);
 void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor);
 Color antiAliasing(float inp, Color color);
+void drawChar(char inp, short x, short y, Color fgColor, Color bgColor);
 
 struct VesaInfoBlock{
     unsigned short attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.

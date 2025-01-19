@@ -3,8 +3,8 @@
 #include "io.h"
 
 int currentCursorLoc;
-char foreColor;
-char backColor;
+Color foreColor;
+Color backColor;
 
 unsigned short height;
 unsigned short width;
@@ -12,23 +12,39 @@ unsigned short width;
 Color* screenRam;
 char graphicMode;
 
+char scroll;
+
 VesaInfoBlock* vesaInfoBlock;
 
-void clrScr(){
-
-    if(graphicMode == 'T'){
-        moveCsr(0,0);
-        for(int row = 0; row < screenHeight; row++){
-            for(int col = 0; col < screenWidth; col++){
-                //*(screenRam + (col + (row * screenWidth)) * 2) = ' ';
-                //*((screenRam + (col + (row * screenWidth)) * 2) + 1) = foreColor + (backColor << 4);
-            }
+void clearScreen(){
+    
+    for(int row = 0; row < height; row++){
+        for(int col = 0; col < width; col++){
+            *(screenRam + (col + (row * width))) = backColor;
         }
-        moveCsr(0,0);
     }
 }
 
+void clearConsole(){
+    moveCsr(0,0);
+    scroll = 0;
+    for(int i = 0; i < (consoleHeight * consoleWidth);i++){
+        print(' ');
+    }
+    scroll = 1;
+    moveCsr(0,0);
+}
+
 void initScreen(){
+    Color white;
+    white.R = 255;
+    white.G = 255;
+    white.B = 255;
+
+    Color black;
+    black.R = 0;
+    black.G = 0;
+    black.B = 0;
 
     vesaInfoBlock = (VesaInfoBlock*)0x500;
     
@@ -37,13 +53,15 @@ void initScreen(){
         height = vesaInfoBlock -> height;
         width = vesaInfoBlock -> width;
         graphicMode ='G';
+
     }else{
-        screenRam = (Color*)(0xB8000);
+        //screenRam = (Color*)(0xB8000);
         graphicMode = 'T';
     }
-    foreColor = LIGHT_WHITE;
-    backColor = BLACK;
-    clrScr();
+    foreColor = {255,255,255};
+    backColor = {0,0,0};
+    clearScreen();
+    scroll = 1;
 }
 
 void print(const char* inp){
@@ -124,46 +142,45 @@ int lenH(long inp){
 }
 
 void scrollScreen(){
-            for(int i = 0; i < ((screenWidth * (screenHeight - 1)) * 2); i++){
-                *(screenRam + i) = *(screenRam + i + screenWidth * 2);
+            for(int i = 0; i < (width * (height - 1)); i++){
+                *(screenRam + i) = *(screenRam + i + (width * 14));
             }
-            for(int i = ((screenWidth * (screenHeight - 1)) * 2); i < ((screenWidth * screenHeight) * 2); i += 2){
-               //*(screenRam + i) = ' ';
+            for(int i = (width * (height - 1)); i < (width * height); i++){
+               *(screenRam + i) = backColor;
             }
-            moveCsr(0, screenHeight - 1);
+            moveCsr(0, consoleHeight - 1);
 }
 
 void print(char inp){
     switch (inp)
     {
-    case '\n':
-        if(((currentCursorLoc / screenWidth) + 1) >= screenHeight){
-            scrollScreen();
-        }else{
-            moveCsr(0, (currentCursorLoc / screenWidth) + 1);
-        }
-        break;
+    // case '\n':
+    //     if(((currentCursorLoc / consoleWidth) + 1) >= consoleHeight){
+    //         scrollScreen();
+    //     }else{
+    //         moveCsr(0, (currentCursorLoc / consoleWidth) + 1);
+    //     }
+    //     break;
     
-    case '\b':
+    // case '\b':
 
-        if(currentCursorLoc > 0){
-            csrDec();
-            print(' ');
-            csrDec();
-        }
+    //     if(currentCursorLoc > 0){
+    //         csrDec();
+    //         print(' ');
+    //         csrDec();
+    //     }
 
-        break;
+    //     break;
     
     default:
-        //*(screenRam + currentCursorLoc * 2) = inp;
-        //*((screenRam + currentCursorLoc * 2) + 1) = foreColor + (backColor << 4);
+        drawChar(inp, ((currentCursorLoc % consoleWidth) * 9), ((currentCursorLoc / consoleWidth) * 14), backColor, foreColor);
         csrInc();
         break;
     }
 }
 
 void moveCsr(int col, int row){
-    currentCursorLoc = col + (row * screenWidth);
+    currentCursorLoc = col + (row * consoleWidth);
     outb(0x3D4, 0xf);
     outb(0x3D5, (unsigned char)(currentCursorLoc & 0xff));
     outb(0x3D4, 0xe);
@@ -173,7 +190,7 @@ void moveCsr(int col, int row){
 void csrInc(){
     currentCursorLoc++;
 
-    if(currentCursorLoc >= screenWidth * (screenHeight)){
+    if((currentCursorLoc >= consoleWidth * (consoleHeight))){
             scrollScreen();
     }
     outb(0x3D4, 0xf);
@@ -195,25 +212,25 @@ void csrDec(){
     
 }
 
-void setForeColor(char color){
+void setForeColor(Color color){
     foreColor = color;
 }
 
-void setBackColor(char color){
+void setBackColor(Color color){
     backColor = color;
 }
 
-void setColor(int col, int row, char fgC = -1, char bgC = -1){
-    if (fgC == -1){
-        fgC = foreColor;
-    }
-    if(bgC == -1){
-        bgC = backColor;
-    }
+// void setColor(int col, int row, char fgC = -1, char bgC = -1){
+//     if (fgC == -1){
+//         fgC = foreColor;
+//     }
+//     if(bgC == -1){
+//         bgC = backColor;
+//     }
 
-    //*((screenRam + (col + (row * screenWidth)) * 2) + 1) = fgC + (bgC << 4);
+//     //*((screenRam + (col + (row * consoleWidth)) * 2) + 1) = fgC + (bgC << 4);
 
-}
+// }
 
 void drawLine(short x1, short y1, short x2, short y2, Color color){
     float x;
@@ -279,4 +296,17 @@ Color antiAliasing(float inp, Color color){
     color.B = (int)(val * color.B);
 
     return color;
+}
+
+void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
+    for(int i = 0; i < 14; i++){
+            for(int j = 0; j < 8; j++){
+                if(((*(char*)(0x1000 + 3 + (inp * 14) + i)) & (128 >> j))){
+                    *(screenRam + (j + x) + ((i + y) * width)) = bgColor;
+                }else{
+                    *(screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                }
+            }
+            *(screenRam + (8 + x) + ((i + y) * width)) = fgColor;
+    }
 }
