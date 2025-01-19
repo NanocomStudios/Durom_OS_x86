@@ -59,7 +59,7 @@ void initScreen(){
         graphicMode = 'T';
     }
     foreColor = {255,255,255};
-    backColor = {255,0,0};
+    backColor = {36,10,48};
     clearScreen();
     scroll = 1;
 }

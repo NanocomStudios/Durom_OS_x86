@@ -18,7 +18,7 @@ int main(){
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-
+    
     while(1){
         
         char key = getChar();
