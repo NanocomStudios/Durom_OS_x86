@@ -59,7 +59,7 @@ void initScreen(){
         graphicMode = 'T';
     }
     foreColor = {255,255,255};
-    backColor = {0,0,0};
+    backColor = {255,0,0};
     clearScreen();
     scroll = 1;
 }
@@ -145,7 +145,7 @@ void scrollScreen(){
             for(int i = 0; i < (width * (height - 1)); i++){
                 *(screenRam + i) = *(screenRam + i + (width * 14));
             }
-            for(int i = (width * (height - 1)); i < (width * height); i++){
+            for(int i = (width * (height - 14)); i < (width * height); i++){
                *(screenRam + i) = backColor;
             }
             moveCsr(0, consoleHeight - 1);
@@ -154,23 +154,23 @@ void scrollScreen(){
 void print(char inp){
     switch (inp)
     {
-    // case '\n':
-    //     if(((currentCursorLoc / consoleWidth) + 1) >= consoleHeight){
-    //         scrollScreen();
-    //     }else{
-    //         moveCsr(0, (currentCursorLoc / consoleWidth) + 1);
-    //     }
-    //     break;
+    case '\n':
+        if(((currentCursorLoc / consoleWidth) + 1) >= consoleHeight){
+            scrollScreen();
+        }else{
+            moveCsr(0, (currentCursorLoc / consoleWidth) + 1);
+        }
+        break;
     
-    // case '\b':
+    case '\b':
 
-    //     if(currentCursorLoc > 0){
-    //         csrDec();
-    //         print(' ');
-    //         csrDec();
-    //     }
+        if(currentCursorLoc > 0){
+            csrDec();
+            print(' ');
+            csrDec();
+        }
 
-    //     break;
+        break;
     
     default:
         drawChar(inp, ((currentCursorLoc % consoleWidth) * 9), ((currentCursorLoc / consoleWidth) * 14), backColor, foreColor);

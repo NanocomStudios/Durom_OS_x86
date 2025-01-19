@@ -18,11 +18,6 @@ int main(){
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-    print('\n');
-    
-        for(int i = 0; i < 128; i++){
-            print(i);   
-        }
 
     while(1){
         
