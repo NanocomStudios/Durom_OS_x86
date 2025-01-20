@@ -26,3 +26,12 @@ long strcpy(const char * inp1, long length1, const char * inp2, long length2){
     return tmp;
 
 }
+
+long toInt(const char * inp, int length){
+    long tmp = 0;
+    for(int i = length - 1; i >= 0; i--){
+        if((inp[i] <= 0x30) && (inp[i] >= 0x39)){
+            
+        }
+    }
+}

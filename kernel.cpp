@@ -30,10 +30,12 @@ int main(){
 
                 //print(inpBuffer);
 
-                if (!strcpy(inpBuffer, 255, "clear", 6)){
+                if (!strcpy(inpBuffer, 255, "clear", 5)){
                     clearConsole();
-                }else if(!strcpy(inpBuffer, 255, "help", 5)){
+                }else if(!strcpy(inpBuffer, 255, "help", 4)){
                     print("Showing help.\n");
+                }else if(!strcpy(inpBuffer, 255, "box", 3)){
+                    print("Showing box.\n");
                 }else if(inpBufferPtr == 0){
 
                 }else{
