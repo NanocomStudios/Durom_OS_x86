@@ -25,7 +25,7 @@ int main(){
     while(1){
         
         char key = getChar();
-
+        
         switch (key){
             case '\n':
                 print('\n');
