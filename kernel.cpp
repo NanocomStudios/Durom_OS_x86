@@ -3,6 +3,7 @@
 #include "io.h"
 #include "keyboard.h"
 #include "Nstring.h"
+#include "Nmath.h"
 
 typedef char * string;
 
@@ -11,7 +12,9 @@ unsigned short Kwidth;
 
 Color* KscreenRam;
 
+int step;
 int main(){
+
     Color border = {0,255,0};
 
     print("DuRom x86 V1.0\n#>");
@@ -35,7 +38,37 @@ int main(){
                 }else if(!strcpy(inpBuffer, 255, "help", 4)){
                     print("Showing help.\n");
                 }else if(!strcpy(inpBuffer, 255, "box", 3)){
-                    print("Showing box.\n");
+                    int count = 0;
+                    for(int i = 0; inpBuffer[i] != 0; i++){
+                        for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++);
+                        count ++;
+                    }
+                    if(count != 5){
+                        print("Insufficient Argument count!\n");
+                    }else{
+                        int* listCoords = (int*) malloc(sizeof(int) * 4);
+
+                        count = 0;
+                        char tmp[20];
+                        int chCnt = 0;
+
+                        for(int i = 4; inpBuffer[i] != 0; i++){
+                            chCnt = 0;
+                            for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                                if(i > 3){ 
+                                    tmp[chCnt] = inpBuffer[i];
+                                    chCnt++;
+                                }
+                            }
+                            tmp[chCnt] = 0;
+                            listCoords[count] = toInt(tmp, chCnt);
+                            count ++;
+                        }
+
+                        drawRectangle(listCoords[0], listCoords[1], listCoords[2], listCoords[3], border);
+
+                    }
+
                 }else if(inpBufferPtr == 0){
 
                 }else{

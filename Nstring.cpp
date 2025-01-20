@@ -1,4 +1,5 @@
 #include "Nstring.h"
+#include "Nmath.h"
 #include "VGA.h"
 
 long strcpy(const char * inp1, long length1, const char * inp2, long length2){
@@ -30,8 +31,9 @@ long strcpy(const char * inp1, long length1, const char * inp2, long length2){
 long toInt(const char * inp, int length){
     long tmp = 0;
     for(int i = length - 1; i >= 0; i--){
-        if((inp[i] <= 0x30) && (inp[i] >= 0x39)){
-            
+        if((inp[i] >= 0x30) && (inp[i] <= 0x39)){
+            tmp = tmp + ((inp[i] - 0x30) * (pow(10,length - i -1)));
         }
     }
+    return tmp;
 }

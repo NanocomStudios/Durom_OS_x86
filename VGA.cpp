@@ -173,7 +173,7 @@ void print(char inp){
         break;
     
     default:
-        drawChar(inp, ((currentCursorLoc % consoleWidth) * 9), ((currentCursorLoc / consoleWidth) * 14), backColor, foreColor);
+        drawChar(inp, ((currentCursorLoc % consoleWidth) * 9), ((currentCursorLoc / consoleWidth) * 14), foreColor, backColor);
         csrInc();
         break;
     }
@@ -302,11 +302,11 @@ void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
     for(int i = 0; i < 14; i++){
             for(int j = 0; j < 8; j++){
                 if(((*(char*)(0x1000 + 3 + (inp * 14) + i)) & (128 >> j))){
-                    *(screenRam + (j + x) + ((i + y) * width)) = bgColor;
-                }else{
                     *(screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                }else{
+                    *(screenRam + (j + x) + ((i + y) * width)) = bgColor;
                 }
             }
-            *(screenRam + (8 + x) + ((i + y) * width)) = fgColor;
+           *(screenRam + (8 + x) + ((i + y) * width)) = bgColor;
     }
 }
