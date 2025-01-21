@@ -15,16 +15,17 @@ Color* KscreenRam;
 
 int step;
 int main(){
-
+    
     Color border = {0,255,0};
 
     print("DuRom x86 V1.0\n#>");
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-    openWindow(0,0,400,500);
-    openWindow(50,50,500,600);
+    Window* window1 = openWindow(0,0,400,500);
+    Window* window2 = openWindow(50,50,500,600);
     drawWindows();
+
     while(1){
         
         char key = getChar();
@@ -71,6 +72,9 @@ int main(){
 
                     }
 
+                }else if(!strcpy(inpBuffer, 255, "close", 5)){
+                    //closeWindow(window1);
+                    drawWindows();
                 }else if(inpBufferPtr == 0){
 
                 }else{

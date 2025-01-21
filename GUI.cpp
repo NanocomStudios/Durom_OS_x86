@@ -78,8 +78,8 @@ void closeWindow(Window* inp){
 
 void initGUI(){
     windowListHead = 0;
-    borderColor = {80,80,80};
-    fillColor = {200,200,200};
+    borderColor = {0,0,255};
+    fillColor = {0,255,255};
 }
 
 void drawWindows(){
@@ -100,10 +100,10 @@ void drawWindows(){
                         borderColor\
                     );
                     fillRectangle(
-                        tmpW->x + tmpG->x,\
-                        tmpW->y + tmpG->y,\
-                        tmpW->x + tmpG->x + tmpO->width,\
-                        tmpW->y + tmpG->y + tmpO->height,\
+                        tmpW->x + tmpG->x + 1,\
+                        tmpW->y + tmpG->y + 1,\
+                        tmpW->x + tmpG->x + tmpO->width - 1,\
+                        tmpW->y + tmpG->y + tmpO->height - 1,\
                         fillColor\
                     );
             }
