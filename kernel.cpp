@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "Nstring.h"
 #include "Nmath.h"
+#include "GUI.h"
 
 typedef char * string;
 
@@ -21,11 +22,12 @@ int main(){
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
-    
+    openWindow(0,0,400,500);
+    openWindow(50,50,500,600);
+    drawWindows();
     while(1){
         
         char key = getChar();
-        
         switch (key){
             case '\n':
                 print('\n');
@@ -107,6 +109,8 @@ int main(){
 extern "C" void init(){
     initScreen();
     mallocInit();
+
+    initGUI();
 
     Kheight = (*(VesaInfoBlock*)0x500).height;
     Kwidth = (*(VesaInfoBlock*)0x500).width;
