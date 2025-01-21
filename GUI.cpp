@@ -15,6 +15,11 @@ Window* getLastWindow(){
     }
 }
 
+short searchWindow(Window* inp){
+    Window* tmp = windowListHead;
+    
+}
+
 Window* openWindow(short w_x = 0, short w_y = 0){
 
     Window* newWindow = (Window*)malloc(sizeof(Window));
@@ -34,8 +39,10 @@ Window* openWindow(short w_x = 0, short w_y = 0){
     if(!lastWindow){
         newWindow->id = lastWindow->id + 1;
         lastWindow->next = newWindow;
+        newWindow->prev = lastWindow;
     }else{
         windowListHead = newWindow;
+        newWindow->prev = 0;
     }
 
     return newWindow;
@@ -43,7 +50,14 @@ Window* openWindow(short w_x = 0, short w_y = 0){
 }
 
 void closeWindow(Window* inp){
-    if(inp->next > 0){
-        
+    if((unsigned int)inp->next > 0){
+        inp->next->prev = inp->prev;
     }
+    if((unsigned int)inp->prev > 0){
+        inp->prev->next = inp->next;
+    } 
+    if(windowListHead == inp){
+        windowListHead = inp->next;
+    }
+    free(inp);
 }

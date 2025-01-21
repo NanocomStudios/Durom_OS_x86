@@ -11,7 +11,7 @@ struct Window{
         short id, status, x, y;
         GraphicObject* childList;
         Window* next;
-
+        Window* prev;
 };
 
 #endif
