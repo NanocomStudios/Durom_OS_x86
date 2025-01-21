@@ -38,5 +38,6 @@ Window* openWindow(short w_x, short w_y, short w_width, short w_height);
 void closeWindow(Window* inp);
 void initGUI();
 void drawWindows();
+void bringWindowFront(Window* inp);
 
 #endif

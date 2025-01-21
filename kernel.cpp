@@ -24,6 +24,11 @@ int main(){
     int inpBufferPtr = 0;
     Window* window1 = openWindow(0,0,400,500);
     Window* window2 = openWindow(50,50,500,600);
+
+    char focused = 0;
+    ((Box*)(window1->childList->Object))->fillColor = {0,0,0};
+    //printInt(((Box*)(window1->childList->Object))->fillColor.G);
+
     drawWindows();
 
     while(1){
@@ -73,7 +78,16 @@ int main(){
                     }
 
                 }else if(!strcpy(inpBuffer, 255, "close", 5)){
-                    //closeWindow(window1);
+                    closeWindow(window1);
+                    drawWindows();
+                }else if(!strcpy(inpBuffer, 255, "focus", 5)){
+                    if(focused == 0){
+                        bringWindowFront(window1);
+                        focused = 1;
+                    }else{
+                        bringWindowFront(window2);
+                        focused = 0;
+                    }
                     drawWindows();
                 }else if(inpBufferPtr == 0){
 

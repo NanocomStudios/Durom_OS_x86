@@ -270,13 +270,19 @@ void drawRectangle(short x1, short y1, short x2, short y2, Color color){
 }
 
 void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
-    if(y1 < y2){
-        for(short y = y1; y <= y2; y++){
-            drawLine(x1, y, x2, y, fillColor);
-        }
-    }else{
-        for(short y = y2; y <= y1; y++){
-            drawLine(x1, y, x2, y, fillColor);
+    if(y1 > y2){
+        short tmp = y2;
+        y2 = y1;
+        y1 = tmp;
+    }
+    if(x1 > x2){
+        short tmp = x2;
+        x2 = x1;
+        x1 = tmp;
+    }
+    for(short y = y1; y <= y2; y++){
+        for(short x = x1; x <= x2; x++){
+            *(screenRam + x + y * width) = fillColor;
         }
     }
 }

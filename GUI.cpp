@@ -20,7 +20,7 @@ Window* getLastWindow(){
 Window* openWindow(short w_x, short w_y, short w_height, short w_width){
 
     Window* newWindow = (Window*)malloc(sizeof(Window));
-
+    
     if(newWindow == 0){
         return 0;
     }
@@ -34,7 +34,7 @@ Window* openWindow(short w_x, short w_y, short w_height, short w_width){
 
     Window* lastWindow = getLastWindow();
 
-    if(lastWindow){
+    if((unsigned int)(lastWindow) != 0){
         lastWindow->next = newWindow;
         newWindow->prev = lastWindow;
     }else{
@@ -97,14 +97,14 @@ void drawWindows(){
                         tmpW->y + tmpG->y,\
                         tmpW->x + tmpG->x + tmpO->width,\
                         tmpW->y + tmpG->y + tmpO->height,\
-                        borderColor\
+                        tmpO->borderColor\
                     );
                     fillRectangle(
                         tmpW->x + tmpG->x + 1,\
                         tmpW->y + tmpG->y + 1,\
                         tmpW->x + tmpG->x + tmpO->width - 1,\
                         tmpW->y + tmpG->y + tmpO->height - 1,\
-                        fillColor\
+                        tmpO->fillColor\
                     );
             }
 
@@ -114,4 +114,24 @@ void drawWindows(){
 
     }
     print("Drawing Complete\n");
+
+}
+
+void bringWindowFront(Window* inp){
+    Window* tmp = getLastWindow();
+    
+    if((unsigned int)(inp->next) > 0){
+        inp->next->prev = inp->prev;
+    }
+    if((unsigned int)(inp->prev) > 0){
+        inp->prev->next = inp->next;
+    } 
+    if(windowListHead == inp){
+        windowListHead = inp->next;
+    }
+
+    tmp->next = inp;
+    inp->prev = tmp;
+    inp->next = 0;
+
 }
