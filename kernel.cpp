@@ -5,6 +5,7 @@
 #include "Nstring.h"
 #include "Nmath.h"
 #include "GUI.h"
+#include "ps2.h"
 
 typedef char * string;
 
@@ -31,7 +32,24 @@ int main(){
     ((Box*)(getGraphicObject(window1, 0)->Object))->fillColor = {0,0,0};
     //printInt(((Box*)(window1->childList->Object))->fillColor.G);
 
-    drawWindows();
+    //drawWindows();
+
+    //outb(0x64, 0x20);
+    
+    ps2Write(0xF6);
+    ps2Write(0xF4);
+
+
+    while(1){
+        ps2Wait(READ);
+        if((inb(0x64) & (unsigned char)32) == 0){
+            print("Keyboard -> ");
+        }else{
+            print("Mouse -> ");
+        }
+        printHex(inb(0x60));
+        print('\n');
+    }
 
     while(1){
         

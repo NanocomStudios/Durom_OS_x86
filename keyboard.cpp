@@ -1,5 +1,6 @@
 #include "keyboard.h"
 #include "io.h"
+#include "ps2.h"
 #include "VGA.h"
 
 
@@ -149,8 +150,7 @@ char toAscii(char inp){
     static unsigned char key;
     
     while(1){
-      while((inb(0x64) % 2) == 0);
-        key = inb(0x60);
+      key = ps2Read();
         
         if(key < 128){
             switch (key){
