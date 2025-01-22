@@ -14,7 +14,6 @@ class GraphicObject{
         short id;
         char type;
 
-
 };
 
 class Window{

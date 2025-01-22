@@ -149,34 +149,36 @@ char toAscii(char inp){
     static unsigned char key;
     
     while(1){
+      while((inb(0x64) % 2) == 0);
         key = inb(0x60);
         
-        if((key < 128) && (key != lastKey)){
+        if(key < 128){
             switch (key){
               case CAPS:
-                keyFlags = keyFlags | (unsigned char)2;
-                lastKey = key;
+                if((keyFlags & (unsigned char)2) == 0){
+                  keyFlags = keyFlags | (unsigned char)2;
+                }else{
+                  keyFlags = keyFlags & ~(unsigned char)2;
+                }
+                
                 break;
 
               case LSHIFT:
                 keyFlags = keyFlags | (unsigned char)1;
-                lastKey = key;
                 break;
 
               case RSHIFT:
                 keyFlags = keyFlags | (unsigned char)1;
-                lastKey = key;
                 break;
               
               default:
-                lastKey = key;
                 return toAscii(key);
                 break;
             } 
 
-        }else if((key > 127) && (key = lastKey + 128)){
+        }else if(key > 127){
             
-            switch (key + 128){
+            switch (key - 128){
 
               case LSHIFT:
                 keyFlags = keyFlags & ~(unsigned char)1;
