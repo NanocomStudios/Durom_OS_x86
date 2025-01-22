@@ -38,108 +38,121 @@ int main(){
     
     ps2Write(0xF6);
     ps2Write(0xF4);
+    ps2Write(0xF0);
 
 
     while(1){
-        ps2Wait(READ);
-        if((inb(0x64) & (unsigned char)32) == 0){
-            print("Keyboard -> ");
-        }else{
-            print("Mouse -> ");
-        }
-        printHex(inb(0x60));
+        // if((inb(0x64) & (unsigned char)32) == 0){
+        //     print("Keyboard -> ");
+        // }else{
+        //     print("Mouse -> ");
+        // }
+        ps2Write(0xeb);
+        printHex(ps2Read());
+        print(' ');
+        printHex(ps2Read());
+        print(' ');
+        printHex(ps2Read());
         print('\n');
     }
 
     while(1){
-        
-        char key = getChar();
-        switch (key){
-            case '\n':
-                print('\n');
-                inpBuffer[inpBufferPtr] = 0;
+        ps2Wait(READ);
+        if((inb(0x64) & (unsigned char)32) == 0){
+            
+            char key = getChar();
+            switch (key){
+                case '\n':
+                    print('\n');
+                    inpBuffer[inpBufferPtr] = 0;
 
-                //print(inpBuffer);
+                    //print(inpBuffer);
 
-                if (!strcpy(inpBuffer, 255, "clear", 5)){
-                    clearConsole();
-                }else if(!strcpy(inpBuffer, 255, "help", 4)){
-                    print("Showing help.\n");
-                }else if(!strcpy(inpBuffer, 255, "box", 3)){
-                    int count = 0;
-                    for(int i = 0; inpBuffer[i] != 0; i++){
-                        for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++);
-                        count ++;
-                    }
-                    if(count != 5){
-                        print("Insufficient Argument count!\n");
-                    }else{
-                        int* listCoords = (int*) malloc(sizeof(int) * 4);
-
-                        count = 0;
-                        char tmp[20];
-                        int chCnt = 0;
-
-                        for(int i = 4; inpBuffer[i] != 0; i++){
-                            chCnt = 0;
-                            for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
-                                if(i > 3){ 
-                                    tmp[chCnt] = inpBuffer[i];
-                                    chCnt++;
-                                }
-                            }
-                            tmp[chCnt] = 0;
-                            listCoords[count] = toInt(tmp, chCnt);
+                    if (!strcpy(inpBuffer, 255, "clear", 5)){
+                        clearConsole();
+                    }else if(!strcpy(inpBuffer, 255, "help", 4)){
+                        print("Showing help.\n");
+                    }else if(!strcpy(inpBuffer, 255, "box", 3)){
+                        int count = 0;
+                        for(int i = 0; inpBuffer[i] != 0; i++){
+                            for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++);
                             count ++;
                         }
+                        if(count != 5){
+                            print("Insufficient Argument count!\n");
+                        }else{
+                            int* listCoords = (int*) malloc(sizeof(int) * 4);
 
-                        drawRectangle(listCoords[0], listCoords[1], listCoords[2], listCoords[3], border);
+                            count = 0;
+                            char tmp[20];
+                            int chCnt = 0;
 
-                    }
+                            for(int i = 4; inpBuffer[i] != 0; i++){
+                                chCnt = 0;
+                                for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                                    if(i > 3){ 
+                                        tmp[chCnt] = inpBuffer[i];
+                                        chCnt++;
+                                    }
+                                }
+                                tmp[chCnt] = 0;
+                                listCoords[count] = toInt(tmp, chCnt);
+                                count ++;
+                            }
 
-                }else if(!strcpy(inpBuffer, 255, "close", 5)){
-                    closeWindow(window1);
-                    drawWindows();
-                }else if(!strcpy(inpBuffer, 255, "focus", 5)){
-                    if(focused == 0){
-                        bringWindowFront(window1);
-                        focused = 1;
+                            drawRectangle(listCoords[0], listCoords[1], listCoords[2], listCoords[3], border);
+
+                        }
+
+                    }else if(!strcpy(inpBuffer, 255, "close", 5)){
+                        closeWindow(window1);
+                        drawWindows();
+                    }else if(!strcpy(inpBuffer, 255, "focus", 5)){
+                        if(focused == 0){
+                            bringWindowFront(window1);
+                            focused = 1;
+                        }else{
+                            bringWindowFront(window2);
+                            focused = 0;
+                        }
+                        drawWindows();
+                    }else if(inpBufferPtr == 0){
+
                     }else{
-                        bringWindowFront(window2);
-                        focused = 0;
+                        print('\'');
+                        print(inpBuffer);
+                        print("\' is not a valid Command.\n");
                     }
-                    drawWindows();
-                }else if(inpBufferPtr == 0){
 
-                }else{
-                    print('\'');
-                    print(inpBuffer);
-                    print("\' is not a valid Command.\n");
-                }
-
-                inpBufferPtr = 0;
-                print("#>");
-                break;
-            case '\b':
-
-                if(inpBufferPtr > 0){
-                    inpBufferPtr --;
-                    print('\b');
-                }
-
-                break;
-            default:
-                print(key);
-                inpBuffer[inpBufferPtr++] = key;
-
-                if(inpBufferPtr > 255){
-                    print("Input Buffer Exceeded!\n#>");
                     inpBufferPtr = 0;
-                }
+                    print("#>");
+                    break;
+                case '\b':
 
-                //printHex(key);
-                break;
+                    if(inpBufferPtr > 0){
+                        inpBufferPtr --;
+                        print('\b');
+                    }
+
+                    break;
+                default:
+                    print(key);
+                    inpBuffer[inpBufferPtr++] = key;
+
+                    if(inpBufferPtr > 255){
+                        print("Input Buffer Exceeded!\n#>");
+                        inpBufferPtr = 0;
+                    }
+
+                    //printHex(key);
+                    break;
+            }
+        }else{
+            
+            
         }
+
+        
     }
     return 0;
 }

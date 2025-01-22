@@ -19,7 +19,7 @@ void ps2Write(unsigned char data){
     ps2Wait(WRITE);
     outb(0x60, data);
 
-    ps2Read();
+    while(ps2Read() != 0xFA);
 }
 
 unsigned char ps2Read(){
@@ -27,6 +27,3 @@ unsigned char ps2Read(){
     return inb(0x60);
 }
 
-void mouseInit(){
-
-}
