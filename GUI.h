@@ -6,15 +6,19 @@
 #define BOX 1
 #define TEXT 2
 
-struct GraphicObject{
+class GraphicObject{ 
+        public:
         short x, y;
         GraphicObject* next;
         void* Object;
+        short id;
         char type;
+
 
 };
 
-struct Window{
+class Window{
+        public:
         short height, width, x, y;
         GraphicObject* childList;
         Window* next;
@@ -34,6 +38,7 @@ struct Text{
 };
 
 Window* getLastWindow();
+GraphicObject* getGraphicObject(Window* window, short id);
 Window* openWindow(short w_x, short w_y, short w_width, short w_height);
 void closeWindow(Window* inp);
 void initGUI();

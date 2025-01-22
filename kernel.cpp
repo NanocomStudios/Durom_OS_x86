@@ -26,7 +26,9 @@ int main(){
     Window* window2 = openWindow(50,50,500,600);
 
     char focused = 0;
-    ((Box*)(window1->childList->Object))->fillColor = {0,0,0};
+    char colorTmp = 0;
+
+    ((Box*)(getGraphicObject(window1, 0)->Object))->fillColor = {0,0,0};
     //printInt(((Box*)(window1->childList->Object))->fillColor.G);
 
     drawWindows();

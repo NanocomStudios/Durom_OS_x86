@@ -17,6 +17,21 @@ Window* getLastWindow(){
     }
 }
 
+GraphicObject* getGraphicObject(Window* window, short id){
+    GraphicObject* tmp = window->childList;
+
+    while((tmp->next != 0) && (tmp->id != id)){
+        tmp = tmp->next;
+    }
+
+    if(tmp->id == id){
+        return tmp;
+    }else{
+        return 0;
+    }
+
+}
+
 Window* openWindow(short w_x, short w_y, short w_height, short w_width){
 
     Window* newWindow = (Window*)malloc(sizeof(Window));
@@ -43,6 +58,7 @@ Window* openWindow(short w_x, short w_y, short w_height, short w_width){
     }
 
     GraphicObject* baseUI = (GraphicObject*)malloc(sizeof(GraphicObject));
+    baseUI->id = 0;
     baseUI->x = 0;
     baseUI->y = 0;
     baseUI->next = 0;
