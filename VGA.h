@@ -36,6 +36,7 @@ void moveCsr(int col, int row);
 void print(char inp);
 void printInt(long inp);
 void printHex(long inp);
+void printHexV(long inp);
 int len(long inp);
 int lenH(long inp);
 char hexToAscii(char inp);

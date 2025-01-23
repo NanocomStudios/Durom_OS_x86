@@ -108,6 +108,22 @@ void printHex(long inp){
     free(charBuffer);
 }
 
+void printHexV(long inp){
+
+    long length = lenH(inp);
+    char* charBuffer = (char*)malloc(length * 2);
+
+    for(short i = 0; i < length; i ++){
+        *(charBuffer + (i * 2)) = hexToAscii((*(unsigned char*)((char*)&inp + i)) % 16);
+        *(charBuffer + (i * 2) + 1) = hexToAscii((*(unsigned char*)((char*)&inp + i)) / 16);
+    }
+
+    for(long i = (length * 2) - 1; i >= 0; i--){
+        print(*(charBuffer + i));
+    }
+    free(charBuffer);
+}
+
 char hexToAscii(char inp){
     if(inp < 10){
         return (inp + 0x30);

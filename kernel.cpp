@@ -6,6 +6,7 @@
 #include "Nmath.h"
 #include "GUI.h"
 #include "ps2.h"
+#include "hdd.h"
 
 typedef char * string;
 
@@ -36,12 +37,29 @@ int main(){
 
     //outb(0x64, 0x20);
     
-    ps2Write(0xF6);
-    ps2Write(0xF4);
-    ps2Write(0xF0);
+    // ps2Write(0xF6);
+    // ps2Write(0xF4);
+    // ps2Write(0xF0);
+    outb(0x1f6, 0xA0);
+    outb(0x1f7, 0x20);
+    
+    hddWait();
 
+    int i = 0;
+    while((i < 512) && (inb(0x1f7) & (unsigned char)8)){
+        unsigned short inp = inw(0x1f0);
+        printHexV((unsigned char)(inp >> 8));
+        printHexV((unsigned char)(inp & 255));
 
-    while(1){
+        i++;
+
+        if((i % 8) == 0){
+            print('\n');
+        }else{
+            print(' ');
+        }
+    }
+    while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
         //     print("Keyboard -> ");
         // }else{
