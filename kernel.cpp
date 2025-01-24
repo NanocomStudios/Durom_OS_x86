@@ -40,25 +40,26 @@ int main(){
     // ps2Write(0xF6);
     // ps2Write(0xF4);
     // ps2Write(0xF0);
-    outb(0x1f6, 0xA0);
-    outb(0x1f7, 0x20);
+    outb(0x1f6, 0xE0);
+    outb(0x1f7, 0xec);
     
-    hddWait();
+    DriveInfo* dBuffer = (DriveInfo*)malloc(sizeof(DriveInfo));
+    getDriveInfo(dBuffer);
+    print(dBuffer->modelNumber);
+    print('\n');
 
-    int i = 0;
-    while((i < 512) && (inb(0x1f7) & (unsigned char)8)){
-        unsigned short inp = inw(0x1f0);
-        printHexV((unsigned char)(inp >> 8));
-        printHexV((unsigned char)(inp & 255));
+    free(dBuffer);
 
-        i++;
+    MBR* mbr = (MBR*)malloc(sizeof(MBR));
 
-        if((i % 8) == 0){
-            print('\n');
-        }else{
-            print(' ');
-        }
+    readSectors(mbr, 1, 0);
+
+    //printInt(mbr->p1.noOfSectors);
+
+    for(int i = 0; i < 512; i++){
+        printHex(*(((char*)mbr) + i));
     }
+
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
         //     print("Keyboard -> ");
