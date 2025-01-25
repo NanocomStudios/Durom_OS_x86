@@ -13,10 +13,11 @@ i386-elf-gcc -ffreestanding -m32 -g -c -o "Nmath.o" Nmath.cpp
 i386-elf-gcc -ffreestanding -m32 -g -c -o "GUI.o" GUI.cpp
 i386-elf-gcc -ffreestanding -m32 -g -c -o "ps2.o" ps2.cpp
 i386-elf-gcc -ffreestanding -m32 -g -c -o "hdd.o" hdd.cpp
+i386-elf-gcc -ffreestanding -m32 -g -c -o "PCI.o" PCI.cpp
 
 nasm "zeroes.asm" -f bin -o "zeroes.bin"
 
-i386-elf-ld -o "full_kernel.bin" -Ttext 0x1000 "font.o" "kernel_entry.o" "kernel.o" "VGA.o" "malloc.o" "io.o" "keyboard.o" "Nstring.o" "Nmath.o" "GUI.o" "ps2.o" "hdd.o" --oformat binary
+i386-elf-ld -o "full_kernel.bin" -Ttext 0x1000 "font.o" "kernel_entry.o" "kernel.o" "VGA.o" "malloc.o" "io.o" "keyboard.o" "Nstring.o" "Nmath.o" "GUI.o" "ps2.o" "hdd.o" "PCI.o" --oformat binary
 
 cat "boot.bin" "full_kernel.bin" "zeroes.bin"  > "OS.bin"
 #qemu-system-x86_64.exe -drive format=raw,file="OS.bin",index=0,if=floppy,  -m 128M

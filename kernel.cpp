@@ -7,6 +7,7 @@
 #include "GUI.h"
 #include "ps2.h"
 #include "hdd.h"
+#include "PCI.h"
 
 typedef char * string;
 
@@ -59,15 +60,40 @@ int main(){
 
     //     i++;
     // }
+    for(int i = 0 ; i < 256; i++){
+        for(int j = 0; j < 32; j++){
+            if(pciConfigReadWord(i,j,0,14) == 0x80){
+                for(int k = 0; k < 8; k++){
+                    unsigned short tmp = pciConfigReadWord(i,j,k,10);
+                    if(tmp != 0xFFFF){
+                        printHex(pciConfigReadWord(i,j,0,10));
+                        print("->");
+                        printHex(pciConfigReadWord(i,j,k,14));
+                        print('=');
+                        printHex(tmp);
+                        print(' ');
+                }
+                }
+            }else{
+                unsigned short tmp = pciConfigReadWord(i,j,0,10);
+                if(tmp != 0xFFFF){
+                    printHex(pciConfigReadWord(i,j,0,14));
+                    print('=');
+                    printHex(tmp);
+                    print(' ');
+                }
+            }
+        }
+    }
+    // MBR* mbr = (MBR*)malloc(512);
 
-    MBR* mbr = (MBR*)malloc(512);
+    // readSectors(mbr, 1, 0);
 
-    readSectors(mbr, 1, 0);
-
-    printHex(mbr->p1.);
+    // printInt(mbr->p1.noOfSectors * 512 /(1024 * 1024));
 
     // for(int i = 0; i < 512; i++){
-    //     printHex(*(((char*)mbr) + i));
+    //     printHexV(*(((char*)mbr) + i));
+    //     print(' ');
     // }
 
     while(0){
