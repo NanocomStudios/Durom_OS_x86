@@ -60,24 +60,24 @@ int main(){
 
     //     i++;
     // }
-    for(int i = 0 ; i < 256; i++){
-        for(int j = 0; j < 32; j++){
-            if(pciConfigReadWord(i,j,0,14) == 0x80){
-                for(int k = 0; k < 8; k++){
-                    unsigned short tmp = pciConfigReadWord(i,j,k,10);
+    for(int bus = 0 ; bus < 256; bus++){
+        for(int device = 0; device < 32; device++){
+            if(pciConfigReadWord(bus,device,0,14) == 0x80){
+                for(int func = 0; func < 8; func++){
+                    unsigned short tmp = pciConfigReadWord(bus,device,func,10);
                     if(tmp != 0xFFFF){
-                        printHex(pciConfigReadWord(i,j,0,10));
+                        printHex(pciConfigReadWord(bus,device,0,10));
                         print("->");
-                        printHex(pciConfigReadWord(i,j,k,14));
+                        printHex(pciConfigReadWord(bus,device,func,14));
                         print('=');
                         printHex(tmp);
                         print(' ');
                 }
                 }
             }else{
-                unsigned short tmp = pciConfigReadWord(i,j,0,10);
+                unsigned short tmp = pciConfigReadWord(bus,device,0,10);
                 if(tmp != 0xFFFF){
-                    printHex(pciConfigReadWord(i,j,0,14));
+                    printHex(pciConfigReadWord(bus,device,0,14));
                     print('=');
                     printHex(tmp);
                     print(' ');
