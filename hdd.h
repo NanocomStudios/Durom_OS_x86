@@ -34,12 +34,12 @@ struct PartitionRecord{
 };
 
 struct MBR{
-    char bootCode[512];
-    //PartitionRecord p1;
-    //PartitionRecord p2;
-    //PartitionRecord p3;
-    //PartitionRecord p4;
-    //unsigned short magicNumber;
+    char bootCode[446];
+    PartitionRecord p1;
+    PartitionRecord p2;
+    PartitionRecord p3;
+    PartitionRecord p4;
+    unsigned short magicNumber;
 };
 
 void hddWait();

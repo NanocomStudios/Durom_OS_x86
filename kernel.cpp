@@ -40,7 +40,7 @@ int main(){
     // ps2Write(0xF6);
     // ps2Write(0xF4);
     // ps2Write(0xF0);
-    outb(0x1f6, 0xE0);
+    outb(0x1f6, 0xA0);
     outb(0x1f7, 0xec);
     
     DriveInfo* dBuffer = (DriveInfo*)malloc(sizeof(DriveInfo));
@@ -50,15 +50,25 @@ int main(){
 
     free(dBuffer);
 
-    MBR* mbr = (MBR*)malloc(sizeof(MBR));
+    // int i = 0 ;
+    // outb(0x1f7,0x20);
+    // while((i < (512)) && (inb(0x1f7) & (unsigned char)8)){
+    //     unsigned short inp = inw(0x1f0);
+    //     printHex(inp);
+    //     print(' ');
+
+    //     i++;
+    // }
+
+    MBR* mbr = (MBR*)malloc(512);
 
     readSectors(mbr, 1, 0);
 
-    //printInt(mbr->p1.noOfSectors);
+    printHex(mbr->p1.);
 
-    for(int i = 0; i < 512; i++){
-        printHex(*(((char*)mbr) + i));
-    }
+    // for(int i = 0; i < 512; i++){
+    //     printHex(*(((char*)mbr) + i));
+    // }
 
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
