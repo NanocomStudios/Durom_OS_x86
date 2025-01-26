@@ -1,4 +1,17 @@
 [bits 16]
+
+mov ah, 0x4f
+mov al, 0x2
+mov bx, 0x4115
+int 0x10
+	
+mov ax, 0x4f01
+mov cx, 0x115
+push word 0
+pop es
+mov di, 0x500
+int 0x10
+
 CODE_SEG equ GDT_code - GDT_start
 DATA_SEG equ GDT_data - GDT_start
 

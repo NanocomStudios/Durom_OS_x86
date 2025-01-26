@@ -41,7 +41,7 @@ int main(){
     // ps2Write(0xF6);
     // ps2Write(0xF4);
     // ps2Write(0xF0);
-    outb(0x1f6, 0xA0);
+    outb(0x1f6, 0xE0);
     outb(0x1f7, 0xec);
     
     DriveInfo* dBuffer = (DriveInfo*)malloc(sizeof(DriveInfo));
@@ -50,7 +50,7 @@ int main(){
     print('\n');
 
     free(dBuffer);
-
+    pciInit();
     // int i = 0 ;
     // outb(0x1f7,0x20);
     // while((i < (512)) && (inb(0x1f7) & (unsigned char)8)){
@@ -60,39 +60,66 @@ int main(){
 
     //     i++;
     // }
-    for(int bus = 0 ; bus < 256; bus++){
-        for(int device = 0; device < 32; device++){
-            if(pciConfigReadWord(bus,device,0,14) == 0x80){
-                for(int func = 0; func < 8; func++){
-                    unsigned short tmp = pciConfigReadWord(bus,device,func,10);
-                    if(tmp != 0xFFFF){
-                        printHex(pciConfigReadWord(bus,device,0,10));
-                        print("->");
-                        printHex(pciConfigReadWord(bus,device,func,14));
-                        print('=');
-                        printHex(tmp);
-                        print(' ');
-                }
-                }
-            }else{
-                unsigned short tmp = pciConfigReadWord(bus,device,0,10);
-                if(tmp != 0xFFFF){
-                    printHex(pciConfigReadWord(bus,device,0,14));
-                    print('=');
-                    printHex(tmp);
-                    print(' ');
-                }
-            }
+    // for(int bus = 0 ; bus < 256; bus++){
+    //     for(int device = 0; device < 32; device++){
+    //         if(pciConfigReadWord(bus,device,0,14) == 0x80){
+    //             for(int func = 0; func < 8; func++){
+    //                 unsigned short tmp = pciConfigReadWord(bus,device,func,10);
+    //                 if(tmp != 0xFFFF){
+    //                     printHex(pciConfigReadWord(bus,device,0,10));
+    //                     print("->");
+    //                     printHex(pciConfigReadWord(bus,device,func,14));
+    //                     print('=');
+    //                     printHex(tmp);
+    //                     print(' ');
+    //             }
+    //             }
+    //         }else{
+    //             unsigned short tmp = pciConfigReadWord(bus,device,0,10);
+    //             if(tmp != 0xFFFF){
+    //                 printHex(pciConfigReadWord(bus,device,0,14));
+    //                 print('=');
+    //                 printHex(tmp);
+    //                 print(' ');
+    //             }
+    //         }
+    //     }
+    // }
+
+    printPciList();
+    MBR* mbr = (MBR*)malloc(512);
+
+    VolumeInfo* vol1 = (VolumeInfo*)malloc(512);
+
+    readSectors(mbr, 1, 0);
+
+    readSectors(vol1, 1, mbr->p1.LBABegin);
+
+    unsigned int rootDir = mbr->p1.LBABegin + vol1->rsvdSecCount + (vol1->fatCount * vol1->fatSize32Bit);
+
+    DirectoryEntry* tmpSector = (DirectoryEntry*)malloc(512);
+
+    readSectors(tmpSector, 1, rootDir);
+
+    print('\n');
+    
+    for(int i = 0; i < 16; i++){
+        //if(tmpSector[i].attribute != 0x20)continue;
+        for(int j = 0; j < 8; j++){
+            print(tmpSector[i].shortName[j]);
         }
+        print('.');
+        for(int j = 8; j < 11; j++){
+            print(tmpSector[i].shortName[j]);
+        }
+        //printHex(tmpSector[i].attribute);
+        print("\n");
     }
-    // MBR* mbr = (MBR*)malloc(512);
 
-    // readSectors(mbr, 1, 0);
-
-    // printInt(mbr->p1.noOfSectors * 512 /(1024 * 1024));
+    
 
     // for(int i = 0; i < 512; i++){
-    //     printHexV(*(((char*)mbr) + i));
+    //     printHexV(*(((char*)tmpSector) + i));
     //     print(' ');
     // }
 
@@ -123,11 +150,11 @@ int main(){
 
                     //print(inpBuffer);
 
-                    if (!strcpy(inpBuffer, 255, "clear", 5)){
+                    if (!strcmp(inpBuffer, 255, "clear", 5)){
                         clearConsole();
-                    }else if(!strcpy(inpBuffer, 255, "help", 4)){
+                    }else if(!strcmp(inpBuffer, 255, "help", 4)){
                         print("Showing help.\n");
-                    }else if(!strcpy(inpBuffer, 255, "box", 3)){
+                    }else if(!strcmp(inpBuffer, 255, "box", 3)){
                         int count = 0;
                         for(int i = 0; inpBuffer[i] != 0; i++){
                             for(;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++);
@@ -159,10 +186,10 @@ int main(){
 
                         }
 
-                    }else if(!strcpy(inpBuffer, 255, "close", 5)){
+                    }else if(!strcmp(inpBuffer, 255, "close", 5)){
                         closeWindow(window1);
                         drawWindows();
-                    }else if(!strcpy(inpBuffer, 255, "focus", 5)){
+                    }else if(!strcmp(inpBuffer, 255, "focus", 5)){
                         if(focused == 0){
                             bringWindowFront(window1);
                             focused = 1;

@@ -38,7 +38,7 @@ mov bp, 0x8000
 mov sp, bp
 
 mov bx, KERNEL_LOCATION
-mov dh, 30  ;Sectors to read
+mov dh, 35  ;Sectors to read
 
 mov ah, 0x02
 mov al, dh 
@@ -49,18 +49,6 @@ mov dl, [BOOT_DISK]
 int 0x13                ; no error management, do your homework!
 
                                 
-
-mov ah, 0x4f
-mov al, 0x2
-mov bx, 0x4115
-int 0x10                ; text mode
-	
-mov ax, 0x4f01
-mov cx, 0x115
-push word 0
-pop es
-mov di, 0x500
-int 0x10
 	
 jmp KERNEL_LOCATION                    
  

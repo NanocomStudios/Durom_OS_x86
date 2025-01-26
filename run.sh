@@ -20,4 +20,6 @@ nasm "zeroes.asm" -f bin -o "zeroes.bin"
 i386-elf-ld -o "full_kernel.bin" -Ttext 0x1000 "font.o" "kernel_entry.o" "kernel.o" "VGA.o" "malloc.o" "io.o" "keyboard.o" "Nstring.o" "Nmath.o" "GUI.o" "ps2.o" "hdd.o" "PCI.o" --oformat binary
 
 cat "boot.bin" "full_kernel.bin" "zeroes.bin"  > "OS.bin"
+dd if=/dev/zero of=floppy.img ibs=1k count=1440
+dd if=OS.bin of=floppy.img conv=notrunc 
 #qemu-system-x86_64.exe -drive format=raw,file="OS.bin",index=0,if=floppy,  -m 128M
