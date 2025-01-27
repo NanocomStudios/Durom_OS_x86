@@ -119,9 +119,10 @@ int main(){
     
 
     // for(int i = 0; i < 512; i++){
-    //     printHexV(*(((char*)tmpSector) + i));
+    //     printHexV(*(((char*)mbr) + i));
     //     print(' ');
     // }
+
 
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
