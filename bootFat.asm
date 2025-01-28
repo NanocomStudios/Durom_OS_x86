@@ -16,17 +16,48 @@ mov [d_lba], ax
 
 call loadSector
 
+
+mov al, [tmpBuffer + 13]
+mov [secPerClus], al
+
 mov ax, [lbaTmp]
-clc
-add ax, [tmpBuffer + 14] 
+add ax, [tmpBuffer + 14]
+mov [fatBegin], ax 
 add ax, [tmpBuffer + 36]
 add ax, [tmpBuffer + 36]
 mov [d_lba], ax
+mov [lbaTmp], ax
+
+mov al, [secPerClus]
+mov [blkcnt], al
 
 call loadSector
 
-mov bx, tmpBuffer
 mov cx, 0
+push cx
+printLine:
+
+	mov ax, [secPerClus]
+	mov bx, 16
+	mul bx
+	pop cx
+	cmp cx, ax
+	je loopEnd
+
+	add cx, 1
+	push cx
+
+mov bx, tmpBuffer
+mov ax, cx
+mov cx, 32
+mul cx
+add bx, ax
+mov cx, 0
+
+mov al, [bx]
+cmp al, 0
+je endPrg
+
 printLoop:
 push bx
 mov al, [bx]
@@ -37,22 +68,42 @@ int 10h
 pop bx
 add bx, 1
 add cx, 1
-cmp cx, 512
+cmp cx, 11
 jne printLoop
 
-
-
-jmp $
-
-error:
-
-mov al, 69
+mov al, 0xA
 mov ah, 0xe
 mov bh, 0
 mov bl, 7
 int 10h
 
+mov al, 0xD
+mov ah, 0xe
+mov bh, 0
+mov bl, 7
+int 10h
+
+jmp printLine
+loopEnd:
+
+mov ax, [tmpBuffer + 480]
+cmp ax, 0
+je endPrg
+
+
+
+endPrg:
 jmp $
+
+error:
+
+	mov al, 69
+	mov ah, 0xe
+	mov bh, 0
+	mov bl, 7
+	int 10h
+
+	jmp $
 
 loadSector:
     mov si, DAPACK		; address of "disk address packet"
@@ -81,7 +132,9 @@ hddWait:
  
 BOOT_DISK: db 0
 kernelName: db "KERNEL  BIN"
-lbaTmp:	db 0
+lbaTmp:	dw 0
+fatBegin: dw 0
+secPerClus: db 0
 
 DAPACK:
 	db	0x10
