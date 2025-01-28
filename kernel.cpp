@@ -100,7 +100,7 @@ int main(){
     DirectoryEntry* tmpSector = (DirectoryEntry*)malloc(512);
 
     readSectors(tmpSector, 1, rootDir);
-
+    printInt(vol1->secPerClus);
     print('\n');
     
     for(int i = 0; i < 16; i++){

@@ -33,66 +33,45 @@ mov [blkcnt], al
 
 call loadSector
 
-mov cx, 0
-push cx
+search_dir:
+	popa
 
-searchLine:
+	mov ax, ds			; Root dir is now in [buffer]
+	mov es, ax			; Set DI to this info
+	mov di, tmpBuffer
 
 	mov ax, [secPerClus]
-	mov bx, 16
-	mul bx
-	pop cx
-	cmp cx, ax
-	je loopEnd
+	mov cx, 16
+	mul cx
+	mov cx, ax	; Search all (224) entries
+	mov ax, 0			; Searching at offset 0
 
-	add cx, 1
-	push cx
 
-mov bx, tmpBuffer
-mov dx, kernelName
-mov ax, cx
-mov cx, 32
-mul cx
-add bx, ax
-mov cx, 0
+next_root_entry:
+	xchg cx, dx			; We use CX in the inner loop...
 
-mov al, [bx]
-cmp al, 0
-je endPrg
+	mov si, kernelName		; Start searching for kernel filename
+	mov cx, 11
+	rep cmpsb
+	je found_file_to_load		; Pointer DI will be at offset 11
 
-searchLoop:
+	add ax, 32			; Bump searched entries by 1 (32 bytes per entry)
 
-push bx
-mov bx, dx
-mov ah, [bx]
-pop bx
-mov al, [bx]
+	mov di, tmpBuffer			; Point to next entry
+	add di, ax
 
-cmp al, ah
-jne loopEnd
-clc
-add bx, 1
-add dx, 1
-add cx, 1
-cmp cx, 11
-jne searchLoop
+	xchg dx, cx			; Get the original CX back
+	loop next_root_entry
 
-loopEnd:
+	jmp error
 
-mov al, 75
-	mov ah, 0xe
-	mov bh, 0
-	mov bl, 7
-	int 10h
+found_file_to_load:
+	mov ax, [di + 0x14]
+	mov [d_lbaH], ax
+	mov ax, [di + 0x1A]
+	mov [d_lba], ax
 
-endPrg:
-
-mov al, 68
-	mov ah, 0xe
-	mov bh, 0
-	mov bl, 7
-	int 10h
-
+	
 jmp $
 
 error:
@@ -142,7 +121,8 @@ DAPACK:
 blkcnt:	dw	1		; int 13 resets this to # of blocks actually read/written
 db_add:	dw	0x1000		; memory buffer destination address (0:7c00)
 	dw	0		; in memory page zero
-d_lba:	dd	0		; put the lba to read in this spot
+d_lba:	dw	0	
+d_lbaH:	dw	0	; put the lba to read in this spot
 	dd	0		; more storage bytes only for big lba's ( > 4 bytes )
 
 
