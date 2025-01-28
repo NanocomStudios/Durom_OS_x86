@@ -7,64 +7,23 @@ mov [BOOT_DISK], dl
 xor ax, ax                          
 mov es, ax
 mov ds, ax
-mov bp, 0x9000
+mov bp, 0x8000
 mov sp, bp
 
-mov al, 0xE0
-mov dx, 0x1f6
-out dx, al
+mov ax, [0x7c00 + 446 + 8]
+mov [lbaTmp], ax
+mov [d_lba], ax
 
-call hddWait
+call loadSector
 
-mov al, 1
-mov dx, 0x1f2
-out dx, al
+mov ax, [lbaTmp]
+clc
+add ax, [tmpBuffer + 14] 
+add ax, [tmpBuffer + 36]
+add ax, [tmpBuffer + 36]
+mov [d_lba], ax
 
-mov bx, lbaTmp
-mov dx, 0x1f3
-mov al, 0x80
-out dx, al
-
-mov al, 0x20
-mov dx, 0x1f4
-out dx, al
-
-mov al, 0
-mov dx, 0x1f5
-out dx, al
-
-mov al, 0x20
-mov dx, 0x1f7
-out dx, al
-
-mov cx, 0
-mov bx, tmpBuffer
-
-readLoop:
-	call hddWait
-
-	mov dx, 0x1f7
-	in al, dx
-
-	and al, 8
-	cmp al, 8
-	jne loopEnd
-
-	cmp cx, 256
-	je loopEnd
-
-	mov dx, 0x1f0
-	in ax, dx
-
-	mov [bx], al
-	add bx, 1
-	mov [bx], ah
-	add bx, 1
-	add cx, 1
-
-	jmp readLoop
-
-loopEnd:
+call loadSector
 
 mov bx, tmpBuffer
 mov cx, 0
@@ -95,7 +54,14 @@ int 10h
 
 jmp $
 
-	
+loadSector:
+    mov si, DAPACK		; address of "disk address packet"
+    mov ah, 0x42		; AL is unused
+    mov dl, 0x80		; drive number 0 (OR the drive # with 0x80)
+    int 0x13
+    jc short error
+	ret
+
 hddWait:
 	push dx
 	push ax
@@ -115,7 +81,17 @@ hddWait:
  
 BOOT_DISK: db 0
 kernelName: db "KERNEL  BIN"
-lbaTmp:	db 0x80
+lbaTmp:	db 0
+
+DAPACK:
+	db	0x10
+	db	0
+blkcnt:	dw	1		; int 13 resets this to # of blocks actually read/written
+db_add:	dw	0x1000		; memory buffer destination address (0:7c00)
+	dw	0		; in memory page zero
+d_lba:	dd	0		; put the lba to read in this spot
+	dd	0		; more storage bytes only for big lba's ( > 4 bytes )
+
 
 times 446-($-$$) db 0
 
