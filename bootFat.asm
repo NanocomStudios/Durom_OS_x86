@@ -35,7 +35,8 @@ call loadSector
 
 mov cx, 0
 push cx
-printLine:
+
+searchLine:
 
 	mov ax, [secPerClus]
 	mov bx, 16
@@ -48,6 +49,7 @@ printLine:
 	push cx
 
 mov bx, tmpBuffer
+mov dx, kernelName
 mov ax, cx
 mov cx, 32
 mul cx
@@ -58,41 +60,39 @@ mov al, [bx]
 cmp al, 0
 je endPrg
 
-printLoop:
+searchLoop:
+
 push bx
-mov al, [bx]
-mov ah, 0xe
-mov bh, 0
-mov bl, 7
-int 10h
+mov bx, dx
+mov ah, [bx]
 pop bx
+mov al, [bx]
+
+cmp al, ah
+jne loopEnd
+clc
 add bx, 1
+add dx, 1
 add cx, 1
 cmp cx, 11
-jne printLoop
+jne searchLoop
 
-mov al, 0xA
-mov ah, 0xe
-mov bh, 0
-mov bl, 7
-int 10h
-
-mov al, 0xD
-mov ah, 0xe
-mov bh, 0
-mov bl, 7
-int 10h
-
-jmp printLine
 loopEnd:
 
-mov ax, [tmpBuffer + 480]
-cmp ax, 0
-je endPrg
-
-
+mov al, 75
+	mov ah, 0xe
+	mov bh, 0
+	mov bl, 7
+	int 10h
 
 endPrg:
+
+mov al, 68
+	mov ah, 0xe
+	mov bh, 0
+	mov bl, 7
+	int 10h
+
 jmp $
 
 error:
