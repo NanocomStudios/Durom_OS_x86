@@ -1,49 +1,70 @@
 [BITS 16]
+[org 0x7c00]
+
 tmpBuffer equ 0x1000
 mov [BOOT_DISK], dl                 
                               
-;xor ax, ax                          
-;mov es, ax
-;mov ds, ax
-;mov bp, 0x8000
-;mov sp, bp
+xor ax, ax                          
+mov es, ax
+mov ds, ax
+mov bp, 0x9000
+mov sp, bp
+
+mov al, 0xE0
+mov dx, 0x1f6
+out dx, al
+
+call hddWait
+
+mov al, 1
+mov dx, 0x1f2
+out dx, al
+
+mov bx, lbaTmp
+mov dx, 0x1f3
+mov al, 0x80
+out dx, al
+
+mov al, 0x20
+mov dx, 0x1f4
+out dx, al
+
+mov al, 0
+mov dx, 0x1f5
+out dx, al
+
+mov al, 0x20
+mov dx, 0x1f7
+out dx, al
+
+mov cx, 0
 mov bx, tmpBuffer
-mov dh ,1
 
-mov ah, 0x02
-mov al, dh
-mov ch, 0x00
-mov dh, 0x02
-mov cl, 0x03
-mov dl, [BOOT_DISK]
-int 0x13                ; no error management, do your homework!
+readLoop:
+	call hddWait
 
-mov ax, lbaTmp
-mov bx, [tmpBuffer + 14] 
-add ax, bx
-mov bx, [tmpBuffer + 36]
-shl bx, 1
-add ax, bx
-;mov [d_lba], ax
+	mov dx, 0x1f7
+	in al, dx
 
-jmp readDisk
+	and al, 8
+	cmp al, 8
+	jne loopEnd
 
-DAPACK:
-	db	0x10
-	db	0
-blkcnt:	dw	1		; int 13 resets this to # of blocks actually read/written
-db_add:	dw	tmpBuffer		; memory buffer destination address (0:7c00)
-	dw	0		; in memory page zero
-d_lba:	dd	0		; put the lba to read in this spot
-	dd	0		; more storage bytes only for big lba's ( > 4 bytes )
+	cmp cx, 256
+	je loopEnd
 
-readDisk:
+	mov dx, 0x1f0
+	in ax, dx
 
-	mov si, DAPACK		; address of "disk address packet"
-	mov ah, 0x42		; AL is unused
-	mov dl, [BOOT_DISK]		; drive number 0 (OR the drive # with 0x80)
-	int 0x13
+	mov [bx], al
+	add bx, 1
+	mov [bx], ah
+	add bx, 1
+	add cx, 1
 
+	jmp readLoop
+
+loopEnd:
 
 mov bx, tmpBuffer
 mov cx, 0
@@ -63,12 +84,38 @@ jne printLoop
 
 
 jmp $
+
+error:
+
+mov al, 69
+mov ah, 0xe
+mov bh, 0
+mov bl, 7
+int 10h
+
+jmp $
+
 	
+hddWait:
+	push dx
+	push ax
+    clc
+	mov dx, 0x1f7
+	in al, dx
+	and al, 128
+	cmp al, 128
+	je hddWait
+	
+	pop ax
+	pop dx
+	ret
+
+
 ;jmp KERNEL_LOCATION                    
  
 BOOT_DISK: db 0
 kernelName: db "KERNEL  BIN"
-lbaTmp: dw 0x80
+lbaTmp:	db 0x80
 
 times 446-($-$$) db 0
 
