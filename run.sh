@@ -23,3 +23,4 @@ cat "boot.bin" "full_kernel.bin" "zeroes.bin"  > "OS.bin"
 dd if=/dev/zero of=floppy.img ibs=1k count=1440
 dd if=OS.bin of=floppy.img conv=notrunc 
 #qemu-system-x86_64.exe -drive format=raw,file="OS.bin",index=0,if=floppy,  -m 128M
+

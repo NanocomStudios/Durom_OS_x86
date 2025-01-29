@@ -66,12 +66,45 @@ next_root_entry:
 	jmp error
 
 found_file_to_load:
-	mov ax, [di + 0x14]
-	mov [d_lbaH], ax
-	mov ax, [di + 0x1A]
-	mov [d_lba], ax
-
 	
+	clc
+	mov ax, [di + 0x1A]
+	mov [lastClus], ax
+	add ax, word [fatBegin]
+	mov [d_lba], ax
+	mov ax, [di + 0x14]
+	mov [lastClusH], ax
+	add ax, 0
+	mov [d_lbaH], ax
+
+	mov ax, [secPerClus]
+	mov [blkcnt], ax
+
+	call loadSector
+
+	mov ax, [lastClus]
+	cmp ax, 0xFFFF
+	jne loadNextFat
+
+	mov ax, [lastClusH]
+	cmp ax, 0xFFFF
+
+	je loadEnd
+
+loadNextFat:
+	clc
+	mov ax, [lastClus]
+	mov bx, 4
+	mul bx
+	div 
+
+
+	mov ax, [di + 0x14]
+	mov [lastClusH], ax
+	add ax, 0
+	mov [d_lbaH], ax
+	
+loadEnd:
 jmp $
 
 error:
@@ -109,11 +142,13 @@ hddWait:
 
 ;jmp KERNEL_LOCATION                    
  
-BOOT_DISK: db 0
-kernelName: db "KERNEL  BIN"
-lbaTmp:	dw 0
-fatBegin: dw 0
-secPerClus: db 0
+BOOT_DISK:	db	0
+kernelName: db	"KERNEL  BIN"
+lbaTmp:		dw	0
+fatBegin:	dw	0
+secPerClus: db 	0
+lastClus:	dw	0
+lastClusH:	dw	0
 
 DAPACK:
 	db	0x10
