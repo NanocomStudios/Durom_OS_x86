@@ -1,5 +1,5 @@
 #include "malloc.h"
-#include "VGA.h"
+#include "../Graphics/VGA.h"
 
 char* ram;
 char isInit;

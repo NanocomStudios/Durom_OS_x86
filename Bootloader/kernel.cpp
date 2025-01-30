@@ -1,13 +1,13 @@
-#include "VGA.h"
-#include "malloc.h"
-#include "io.h"
-#include "keyboard.h"
-#include "Nstring.h"
-#include "Nmath.h"
-#include "GUI.h"
-#include "ps2.h"
-#include "hdd.h"
-#include "PCI.h"
+#include "../Graphics/VGA.h"
+#include "../StdLib/malloc.h"
+#include "../IO/io.h"
+#include "../HID/keyboard.h"
+#include "../StdLib/Nstring.h"
+#include "../StdLib/Nmath.h"
+#include "../Graphics/GUI.h"
+#include "../IO/ps2.h"
+#include "../Storage/hdd.h"
+#include "../IO/PCI.h"
 
 typedef char * string;
 

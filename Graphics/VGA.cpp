@@ -1,6 +1,6 @@
 #include "VGA.h"
-#include "malloc.h"
-#include "io.h"
+#include "../StdLib/malloc.h"
+#include "../IO/io.h"
 
 int currentCursorLoc;
 Color foreColor;

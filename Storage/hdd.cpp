@@ -1,6 +1,6 @@
 #include "hdd.h"
-#include "io.h"
-#include "VGA.h"
+#include "../IO/io.h"
+#include "../Graphics/VGA.h"
 
 void hddWait(){
     while((inb(0x1f7) & (unsigned char)128));

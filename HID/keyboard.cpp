@@ -1,7 +1,7 @@
 #include "keyboard.h"
-#include "io.h"
-#include "ps2.h"
-#include "VGA.h"
+#include "../IO/io.h"
+#include "../IO/ps2.h"
+#include "../Graphics/VGA.h"
 
 
 #define CAPS 0x3A

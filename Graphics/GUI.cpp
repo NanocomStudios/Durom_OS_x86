@@ -1,5 +1,5 @@
 #include "GUI.h"
-#include "malloc.h"
+#include "../StdLIB/malloc.h"
 
 Window* windowListHead;
 Color borderColor;

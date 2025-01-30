@@ -1,7 +1,7 @@
 #include "io.h"
-#include "malloc.h"
+#include "../StdLib/malloc.h"
 #include "PCI.h"
-#include "VGA.h"
+#include "../Graphics/VGA.h"
 
 pciNode* pciNodeList;
 
