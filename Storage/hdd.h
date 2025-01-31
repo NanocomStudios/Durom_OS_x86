@@ -4,6 +4,12 @@
 #define MASTER 0
 #define SLAVE 1
 
+#define LBA 1
+#define CHS 0
+
+#define PRIMARY_PORT 0x1f0
+#define SECONDARY_PORT 0x170
+
 #define LBA_MODE_BIT 6
 #define MASTER_SLAVE_BIT 3
 
@@ -33,7 +39,10 @@ struct DriveInfo{
     short writeProtected;
 };
 
+void setDrive(short port, char masterSlave, char lba);
 void hddWait();
+char isReady();
+char isError();
 void getDriveInfo(void* buffer);
 void readSectors(void* buffer, unsigned char sectorCount, unsigned int address);
 
