@@ -7,6 +7,7 @@
 #include "../Graphics/GUI.h"
 #include "../IO/ps2.h"
 #include "../Storage/hdd.h"
+#include "../Storage/fat32.h"
 #include "../IO/PCI.h"
 
 typedef char * string;
