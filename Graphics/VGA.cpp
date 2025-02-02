@@ -9,18 +9,26 @@ Color backColor;
 unsigned short height;
 unsigned short width;
 
-Color* screenRam;
+unsigned char bpp;
+
+void* screenRam;
 char graphicMode;
 
 char scroll;
 
 VesaInfoBlock* vesaInfoBlock;
 
+
 void clearScreen(){
     
     for(int row = 0; row < height; row++){
         for(int col = 0; col < width; col++){
-            *(screenRam + (col + (row * width))) = backColor;
+            if(bpp == 32){
+                *((Color32*)screenRam + (col + (row * width))) = backColor;
+            }else{
+                *((Color*)screenRam + (col + (row * width))) = backColor;
+            }
+            
         }
     }
 }
@@ -49,9 +57,10 @@ void initScreen(){
     vesaInfoBlock = (VesaInfoBlock*)0x500;
     
     if(vesaInfoBlock -> framebuffer){
-        screenRam = (Color*)vesaInfoBlock -> framebuffer;
+        screenRam = (void*)vesaInfoBlock -> framebuffer;
         height = vesaInfoBlock -> height;
         width = vesaInfoBlock -> width;
+        bpp = vesaInfoBlock -> bpp;
         graphicMode ='G';
 
     }else{
@@ -62,6 +71,9 @@ void initScreen(){
     backColor = {36,10,48};
     clearScreen();
     scroll = 1;
+    print("BPP :");
+    printInt(bpp);
+    print('\n');
 }
 
 void print(const char* inp){
@@ -159,10 +171,20 @@ int lenH(long inp){
 
 void scrollScreen(){
             for(int i = 0; i < (width * (height - 1)); i++){
-                *(screenRam + i) = *(screenRam + i + (width * 14));
+                if(bpp == 32){
+                    *((Color32*)screenRam + i) = *((Color32*)screenRam + i + (width * 14));
+                }else{
+                    *((Color*)screenRam + i) = *((Color*)screenRam + i + (width * 14));
+                }
+                
             }
             for(int i = (width * (height - 14)); i < (width * height); i++){
-               *(screenRam + i) = backColor;
+                if(bpp == 32){
+                    *((Color32*)screenRam + i) = backColor;
+                }else{
+                    *((Color*)screenRam + i) = backColor;
+                }
+               
             }
             moveCsr(0, consoleHeight - 1);
 }
@@ -254,26 +276,43 @@ void drawLine(short x1, short y1, short x2, short y2, Color color){
 	if (x1 > x2) {
 		for (x = x2; x <= x1; x++) {
 			y = y1 + (((y1 - y2) / (float)(x1 - x2)) * (x - x1));
-			*(screenRam + (int)x + ((int)y * width)) = color;
+            if(bpp == 32){
+                *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+            }else{
+                *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+            }
+			
 		}
 	}
 	else if (x1 < x2) {
 		for (x = x1; x <= x2; x++) {
 			y = y1 + (((y1 - y2) / (float)(x1 - x2)) * (x - x1));
-			*(screenRam + (int)x + ((int)y * width)) = color;
+			if(bpp == 32){
+                *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+            }else{
+                *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+            }
 		}
 	}
 
 	if (y1 > y2) {
 		for (y = y2; y <= y1; y++) {
 			x = (((y - y1) / (float)(y1 - y2)) * (x1 - x2)) + x1;
-			*(screenRam + (int)x + ((int)y * width)) = color;
+			if(bpp == 32){
+                *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+            }else{
+                *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+            }
 		}
 	}
 	else if (y1 < y2) {
 		for (y = y1; y <= y2; y++) {
 			x = (((y - y1) / (float)(y1 - y2)) * (x1 - x2)) + x1;
-			*(screenRam + (int)x + ((int)y * width)) = color;
+			if(bpp == 32){
+                *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+            }else{
+                *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+            }
 		}
 	}
 }
@@ -298,7 +337,12 @@ void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
     }
     for(short y = y1; y <= y2; y++){
         for(short x = x1; x <= x2; x++){
-            *(screenRam + x + y * width) = fillColor;
+            if(bpp == 32){
+                *((Color32*)screenRam + x + y * width) = fillColor;
+            }else{
+                *((Color*)screenRam + x + y * width) = fillColor;
+            }
+            
         }
     }
 }
@@ -324,11 +368,25 @@ void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
     for(int i = 0; i < 14; i++){
             for(int j = 0; j < 8; j++){
                 if(((*(char*)(0x1000 + 3 + (inp * 14) + i)) & (128 >> j))){
-                    *(screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                    if(bpp == 32){
+                        *((Color32*)screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                    }else{
+                        *((Color*)screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                    }
+                    
                 }else{
-                    *(screenRam + (j + x) + ((i + y) * width)) = bgColor;
+                    if(bpp == 32){
+                        *((Color32*)screenRam + (j + x) + ((i + y) * width)) = bgColor;
+                    }else{
+                        *((Color*)screenRam + (j + x) + ((i + y) * width)) = bgColor;
+                    }
                 }
             }
-           *(screenRam + (8 + x) + ((i + y) * width)) = bgColor;
+            if(bpp == 32){
+                *((Color32*)screenRam + (8 + x) + ((i + y) * width)) = bgColor;
+            }else{
+                *((Color*)screenRam + (8 + x) + ((i + y) * width)) = bgColor;
+            }
+           
     }
 }

@@ -24,6 +24,25 @@ unsigned short pciConfigReadWord(unsigned char bus, unsigned char slot, unsigned
     return tmp;
 }
 
+unsigned int pciConfigReadDouble(unsigned char bus, unsigned char slot, unsigned char func, unsigned char offset) {
+    unsigned int address;
+    unsigned int lbus  = (unsigned int)bus;
+    unsigned int lslot = (unsigned int)slot;
+    unsigned int lfunc = (unsigned int)func;
+    unsigned int tmp = 0;
+  
+    // Create configuration address as per Figure 1
+    address = (unsigned int)((lbus << 16) | (lslot << 11) |
+              (lfunc << 8) | (offset & 0xFC) | ((unsigned int)0x80000000));
+  
+    // Write out the address
+    outl(0xCF8, address);
+    // Read in the data
+    // (offset & 2) * 8) = 0 will choose the first word of the 32-bit register
+    tmp = inl(0xCFC);
+    return tmp;
+}
+
 void pciInit(){
 
     pciNodeList = (pciNode*)malloc(sizeof(pciNode));
@@ -91,7 +110,7 @@ void pciInit(){
 
 void printPciList(){
     pciNode* pciNodeTmp = pciNodeList;
-    while(pciNodeTmp->next != 0){
+    while(pciNodeTmp != 0){
         printHex(pciNodeTmp->classCode);
         print(' ');
         printHex(pciNodeTmp->subClass);
@@ -100,4 +119,42 @@ void printPciList(){
         print('\n');
         pciNodeTmp = pciNodeTmp->next;
     }
+}
+
+short getClassCount(unsigned char classCode){
+    pciNode* pciNodeTmp = pciNodeList;
+    short count = 0;
+    while(pciNodeTmp != 0){
+        if(pciNodeTmp->classCode == classCode){
+            count++;
+        }
+        pciNodeTmp = pciNodeTmp->next;
+    }
+    return count;
+}
+
+pciNode* getClassCategory(unsigned char classCode){
+    pciNode* pciNodeTmp = pciNodeList;
+    short count = getClassCount(classCode);
+    
+    if(count == 0){
+        return 0;
+    }
+    
+    pciNode* buffer = (pciNode*)malloc(sizeof(pciNode) * count);
+
+    short i = 0;
+    while((pciNodeTmp != 0) && (i < count)){
+        if(pciNodeTmp->classCode == classCode){
+            buffer[i].bus = pciNodeTmp->bus;
+            buffer[i].slot = pciNodeTmp->slot;
+            buffer[i].func = pciNodeTmp->func;
+            buffer[i].classCode = pciNodeTmp->classCode;
+            buffer[i].subClass = pciNodeTmp->subClass;
+            buffer[i].progIF = pciNodeTmp->progIF;
+            i++;
+        }
+        pciNodeTmp = pciNodeTmp->next;
+    }
+    return buffer;
 }

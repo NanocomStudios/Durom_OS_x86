@@ -7,8 +7,9 @@
 #include "../IO/PCI.h"
 
 void main(){
-    
-
+    printPciList();
+    print('\n');
+    listHdd();
 }
 
 extern "C" void init(){
@@ -17,6 +18,7 @@ extern "C" void init(){
     mallocInit();
     initGUI();
     pciInit();
+    hddInit();
 
     main();
     return;

@@ -1,6 +1,8 @@
 #ifndef HDD
 #define HDD
 
+#pragma pack(1)
+
 #define MASTER 0
 #define SLAVE 1
 
@@ -11,7 +13,7 @@
 #define SECONDARY_PORT 0x170
 
 #define LBA_MODE_BIT 6
-#define MASTER_SLAVE_BIT 3
+#define MASTER_SLAVE_BIT 4
 
 #define BUSY 128
 #define READY 64
@@ -39,11 +41,23 @@ struct DriveInfo{
     short writeProtected;
 };
 
+struct hddEntry{
+    char driveAvilable;
+    char masterSlave;
+    unsigned short baseAddress;
+};
+
 void setDrive(short port, char masterSlave, char lba);
 void hddWait();
 char isReady();
 char isError();
-void getDriveInfo(void* buffer);
+char getDriveInfo(void* buffer);
+void setDriveAddress(unsigned int address);
+void setSectorCount(unsigned char sectorCount);
+void writeCommand(unsigned char command);
+unsigned char readDriveStatus();
 void readSectors(void* buffer, unsigned char sectorCount, unsigned int address);
+void hddInit();
+void listHdd();
 
 #endif

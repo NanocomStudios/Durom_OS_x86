@@ -22,11 +22,29 @@
 #define LIGHT_BROWN {0,255,255}
 #define LIGHT_WHITE {255,255,255}
 
-struct Color{
-    unsigned char B;
-    unsigned char G;
-    unsigned char R;
+class Color{
+	public:
+	unsigned char B;
+	unsigned char G;
+	unsigned char R;
 };
+
+class Color32{
+	public:
+	unsigned char B;
+	unsigned char G;
+	unsigned char R;
+	unsigned char I = 0xFF;
+
+	Color32& operator = (const Color& color){
+		B = color.B;
+		G = color.G;
+		R = color.R;
+		return *this;
+	}
+
+};
+
 
 void clearScreen();
 void clearConsole();
