@@ -37,6 +37,7 @@ void searchKernel(){
                 return;
             }
         }
+        print("Kernel.bin not found!\n");
 
         }
 }

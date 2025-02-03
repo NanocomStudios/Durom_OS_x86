@@ -9,7 +9,7 @@ PartitionListNode* partitionList;
 
 void initFat32Drives(){
     partitionList = 0;
-
+    print("Init fat32\n");
     hddEntry* hddEntryList;
     short hddCount;
 
@@ -20,8 +20,15 @@ void initFat32Drives(){
     for(short i = 0; i < hddCount; i++){
         if(hddEntryList[i].driveAvilable == 1){
             setDrive(hddEntryList[i].baseAddress, hddEntryList[i].masterSlave);
+            hddWait();
             PartitionRecord* ptr = &(mbr->p1);
+            
             if(readSectors(mbr, 1, 0)){
+                printHex(mbr->magicNumber);
+                print('\n');
+                // for(int j = 0; j < 512; j++){
+                //     printHexV(*((char*)mbr + j));
+                // }
                 for(char j = 0; j < 4; j++){
                     if((ptr[j].typeCode == 0x0C) || (ptr[j].typeCode == 0x0B)){
                         PartitionListNode* pList = partitionList;
@@ -46,6 +53,7 @@ void initFat32Drives(){
         }
     }
     free(mbr);
+    print("Init fat32 done\n");
 }
 
 short getPartitionCount(){
@@ -71,6 +79,9 @@ PartitionListNode* getPartition(short node){
 void printPartitionList(){
     short i = 0;
     PartitionListNode* pList = partitionList;
+    if(pList == 0){
+        print("No Partitions Available.\n");
+    }
     while(pList != 0){
         printInt(i);
         print("> ");

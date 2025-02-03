@@ -47,7 +47,7 @@ void setDrive(short port, char masterSlave, char lba){
     for(short i = 0; i < 16; i++){
         inb(currentHddPort + 7);
     }
-    hddWait();
+    //hddWait();
 }
 
 char getDriveInfo(void* buffer){
