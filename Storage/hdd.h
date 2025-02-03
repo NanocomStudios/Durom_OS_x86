@@ -20,6 +20,7 @@
 
 #define ERROR 1
 
+
 struct DriveInfo{
     short id;
     short noOfFixCylinders;
@@ -47,7 +48,9 @@ struct hddEntry{
     unsigned short baseAddress;
 };
 
-void setDrive(short port, char masterSlave, char lba);
+hddEntry* getHddEntryList();
+short getHddCount();
+void setDrive(short port, char masterSlave, char lba = 1);
 void hddWait();
 char isReady();
 char isError();
@@ -56,7 +59,7 @@ void setDriveAddress(unsigned int address);
 void setSectorCount(unsigned char sectorCount);
 void writeCommand(unsigned char command);
 unsigned char readDriveStatus();
-void readSectors(void* buffer, unsigned char sectorCount, unsigned int address);
+int readSectors(void* buffer, unsigned char sectorCount, unsigned int address);
 void hddInit();
 void listHdd();
 

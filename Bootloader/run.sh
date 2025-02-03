@@ -12,10 +12,11 @@ i386-elf-gcc -ffreestanding -m32 -g -c -o "../BIN/Nmath.o" ../StdLib/Nmath.cpp
 i386-elf-gcc -ffreestanding -m32 -g -c -o "../BIN/GUI.o" ../Graphics/GUI.cpp
 i386-elf-gcc -ffreestanding -m32 -g -c -o "../BIN/hdd.o" ../Storage/hdd.cpp
 i386-elf-gcc -ffreestanding -m32 -g -c -o "../BIN/PCI.o" ../IO/PCI.cpp
+i386-elf-gcc -ffreestanding -m32 -g -c -o "../BIN/fat32.o" ../Storage/fat32.cpp
 
 #nasm "zeroes.asm" -f bin -o "zeroes.bin"
 cd ../BIN/
-i386-elf-ld -o "full_kernel.bin" -Ttext 0x1000 "font.o" "boot2step.o" "bootloader.o" "VGA.o" "malloc.o" "io.o" "Nstring.o" "Nmath.o" "GUI.o" "hdd.o" "PCI.o" --oformat binary
+i386-elf-ld -o "full_kernel.bin" -Ttext 0x1000 "font.o" "boot2step.o" "bootloader.o" "VGA.o" "malloc.o" "io.o" "Nstring.o" "Nmath.o" "GUI.o" "hdd.o" "PCI.o" "fat32.o" --oformat binary
 
 cat "boot.bin" "full_kernel.bin"  > "BOOTLOADER.bin"
 

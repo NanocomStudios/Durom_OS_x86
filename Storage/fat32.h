@@ -78,4 +78,15 @@ struct MBR{
     unsigned short magicNumber;
 };
 
+struct PartitionListNode{
+    PartitionRecord partition;
+    short hddEntryIndex;
+    PartitionListNode* next;
+};
+
+void initFat32Drives();
+short getPartitionCount();
+void printPartitionList();
+PartitionListNode* getPartition(short node);
+
 #endif

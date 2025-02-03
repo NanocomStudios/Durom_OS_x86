@@ -11,6 +11,14 @@ unsigned char lbaMode;
 hddEntry* hddEntryList;
 short hddCount;
 
+hddEntry* getHddEntryList(){
+    return hddEntryList;
+}
+
+short getHddCount(){
+    return hddCount;
+}
+
 void hddWait(){
     while(((inb(currentHddPort + 7) & (unsigned char)BUSY) != 0));
 }
@@ -23,10 +31,13 @@ char isError(){
     return ((inb(currentHddPort + 7) & (unsigned char)ERROR));
 }
 
-void setDrive(short port, char masterSlave, char lba = 1){
+void setDrive(short port, char masterSlave, char lba){
+    if((currentHddPort == port) && (masterSlaveState == masterSlave)){
+        return;
+    }
     currentHddPort = port;
     masterSlaveState = masterSlave;
-    lbaMode = lba;
+    lbaMode = 1;
 
     unsigned char tmp = 0xA0;
     tmp = tmp | (masterSlaveState << MASTER_SLAVE_BIT);
@@ -36,7 +47,7 @@ void setDrive(short port, char masterSlave, char lba = 1){
     for(short i = 0; i < 16; i++){
         inb(currentHddPort + 7);
     }
-
+    hddWait();
 }
 
 char getDriveInfo(void* buffer){
@@ -85,10 +96,13 @@ unsigned char readDriveStatus(){
     return inb(currentHddPort + 7);
 }
 
-void readSectors(void* buffer, unsigned char sectorCount, unsigned int address){
+int readSectors(void* buffer, unsigned char sectorCount, unsigned int address){
+
+    while((inb(currentHddPort + 7) & (unsigned char)8)){
+        inw(currentHddPort + 0);
+    }
 
     hddWait();
-
     setSectorCount(sectorCount);
     setDriveAddress(address);
     
@@ -101,7 +115,7 @@ void readSectors(void* buffer, unsigned char sectorCount, unsigned int address){
     outb(currentHddPort + 6, tmp);
 
     outb(currentHddPort + 7, 0x20);
-
+    hddWait();
     int i = 0 ;
 
     while((i < (sectorCount * 256)) && (inb(currentHddPort + 7) & (unsigned char)8)){
@@ -112,6 +126,7 @@ void readSectors(void* buffer, unsigned char sectorCount, unsigned int address){
     while((inb(currentHddPort + 7) & (unsigned char)8)){
         inw(currentHddPort + 0);
     }
+    return i;
 }
 
 void hddInit(){
@@ -124,7 +139,6 @@ void hddInit(){
 
     for(int i = 0; i < IDEPortCount; i++){
         if((IDEPorts[i].progIF & ((unsigned short)0x5)) == 0){ // 0101
-
             hddEntryList[i * 4].baseAddress = 0x1f0;
             hddEntryList[i * 4].masterSlave = MASTER;
             hddEntryList[(i * 4) + 1].baseAddress = 0x1f0;
