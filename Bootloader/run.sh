@@ -21,7 +21,7 @@ i386-elf-ld -o "full_kernel.bin" -Ttext 0x1000 "font.o" "boot2step.o" "bootloade
 cat "boot.bin" "full_kernel.bin"  > "BOOTLOADER.bin"
 
 cd ../OUT/
-dd if=/dev/zero of=BOOTLOADER.img ibs=1k count=20
+dd if=/dev/zero of=BOOTLOADER.img ibs=1k count=25
 dd if=../BIN/BOOTLOADER.bin of=BOOTLOADER.img conv=notrunc 
-#qemu-system-x86_64.exe -drive format=raw,file="OS.bin",index=0,if=floppy,  -m 128M
+qemu-system-x86_64.exe -drive format=raw,file="..\OUT\BOOTLOADER.img",index=0,if=floppy,  -m 128M
 

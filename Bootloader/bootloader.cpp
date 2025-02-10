@@ -40,6 +40,7 @@ void searchKernel(){
         print("Kernel.bin not found!\n");
 
         }
+        drawLine(20,100,400,20,{0,255,255});
 }
 
 void main(){

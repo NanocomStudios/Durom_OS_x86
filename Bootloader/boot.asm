@@ -11,7 +11,7 @@ mov bp, 0x8000
 mov sp, bp
 
 mov bx, KERNEL_LOCATION
-mov dh, 40  ;Sectors to read
+mov dh, 50  ;Sectors to read
 
 mov ah, 0x02
 mov al, dh 
