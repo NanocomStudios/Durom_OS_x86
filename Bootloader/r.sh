@@ -37,3 +37,4 @@ dd if=/dev/zero of=BOOTLOADER.img ibs=1k count=25
 dd if=../BIN/BOOTLOADER.bin of=BOOTLOADER.img conv=notrunc 
 qemu-system-x86_64.exe -drive format=raw,file="..\OUT\BOOTLOADER.img",index=0,if=floppy,  -m 128M
 
+
