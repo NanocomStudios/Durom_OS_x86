@@ -193,7 +193,7 @@ int lenH(long inp){
 }
 
 void scrollScreen(){
-            for(int i = 0; i < (width * (height - 1)); i++){
+            for(int i = 0; i < (width * (height - 14)); i++){
                 if(bpp == 32){
                     *((Color32*)screenRam + i) = *((Color32*)screenRam + i + (width * 14));
                 }else{
@@ -210,6 +210,7 @@ void scrollScreen(){
                
             }
             moveCsr(0, consoleHeight - 1);
+            
 }
 
 void print(char inp){
@@ -281,216 +282,216 @@ void setBackColor(Color color){
     backColor = color;
 }
 
-// void setColor(int col, int row, char fgC = -1, char bgC = -1){
-//     if (fgC == -1){
-//         fgC = foreColor;
-//     }
-//     if(bgC == -1){
-//         bgC = backColor;
-//     }
+void setColor(int col, int row, char fgC = -1, char bgC = -1){
+    // if (fgC == -1){
+    //     fgC = foreColor;
+    // }
+    // if(bgC == -1){
+    //     bgC = backColor;
+    // }
 
-//     //*((screenRam + (col + (row * consoleWidth)) * 2) + 1) = fgC + (bgC << 4);
+    // //*((screenRam + (col + (row * consoleWidth)) * 2) + 1) = fgC + (bgC << 4);
 
-// }
+}
 
-// void drawLine(short x1, short y1, short x2, short y2, Color color){
-//     float x;
-// 	float y;
-// 	if (x1 > x2) {
-// 		for (x = x2; x <= x1; x++) {
-// 			y = y1 + (((y1 - y2) / (float)(x1 - x2)) * (x - x1));
+void drawLine(short x1, short y1, short x2, short y2, Color color){
+    int x;
+	int y;
+	if (x1 > x2) {
+		for (x = x2; x <= x1; x++) {
+			y = y1 + (((y1 - y2) / (int)(x1 - x2)) * (x - x1));
 
-//             if((y - int(y)) > 0){
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }
+            if((y - int(y)) > 0){
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                }else{
+                    *((Color*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                }
                 
-//             }else if((y - int(y)) < 0){
+            }else if((y - int(y)) < 0){
                 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                }else{
+                    *((Color*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                }
 
-//             }else{
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }
-//             }
+            }else{
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                }
+            }
 
             
 			
-// 		}
-// 	}
-// 	else if (x1 < x2) {
-// 		for (x = x1; x <= x2; x++) {
-// 			y = y1 + (((y1 - y2) / (float)(x1 - x2)) * (x - x1));
-// 			if((y - int(y)) > 0){
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }
+		}
+	}
+	else if (x1 < x2) {
+		for (x = x1; x <= x2; x++) {
+			y = y1 + (((y1 - y2) / (int)(x1 - x2)) * (x - x1));
+			if((y - int(y)) > 0){
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                }else{
+                    *((Color*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                }
                 
-//             }else if((y - int(y)) < 0){
+            }else if((y - int(y)) < 0){
                 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                }else{
+                    *((Color*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                }
 
-//             }else{
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }
-//             }
-// 		}
-// 	}
+            }else{
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                }
+            }
+		}
+	}
 
-// 	if (y1 > y2) {
-// 		for (y = y2; y <= y1; y++) {
-// 			x = (((y - y1) / (float)(y1 - y2)) * (x1 - x2)) + x1;
-// 			if((x - int(x)) > 0){
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }
+	if (y1 > y2) {
+		for (y = y2; y <= y1; y++) {
+			x = (((y - y1) / (int)(y1 - y2)) * (x1 - x2)) + x1;
+			if((x - int(x)) > 0){
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }
-//             }else if((x - int(x)) < 0){
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }else{
+                    *((Color*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }
+            }else if((x - int(x)) < 0){
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }
-//             }else{
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }
-//             }
-// 		}
-// 	}
-// 	else if (y1 < y2) {
-// 		for (y = y1; y <= y2; y++) {
-// 			x = (((y - y1) / (float)(y1 - y2)) * (x1 - x2)) + x1;
-// 			if((x - int(x)) > 0){
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }else{
+                    *((Color*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }
+            }else{
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                }
+            }
+		}
+	}
+	else if (y1 < y2) {
+		for (y = y1; y <= y2; y++) {
+			x = (((y - y1) / (int)(y1 - y2)) * (x1 - x2)) + x1;
+			if((x - int(x)) > 0){
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }
-//             }else if((x - int(x)) < 0){
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
-//                 }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }else{
+                    *((Color*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }
+            }else if((x - int(x)) < 0){
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                }
 
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }else{
-//                     *((Color*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
-//                 }
-//             }else{
-//                 if(bpp == 32){
-//                     *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }else{
-//                     *((Color*)screenRam + (int)x + ((int)y * width)) = color;
-//                 }
-//             }
-// 		}
-// 	}
-// }
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }else{
+                    *((Color*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                }
+            }else{
+                if(bpp == 32){
+                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                }else{
+                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                }
+            }
+		}
+	}
+}
 
-// void drawRectangle(short x1, short y1, short x2, short y2, Color color){
-//     drawLine(x1, y1, x2, y1, color);
-//     drawLine(x1, y1, x1, y2, color);
-//     drawLine(x2, y1, x2, y2, color);
-//     drawLine(x1, y2, x2, y2, color);
-// }
+void drawRectangle(short x1, short y1, short x2, short y2, Color color){
+    drawLine(x1, y1, x2, y1, color);
+    drawLine(x1, y1, x1, y2, color);
+    drawLine(x2, y1, x2, y2, color);
+    drawLine(x1, y2, x2, y2, color);
+}
 
-// void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
-//     if(y1 > y2){
-//         short tmp = y2;
-//         y2 = y1;
-//         y1 = tmp;
-//     }
-//     if(x1 > x2){
-//         short tmp = x2;
-//         x2 = x1;
-//         x1 = tmp;
-//     }
-//     for(short y = y1; y <= y2; y++){
-//         for(short x = x1; x <= x2; x++){
-//             if(bpp == 32){
-//                 *((Color32*)screenRam + x + y * width) = fillColor;
-//             }else{
-//                 *((Color*)screenRam + x + y * width) = fillColor;
-//             }
+void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
+    if(y1 > y2){
+        short tmp = y2;
+        y2 = y1;
+        y1 = tmp;
+    }
+    if(x1 > x2){
+        short tmp = x2;
+        x2 = x1;
+        x1 = tmp;
+    }
+    for(short y = y1; y <= y2; y++){
+        for(short x = x1; x <= x2; x++){
+            if(bpp == 32){
+                *((Color32*)screenRam + x + y * width) = fillColor;
+            }else{
+                *((Color*)screenRam + x + y * width) = fillColor;
+            }
             
-//         }
-//     }
-// }
+        }
+    }
+}
 
-// Color antiAliasing(float val, Color color){
+Color antiAliasing(int val, Color color){//float
 
-//     color.R = (int)(val * color.R);
-//     color.G = (int)(val * color.G);
-//     color.B = (int)(val * color.B);
+    color.R = (int)(val * color.R);
+    color.G = (int)(val * color.G);
+    color.B = (int)(val * color.B);
 
-//     return color;
-// }
+    return color;
+}
 
 void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
     
