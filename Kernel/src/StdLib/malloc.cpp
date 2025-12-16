@@ -4,8 +4,10 @@
 char* ram;
 char isInit;
 
+extern char heap_start;
+
 void mallocInit(){
-        ram = (char*)0x7e00;
+        ram = &heap_start;
         isInit = 0;
 }
 

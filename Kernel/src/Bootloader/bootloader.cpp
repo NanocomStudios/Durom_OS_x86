@@ -58,8 +58,8 @@ void main(){
 
 void init_kernel(){
     
-    initScreen();
     mallocInit();
+    initScreen();
     initGUI();
     pciInit();
     hddInit();

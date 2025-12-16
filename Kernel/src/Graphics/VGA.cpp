@@ -93,9 +93,9 @@ void initScreen(){
     clearScreen();
     scroll = 1;
     print("BPP :");
-    while(1);
     printInt(bpp);
     print('\n');
+    
 }
 
 void print(const char* inp){
@@ -107,6 +107,7 @@ void print(const char* inp){
 void printInt(long inp){
     long length = len(inp);
     char* charBuffer = (char*)malloc(length);
+
     if(inp < 0){
         print('-');
         inp *= -1;
@@ -494,10 +495,9 @@ void setBackColor(Color color){
 void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
     
     
-    
     for(int i = 0; i < 14; i++){
             for(int j = 0; j < 8; j++){
-                if(((*(char*)(long)((&font_start) + 3 + (inp * 14) + i)) & (128 >> j))){
+                if(((*(char*)(long)((&font_start) + (inp * 14) + i)) & (128 >> j))){
                     if(bpp == 32){
                         *((Color32*)screenRam + (j + x) + ((i + y) * width)) = fgColor;
                     }else{
