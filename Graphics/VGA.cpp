@@ -57,7 +57,7 @@ void initScreen(){
     vesaInfoBlock = (VesaInfoBlock*)0x500;
     
     if(vesaInfoBlock -> framebuffer){
-        screenRam = (void*)vesaInfoBlock -> framebuffer;
+        screenRam = (void*)(long)vesaInfoBlock -> framebuffer;
         height = vesaInfoBlock -> height;
         width = vesaInfoBlock -> width;
         bpp = vesaInfoBlock -> bpp;
@@ -472,7 +472,7 @@ Color antiAliasing(float val, Color color){
 void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
     for(int i = 0; i < 14; i++){
             for(int j = 0; j < 8; j++){
-                if(((*(char*)(0x1000 + 3 + (inp * 14) + i)) & (128 >> j))){
+                if(((*(char*)(long)(0x1000 + 3 + (inp * 14) + i)) & (128 >> j))){
                     if(bpp == 32){
                         *((Color32*)screenRam + (j + x) + ((i + y) * width)) = fgColor;
                     }else{

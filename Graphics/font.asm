@@ -1,5 +1,5 @@
 section .text
-[bits 16]
+[bits 64]
 
 jmp end
 

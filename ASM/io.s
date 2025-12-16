@@ -5,27 +5,25 @@
 _Z4outbth:
 .LFB0:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	8(%ebp), %edx
-	movl	12(%ebp), %eax
-	movw	%dx, -4(%ebp)
-	movb	%al, -8(%ebp)
-	movzbl	-8(%ebp), %eax
-	movzwl	-4(%ebp), %edx
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %edx
+	movl	%esi, %eax
+	movw	%dx, -4(%rbp)
+	movb	%al, -8(%rbp)
+	movzbl	-8(%rbp), %eax
+	movzwl	-4(%rbp), %edx
 /APP
-/  4 "../IO/io.cpp" 1
+# 4 "../IO/io.cpp" 1
 	outb %al, %dx
-/  0 "" 2
+# 0 "" 2
 /NO_APP
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE0:
@@ -35,26 +33,24 @@ _Z4outbth:
 _Z3inbt:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$20, %esp
-	movl	8(%ebp), %eax
-	movw	%ax, -20(%ebp)
-	movzwl	-20(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %eax
+	movw	%ax, -20(%rbp)
+	movzwl	-20(%rbp), %eax
 	movl	%eax, %edx
 /APP
-/  10 "../IO/io.cpp" 1
+# 10 "../IO/io.cpp" 1
 	inb %dx, %al
-/  0 "" 2
+# 0 "" 2
 /NO_APP
-	movb	%al, -1(%ebp)
-	movzbl	-1(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	movb	%al, -1(%rbp)
+	movzbl	-1(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -64,27 +60,25 @@ _Z3inbt:
 _Z4outwtt:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	8(%ebp), %edx
-	movl	12(%ebp), %eax
-	movw	%dx, -4(%ebp)
-	movw	%ax, -8(%ebp)
-	movzwl	-8(%ebp), %eax
-	movzwl	-4(%ebp), %edx
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %edx
+	movl	%esi, %eax
+	movw	%dx, -4(%rbp)
+	movw	%ax, -8(%rbp)
+	movzwl	-8(%rbp), %eax
+	movzwl	-4(%rbp), %edx
 /APP
-/  18 "../IO/io.cpp" 1
+# 18 "../IO/io.cpp" 1
 	outw %ax, %dx
-/  0 "" 2
+# 0 "" 2
 /NO_APP
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -94,26 +88,24 @@ _Z4outwtt:
 _Z3inwt:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$20, %esp
-	movl	8(%ebp), %eax
-	movw	%ax, -20(%ebp)
-	movzwl	-20(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %eax
+	movw	%ax, -20(%rbp)
+	movzwl	-20(%rbp), %eax
 	movl	%eax, %edx
 /APP
-/  23 "../IO/io.cpp" 1
+# 23 "../IO/io.cpp" 1
 	inw %dx, %ax
-/  0 "" 2
+# 0 "" 2
 /NO_APP
-	movw	%ax, -2(%ebp)
-	movzwl	-2(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	movw	%ax, -2(%rbp)
+	movzwl	-2(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
@@ -123,25 +115,24 @@ _Z3inwt:
 _Z4outltj:
 .LFB4:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$4, %esp
-	movl	8(%ebp), %eax
-	movw	%ax, -4(%ebp)
-	movzwl	-4(%ebp), %edx
-	movl	12(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %eax
+	movl	%esi, -8(%rbp)
+	movw	%ax, -4(%rbp)
+	movzwl	-4(%rbp), %edx
+	movl	-8(%rbp), %eax
 /APP
-/  30 "../IO/io.cpp" 1
+# 30 "../IO/io.cpp" 1
 	outl %eax, %dx
-/  0 "" 2
+# 0 "" 2
 /NO_APP
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE4:
@@ -151,28 +142,26 @@ _Z4outltj:
 _Z3inlt:
 .LFB5:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$20, %esp
-	movl	8(%ebp), %eax
-	movw	%ax, -20(%ebp)
-	movzwl	-20(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %eax
+	movw	%ax, -20(%rbp)
+	movzwl	-20(%rbp), %eax
 	movl	%eax, %edx
 /APP
-/  35 "../IO/io.cpp" 1
+# 35 "../IO/io.cpp" 1
 	inl %dx, %eax
-/  0 "" 2
+# 0 "" 2
 /NO_APP
-	movl	%eax, -4(%ebp)
-	movl	-4(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	movl	%eax, -4(%rbp)
+	movl	-4(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE5:
 	.size	_Z3inlt, .-_Z3inlt
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

@@ -18,11 +18,11 @@ masterSlaveState:
 lbaMode:
 	.zero	1
 	.globl	hddEntryList
-	.align 4
+	.align 8
 	.type	hddEntryList, @object
-	.size	hddEntryList, 4
+	.size	hddEntryList, 8
 hddEntryList:
-	.zero	4
+	.zero	8
 	.globl	hddCount
 	.align 2
 	.type	hddCount, @object
@@ -35,15 +35,14 @@ hddCount:
 _Z15getHddEntryListv:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movl	hddEntryList, %eax
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	hddEntryList(%rip), %rax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -53,15 +52,14 @@ _Z15getHddEntryListv:
 _Z11getHddCountv:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movzwl	hddCount, %eax
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movzwl	hddCount(%rip), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -71,29 +69,25 @@ _Z11getHddCountv:
 _Z7hddWaitv:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	nop
-.L6:
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+.L7:
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	shrb	$7, %al
 	testb	%al, %al
-	jne	.L6
+	je	.L8
+	jmp	.L7
+.L8:
 	nop
-	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
@@ -103,23 +97,19 @@ _Z7hddWaitv:
 _Z7isReadyv:
 .LFB4:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	andl	$64, %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE4:
@@ -129,23 +119,19 @@ _Z7isReadyv:
 _Z7isErrorv:
 .LFB5:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	andl	$1, %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE5:
@@ -155,77 +141,73 @@ _Z7isErrorv:
 _Z8setDrivescc:
 .LFB6:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$40, %esp
-	movl	8(%ebp), %ecx
-	movl	12(%ebp), %edx
-	movl	16(%ebp), %eax
-	movw	%cx, -28(%ebp)
-	movb	%dl, -32(%ebp)
-	movb	%al, -36(%ebp)
-	movzwl	currentHddPort, %eax
-	cmpw	%ax, -28(%ebp)
-	jne	.L12
-	movzbl	masterSlaveState, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movl	%esi, %ecx
+	movl	%edx, %eax
+	movl	%edi, %edx
+	movw	%dx, -20(%rbp)
+	movl	%ecx, %edx
+	movb	%dl, -24(%rbp)
+	movb	%al, -28(%rbp)
+	movzwl	currentHddPort(%rip), %eax
+	cmpw	%ax, -20(%rbp)
+	jne	.L14
+	movzbl	masterSlaveState(%rip), %eax
 	movzbl	%al, %edx
-	movsbl	-32(%ebp), %eax
+	movsbl	-24(%rbp), %eax
 	cmpl	%eax, %edx
-	je	.L16
-.L12:
-	movzwl	-28(%ebp), %eax
-	movw	%ax, currentHddPort
-	movzbl	-32(%ebp), %eax
-	movb	%al, masterSlaveState
-	movb	$1, lbaMode
-	movb	$-96, -11(%ebp)
-	movzbl	masterSlaveState, %eax
+	je	.L17
+.L14:
+	movzwl	-20(%rbp), %eax
+	movw	%ax, currentHddPort(%rip)
+	movzbl	-24(%rbp), %eax
+	movb	%al, masterSlaveState(%rip)
+	movb	$1, lbaMode(%rip)
+	movb	$-96, -3(%rbp)
+	movzbl	masterSlaveState(%rip), %eax
+	movzbl	%al, %eax
 	sall	$4, %eax
 	movl	%eax, %edx
-	movzbl	-11(%ebp), %eax
+	movzbl	-3(%rbp), %eax
 	orl	%edx, %eax
-	movb	%al, -11(%ebp)
-	movzbl	lbaMode, %eax
+	movb	%al, -3(%rbp)
+	movzbl	lbaMode(%rip), %eax
+	movzbl	%al, %eax
 	sall	$6, %eax
 	movl	%eax, %edx
-	movzbl	-11(%ebp), %eax
+	movzbl	-3(%rbp), %eax
 	orl	%edx, %eax
-	movb	%al, -11(%ebp)
-	movzbl	-11(%ebp), %edx
-	movzwl	currentHddPort, %eax
+	movb	%al, -3(%rbp)
+	movzbl	-3(%rbp), %edx
+	movzwl	currentHddPort(%rip), %eax
 	addl	$6, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movw	$0, -10(%ebp)
-	jmp	.L14
-.L15:
-	movzwl	currentHddPort, %eax
+	movw	$0, -2(%rbp)
+.L16:
+	cmpw	$15, -2(%rbp)
+	jg	.L13
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
-	movzwl	-10(%ebp), %eax
+	movzwl	-2(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -10(%ebp)
-.L14:
-	cmpw	$15, -10(%ebp)
-	jle	.L15
-	jmp	.L11
-.L16:
+	movw	%ax, -2(%rbp)
+	jmp	.L16
+.L17:
 	nop
-.L11:
+.L13:
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE6:
@@ -235,20 +217,19 @@ _Z8setDrivescc:
 _Z12getDriveInfoPv:
 .LFB7:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	$236
-	pushl	%eax
+	movl	$236, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	call	_Z7hddWaitv
 	call	_Z15readDriveStatusv
 	movzbl	%al, %eax
@@ -256,45 +237,20 @@ _Z12getDriveInfoPv:
 	cmpl	$1, %eax
 	sete	%al
 	testb	%al, %al
-	je	.L18
+	je	.L19
 	movl	$0, %eax
-	jmp	.L19
-.L18:
-	movw	$0, -10(%ebp)
 	jmp	.L20
-.L23:
-	movzwl	currentHddPort, %eax
-	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z3inwt
-	addl	$16, %esp
-	movw	%ax, -12(%ebp)
-	movzwl	-12(%ebp), %eax
-	shrw	$8, %ax
-	movl	%eax, %edx
-	movl	8(%ebp), %eax
-	movb	%dl, (%eax)
-	addl	$1, 8(%ebp)
-	movzwl	-12(%ebp), %eax
-	movl	%eax, %edx
-	movl	8(%ebp), %eax
-	movb	%dl, (%eax)
-	addl	$1, 8(%ebp)
-	movzwl	-10(%ebp), %eax
-	addl	$1, %eax
-	movw	%ax, -10(%ebp)
-.L20:
-	movswl	-10(%ebp), %eax
-	cmpl	$97, %eax
+.L19:
+	movw	$0, -2(%rbp)
+.L24:
+	movswq	-2(%rbp), %rax
+	cmpq	$97, %rax
 	ja	.L21
-	movzwl	currentHddPort, %eax
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	movzbl	%al, %eax
 	andl	$8, %eax
 	testl	%eax, %eax
@@ -305,34 +261,49 @@ _Z12getDriveInfoPv:
 	movl	$0, %eax
 .L22:
 	testb	%al, %al
-	jne	.L23
-	jmp	.L24
-.L25:
-	movzwl	currentHddPort, %eax
+	je	.L23
+	movzwl	currentHddPort(%rip), %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inwt
-	addl	$16, %esp
-.L24:
-	movzwl	currentHddPort, %eax
+	movw	%ax, -4(%rbp)
+	movzwl	-4(%rbp), %eax
+	sarl	$8, %eax
+	movl	%eax, %edx
+	movq	-24(%rbp), %rax
+	movb	%dl, (%rax)
+	addq	$1, -24(%rbp)
+	movzwl	-4(%rbp), %eax
+	movl	%eax, %edx
+	movq	-24(%rbp), %rax
+	movb	%dl, (%rax)
+	addq	$1, -24(%rbp)
+	movzwl	-2(%rbp), %eax
+	addl	$1, %eax
+	movw	%ax, -2(%rbp)
+	jmp	.L24
+.L23:
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	movzbl	%al, %eax
 	andl	$8, %eax
 	testl	%eax, %eax
 	setne	%al
 	testb	%al, %al
-	jne	.L25
+	je	.L25
+	movzwl	currentHddPort(%rip), %eax
+	movzwl	%ax, %eax
+	movl	%eax, %edi
+	call	_Z3inwt
+	jmp	.L23
+.L25:
 	movl	$1, %eax
-.L19:
+.L20:
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE7:
@@ -342,48 +313,42 @@ _Z12getDriveInfoPv:
 _Z15setDriveAddressj:
 .LFB8:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	8(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, -4(%rbp)
+	movl	-4(%rbp), %eax
 	movzbl	%al, %edx
-	movzwl	currentHddPort, %eax
+	movzwl	currentHddPort(%rip), %eax
 	addl	$3, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	8(%ebp), %eax
+	movl	-4(%rbp), %eax
 	shrl	$8, %eax
 	movzbl	%al, %edx
-	movzwl	currentHddPort, %eax
+	movzwl	currentHddPort(%rip), %eax
 	addl	$4, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	8(%ebp), %eax
+	movl	-4(%rbp), %eax
 	shrl	$16, %eax
 	movzbl	%al, %edx
-	movzwl	currentHddPort, %eax
+	movzwl	currentHddPort(%rip), %eax
 	addl	$5, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE8:
@@ -393,27 +358,24 @@ _Z15setDriveAddressj:
 _Z14setSectorCounth:
 .LFB9:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -12(%ebp)
-	movzbl	-12(%ebp), %edx
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	movzbl	-4(%rbp), %edx
+	movzwl	currentHddPort(%rip), %eax
 	addl	$2, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE9:
@@ -423,27 +385,24 @@ _Z14setSectorCounth:
 _Z12writeCommandh:
 .LFB10:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -12(%ebp)
-	movzbl	-12(%ebp), %edx
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	movzbl	-4(%rbp), %edx
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE10:
@@ -453,22 +412,18 @@ _Z12writeCommandh:
 _Z15readDriveStatusv:
 .LFB11:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movzwl	currentHddPort, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE11:
@@ -478,147 +433,131 @@ _Z15readDriveStatusv:
 _Z11readSectorsPvhj:
 .LFB12:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$40, %esp
-	movl	12(%ebp), %eax
-	movb	%al, -28(%ebp)
-	jmp	.L32
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movl	%esi, %eax
+	movl	%edx, -32(%rbp)
+	movb	%al, -28(%rbp)
 .L33:
-	movzwl	currentHddPort, %eax
-	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z3inwt
-	addl	$16, %esp
-.L32:
-	movzwl	currentHddPort, %eax
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	movzbl	%al, %eax
 	andl	$8, %eax
 	testl	%eax, %eax
 	setne	%al
 	testb	%al, %al
-	jne	.L33
+	je	.L32
+	movzwl	currentHddPort(%rip), %eax
+	movzwl	%ax, %eax
+	movl	%eax, %edi
+	call	_Z3inwt
+	jmp	.L33
+.L32:
 	call	_Z7hddWaitv
-	movzbl	-28(%ebp), %eax
-	subl	$12, %esp
-	pushl	%eax
+	movzbl	-28(%rbp), %eax
+	movl	%eax, %edi
 	call	_Z14setSectorCounth
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	16(%ebp)
+	movl	-32(%rbp), %eax
+	movl	%eax, %edi
 	call	_Z15setDriveAddressj
-	addl	$16, %esp
-	movb	$-96, -13(%ebp)
-	movzbl	masterSlaveState, %eax
+	movb	$-96, -5(%rbp)
+	movzbl	masterSlaveState(%rip), %eax
+	movzbl	%al, %eax
 	sall	$4, %eax
 	movl	%eax, %edx
-	movzbl	-13(%ebp), %eax
+	movzbl	-5(%rbp), %eax
 	orl	%edx, %eax
-	movb	%al, -13(%ebp)
-	movzbl	lbaMode, %eax
+	movb	%al, -5(%rbp)
+	movzbl	lbaMode(%rip), %eax
+	movzbl	%al, %eax
 	sall	$6, %eax
 	movl	%eax, %edx
-	movzbl	-13(%ebp), %eax
+	movzbl	-5(%rbp), %eax
 	orl	%edx, %eax
-	movb	%al, -13(%ebp)
-	movl	16(%ebp), %eax
+	movb	%al, -5(%rbp)
+	movl	-32(%rbp), %eax
 	shrl	$24, %eax
 	andl	$15, %eax
-	orb	%al, -13(%ebp)
-	movzbl	-13(%ebp), %edx
-	movzwl	currentHddPort, %eax
+	orb	%al, -5(%rbp)
+	movzbl	-5(%rbp), %edx
+	movzwl	currentHddPort(%rip), %eax
 	addl	$6, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	%edx
-	pushl	%eax
+	movl	%edx, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movzwl	currentHddPort, %eax
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$8, %esp
-	pushl	$32
-	pushl	%eax
+	movl	$32, %esi
+	movl	%eax, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	call	_Z7hddWaitv
-	movl	$0, -12(%ebp)
-	jmp	.L34
+	movl	$0, -4(%rbp)
 .L37:
-	movzwl	currentHddPort, %eax
-	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z3inwt
-	addl	$16, %esp
-	movw	%ax, -16(%ebp)
-	movl	-12(%ebp), %eax
-	leal	(%eax,%eax), %edx
-	movl	8(%ebp), %eax
-	addl	%eax, %edx
-	movzwl	-16(%ebp), %eax
-	movw	%ax, (%edx)
-	addl	$1, -12(%ebp)
-.L34:
-	movzbl	-28(%ebp), %eax
+	movzbl	-28(%rbp), %eax
 	sall	$8, %eax
-	cmpl	%eax, -12(%ebp)
-	jge	.L35
-	movzwl	currentHddPort, %eax
+	cmpl	%eax, -4(%rbp)
+	jge	.L34
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	movzbl	%al, %eax
 	andl	$8, %eax
 	testl	%eax, %eax
-	je	.L35
+	je	.L34
 	movl	$1, %eax
-	jmp	.L36
-.L35:
+	jmp	.L35
+.L34:
 	movl	$0, %eax
-.L36:
+.L35:
 	testb	%al, %al
-	jne	.L37
-	jmp	.L38
-.L39:
-	movzwl	currentHddPort, %eax
+	je	.L36
+	movzwl	currentHddPort(%rip), %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inwt
-	addl	$16, %esp
-.L38:
-	movzwl	currentHddPort, %eax
+	movw	%ax, -8(%rbp)
+	movl	-4(%rbp), %eax
+	cltq
+	leaq	(%rax,%rax), %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movzwl	-8(%rbp), %eax
+	movw	%ax, (%rdx)
+	addl	$1, -4(%rbp)
+	jmp	.L37
+.L36:
+	movzwl	currentHddPort(%rip), %eax
 	addl	$7, %eax
 	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z3inbt
-	addl	$16, %esp
 	movzbl	%al, %eax
 	andl	$8, %eax
 	testl	%eax, %eax
 	setne	%al
 	testb	%al, %al
-	jne	.L39
-	movl	-12(%ebp), %eax
+	je	.L38
+	movzwl	currentHddPort(%rip), %eax
+	movzwl	%ax, %eax
+	movl	%eax, %edi
+	call	_Z3inwt
+	jmp	.L36
+.L38:
+	movl	-4(%rbp), %eax
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE12:
@@ -628,398 +567,401 @@ _Z11readSectorsPvhj:
 _Z7hddInitv:
 .LFB13:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$20, %esp
-	.cfi_offset 3, -12
-	subl	$12, %esp
-	pushl	$1
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movl	$1, %edi
 	call	_Z16getClassCategoryh
-	addl	$16, %esp
-	movl	%eax, -20(%ebp)
-	subl	$12, %esp
-	pushl	$1
+	movq	%rax, -16(%rbp)
+	movl	$1, %edi
 	call	_Z13getClassCounth
-	addl	$16, %esp
-	movw	%ax, -22(%ebp)
-	movzwl	-22(%ebp), %eax
+	movw	%ax, -18(%rbp)
+	movzwl	-18(%rbp), %eax
 	sall	$2, %eax
-	movw	%ax, hddCount
-	movzwl	hddCount, %eax
-	cwtl
+	movw	%ax, hddCount(%rip)
+	movzwl	hddCount(%rip), %eax
+	movswq	%ax, %rax
 	sall	$2, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, hddEntryList
-	movl	$0, -12(%ebp)
-	jmp	.L42
-.L45:
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	5(%eax), %eax
+	movq	%rax, hddEntryList(%rip)
+	movl	$0, -4(%rbp)
+.L44:
+	movswl	-18(%rbp), %eax
+	cmpl	%eax, -4(%rbp)
+	jge	.L41
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	5(%rax), %eax
 	movzbl	%al, %eax
 	andl	$5, %eax
 	testl	%eax, %eax
-	jne	.L43
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	%edx, %eax
-	movw	$496, 2(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	%edx, %eax
-	movb	$0, 1(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$4, %edx
-	addl	%edx, %eax
-	movw	$496, 2(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$4, %edx
-	addl	%edx, %eax
-	movb	$1, 1(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$8, %edx
-	addl	%edx, %eax
-	movw	$368, 2(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$8, %edx
-	addl	%edx, %eax
-	movb	$0, 1(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$12, %edx
-	addl	%edx, %eax
-	movw	$368, 2(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$12, %edx
-	addl	%edx, %eax
-	movb	$1, 1(%eax)
-	jmp	.L44
-.L43:
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	2(%eax), %eax
-	movzbl	%al, %ebx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movzbl	%al, %ecx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movzbl	%al, %eax
-	pushl	$16
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%eax
-	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z8printHexl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$10
-	call	_Z5printc
-	addl	$16, %esp
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	2(%eax), %eax
-	movzbl	%al, %ebx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movzbl	%al, %ecx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movzbl	%al, %eax
-	pushl	$16
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%eax
-	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	movl	hddEntryList, %edx
-	movl	-12(%ebp), %ecx
-	sall	$4, %ecx
-	addl	%ecx, %edx
-	andl	$-4, %eax
-	movw	%ax, 2(%edx)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	%edx, %eax
-	movb	$0, 1(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	%edx, %eax
-	movl	hddEntryList, %edx
-	movl	-12(%ebp), %ecx
-	sall	$4, %ecx
-	addl	$4, %ecx
-	addl	%ecx, %edx
-	movzwl	2(%eax), %eax
-	movw	%ax, 2(%edx)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$4, %edx
-	addl	%edx, %eax
-	movb	$1, 1(%eax)
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	2(%eax), %eax
-	movzbl	%al, %ebx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movzbl	%al, %ecx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movzbl	%al, %eax
-	pushl	$24
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%eax
-	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	movzwl	%ax, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z8printHexl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$10
-	call	_Z5printc
-	addl	$16, %esp
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	2(%eax), %eax
-	movzbl	%al, %ebx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movzbl	%al, %ecx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movzbl	%al, %eax
-	pushl	$24
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%eax
-	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	movl	hddEntryList, %edx
-	movl	-12(%ebp), %ecx
-	sall	$4, %ecx
-	addl	$8, %ecx
-	addl	%ecx, %edx
-	andl	$-4, %eax
-	movw	%ax, 2(%edx)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$8, %edx
-	addl	%edx, %eax
-	movb	$0, 1(%eax)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$8, %edx
-	addl	%edx, %eax
-	movl	hddEntryList, %edx
-	movl	-12(%ebp), %ecx
-	sall	$4, %ecx
-	addl	$12, %ecx
-	addl	%ecx, %edx
-	movzwl	2(%eax), %eax
-	movw	%ax, 2(%edx)
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$4, %edx
-	addl	$12, %edx
-	addl	%edx, %eax
-	movb	$1, 1(%eax)
-.L44:
-	addl	$1, -12(%ebp)
+	jne	.L42
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	%rdx, %rax
+	movw	$496, 2(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	%rdx, %rax
+	movb	$0, 1(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$4, %rdx
+	addq	%rdx, %rax
+	movw	$496, 2(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$4, %rdx
+	addq	%rdx, %rax
+	movb	$1, 1(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$8, %rdx
+	addq	%rdx, %rax
+	movw	$368, 2(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$8, %rdx
+	addq	%rdx, %rax
+	movb	$0, 1(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$12, %rdx
+	addq	%rdx, %rax
+	movw	$368, 2(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$12, %rdx
+	addq	%rdx, %rax
+	movb	$1, 1(%rax)
+	jmp	.L43
 .L42:
-	movswl	-22(%ebp), %eax
-	cmpl	%eax, -12(%ebp)
-	jl	.L45
-	movl	$0, -16(%ebp)
-	jmp	.L46
-.L50:
-	movl	hddEntryList, %eax
-	movl	-16(%ebp), %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movsbl	%al, %edx
-	movl	hddEntryList, %eax
-	movl	-16(%ebp), %ecx
-	sall	$2, %ecx
-	addl	%ecx, %eax
-	movzwl	2(%eax), %eax
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	2(%rax), %eax
+	movzbl	%al, %edi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movzbl	%al, %esi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movzbl	%al, %eax
+	movl	$16, %ecx
+	movl	%edi, %edx
+	movl	%eax, %edi
+	call	_Z17pciConfigReadWordhhhh
+	movzwl	%ax, %eax
+	movq	%rax, %rdi
+	call	_Z8printHexl
+	movl	$10, %edi
+	call	_Z5printc
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	2(%rax), %eax
+	movzbl	%al, %edi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movzbl	%al, %esi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movzbl	%al, %eax
+	movl	$16, %ecx
+	movl	%edi, %edx
+	movl	%eax, %edi
+	call	_Z17pciConfigReadWordhhhh
+	movl	%eax, %ecx
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	%rdx, %rax
+	andl	$-4, %ecx
+	movl	%ecx, %edx
+	movw	%dx, 2(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	%rdx, %rax
+	movb	$0, 1(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	%rdx, %rax
+	movq	hddEntryList(%rip), %rdx
+	movl	-4(%rbp), %ecx
+	movslq	%ecx, %rcx
+	salq	$4, %rcx
+	addq	$4, %rcx
+	addq	%rcx, %rdx
+	movzwl	2(%rax), %eax
+	movw	%ax, 2(%rdx)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$4, %rdx
+	addq	%rdx, %rax
+	movb	$1, 1(%rax)
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	2(%rax), %eax
+	movzbl	%al, %edi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movzbl	%al, %esi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movzbl	%al, %eax
+	movl	$24, %ecx
+	movl	%edi, %edx
+	movl	%eax, %edi
+	call	_Z17pciConfigReadWordhhhh
+	movzwl	%ax, %eax
+	movq	%rax, %rdi
+	call	_Z8printHexl
+	movl	$10, %edi
+	call	_Z5printc
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	2(%rax), %eax
+	movzbl	%al, %edi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movzbl	%al, %esi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movzbl	%al, %eax
+	movl	$24, %ecx
+	movl	%edi, %edx
+	movl	%eax, %edi
+	call	_Z17pciConfigReadWordhhhh
+	movl	%eax, %ecx
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$8, %rdx
+	addq	%rdx, %rax
+	andl	$-4, %ecx
+	movl	%ecx, %edx
+	movw	%dx, 2(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$8, %rdx
+	addq	%rdx, %rax
+	movb	$0, 1(%rax)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$8, %rdx
+	addq	%rdx, %rax
+	movq	hddEntryList(%rip), %rdx
+	movl	-4(%rbp), %ecx
+	movslq	%ecx, %rcx
+	salq	$4, %rcx
+	addq	$12, %rcx
+	addq	%rcx, %rdx
+	movzwl	2(%rax), %eax
+	movw	%ax, 2(%rdx)
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$4, %rdx
+	addq	$12, %rdx
+	addq	%rdx, %rax
+	movb	$1, 1(%rax)
+.L43:
+	addl	$1, -4(%rbp)
+	jmp	.L44
+.L41:
+	movl	$0, -8(%rbp)
+.L49:
+	movzwl	hddCount(%rip), %eax
 	cwtl
-	subl	$4, %esp
-	pushl	$1
-	pushl	%edx
-	pushl	%eax
+	cmpl	%eax, -8(%rbp)
+	jge	.L50
+	movq	hddEntryList(%rip), %rax
+	movl	-8(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movsbl	%al, %ecx
+	movq	hddEntryList(%rip), %rax
+	movl	-8(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movzwl	2(%rax), %eax
+	cwtl
+	movl	$1, %edx
+	movl	%ecx, %esi
+	movl	%eax, %edi
 	call	_Z8setDrivescc
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$0
+	movl	$0, %edi
 	call	_Z14setSectorCounth
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$0
+	movl	$0, %edi
 	call	_Z15setDriveAddressj
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$236
+	movl	$236, %edi
 	call	_Z12writeCommandh
-	addl	$16, %esp
 	call	_Z15readDriveStatusv
-	movb	%al, -23(%ebp)
-	cmpb	$0, -23(%ebp)
-	je	.L47
-	movzbl	-23(%ebp), %eax
+	movb	%al, -19(%rbp)
+	cmpb	$0, -19(%rbp)
+	je	.L46
+	movzbl	-19(%rbp), %eax
 	andl	$1, %eax
 	testl	%eax, %eax
-	jne	.L47
-	movzbl	-23(%ebp), %eax
+	jne	.L46
+	movzbl	-19(%rbp), %eax
 	andl	$32, %eax
 	testl	%eax, %eax
-	je	.L48
-.L47:
-	movl	hddEntryList, %eax
-	movl	-16(%ebp), %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	movb	$0, (%eax)
-	jmp	.L49
-.L48:
-	movl	hddEntryList, %eax
-	movl	-16(%ebp), %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	movb	$1, (%eax)
-.L49:
-	addl	$1, -16(%ebp)
+	je	.L47
 .L46:
-	movzwl	hddCount, %eax
-	cwtl
-	cmpl	%eax, -16(%ebp)
-	jl	.L50
+	movq	hddEntryList(%rip), %rax
+	movl	-8(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movb	$0, (%rax)
+	jmp	.L48
+.L47:
+	movq	hddEntryList(%rip), %rax
+	movl	-8(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movb	$1, (%rax)
+.L48:
+	addl	$1, -8(%rbp)
+	jmp	.L49
+.L50:
 	nop
-	nop
-	movl	-4(%ebp), %ebx
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE13:
@@ -1033,89 +975,77 @@ _Z7hddInitv:
 _Z7listHddv:
 .LFB14:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	subl	$12, %esp
-	pushl	$98
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	$98, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -16(%ebp)
-	movl	$0, -12(%ebp)
-	jmp	.L52
-.L56:
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
+	movq	%rax, -16(%rbp)
+	movl	$0, -4(%rbp)
+.L55:
+	movzwl	hddCount(%rip), %eax
+	cwtl
+	cmpl	%eax, -4(%rbp)
+	jge	.L52
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
 	cmpb	$1, %al
 	jne	.L53
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movsbl	%al, %edx
-	movl	hddEntryList, %eax
-	movl	-12(%ebp), %ecx
-	sall	$2, %ecx
-	addl	%ecx, %eax
-	movzwl	2(%eax), %eax
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movsbl	%al, %ecx
+	movq	hddEntryList(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movzwl	2(%rax), %eax
 	cwtl
-	subl	$4, %esp
-	pushl	$1
-	pushl	%edx
-	pushl	%eax
+	movl	$1, %edx
+	movl	%ecx, %esi
+	movl	%eax, %edi
 	call	_Z8setDrivescc
-	addl	$16, %esp
 	call	_Z7hddWaitv
-	subl	$12, %esp
-	pushl	-16(%ebp)
+	movq	-16(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z12getDriveInfoPv
-	addl	$16, %esp
 	testb	%al, %al
 	sete	%al
 	testb	%al, %al
-	jne	.L57
-	movl	-16(%ebp), %eax
-	addl	$52, %eax
-	subl	$12, %esp
-	pushl	%eax
+	jne	.L56
+	movq	-16(%rbp), %rax
+	addq	$52, %rax
+	movq	%rax, %rdi
 	call	_Z5printPKc
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$10
+	movl	$10, %edi
 	call	_Z5printc
-	addl	$16, %esp
 .L53:
-	addl	$1, -12(%ebp)
-.L52:
-	movzwl	hddCount, %eax
-	cwtl
-	cmpl	%eax, -12(%ebp)
-	jl	.L56
+	addl	$1, -4(%rbp)
 	jmp	.L55
-.L57:
+.L56:
 	nop
-.L55:
-	subl	$12, %esp
-	pushl	$.LC0
+.L52:
+	movl	$.LC0, %edi
 	call	_Z5printPKc
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	-16(%ebp)
+	movq	-16(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4freePv
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE14:
 	.size	_Z7listHddv, .-_Z7listHddv
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

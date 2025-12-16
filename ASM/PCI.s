@@ -2,75 +2,68 @@
 	.text
 	.globl	pciNodeList
 	.section	.bss
-	.align 4
+	.align 8
 	.type	pciNodeList, @object
-	.size	pciNodeList, 4
+	.size	pciNodeList, 8
 pciNodeList:
-	.zero	4
+	.zero	8
 	.text
 	.globl	_Z17pciConfigReadWordhhhh
 	.type	_Z17pciConfigReadWordhhhh, @function
 _Z17pciConfigReadWordhhhh:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$52, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %ebx
-	movl	12(%ebp), %ecx
-	movl	16(%ebp), %edx
-	movl	20(%ebp), %eax
-	movb	%bl, -44(%ebp)
-	movb	%cl, -48(%ebp)
-	movb	%dl, -52(%ebp)
-	movb	%al, -56(%ebp)
-	movzbl	-44(%ebp), %eax
-	movl	%eax, -12(%ebp)
-	movzbl	-48(%ebp), %eax
-	movl	%eax, -16(%ebp)
-	movzbl	-52(%ebp), %eax
-	movl	%eax, -20(%ebp)
-	movw	$0, -22(%ebp)
-	movl	-12(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$48, %rsp
+	movl	%ecx, %eax
+	movl	%edi, %ecx
+	movb	%cl, -36(%rbp)
+	movl	%esi, %ecx
+	movb	%cl, -40(%rbp)
+	movb	%dl, -44(%rbp)
+	movb	%al, -48(%rbp)
+	movzbl	-36(%rbp), %eax
+	movl	%eax, -4(%rbp)
+	movzbl	-40(%rbp), %eax
+	movl	%eax, -8(%rbp)
+	movzbl	-44(%rbp), %eax
+	movl	%eax, -12(%rbp)
+	movw	$0, -14(%rbp)
+	movl	-4(%rbp), %eax
 	sall	$16, %eax
 	movl	%eax, %edx
-	movl	-16(%ebp), %eax
+	movl	-8(%rbp), %eax
 	sall	$11, %eax
 	orl	%eax, %edx
-	movl	-20(%ebp), %eax
+	movl	-12(%rbp), %eax
 	sall	$8, %eax
 	orl	%eax, %edx
-	movzbl	-56(%ebp), %eax
+	movzbl	-48(%rbp), %eax
 	andl	$252, %eax
 	orl	%edx, %eax
 	orl	$-2147483648, %eax
-	movl	%eax, -28(%ebp)
-	subl	$8, %esp
-	pushl	-28(%ebp)
-	pushl	$3320
+	movl	%eax, -20(%rbp)
+	movl	-20(%rbp), %eax
+	movl	%eax, %esi
+	movl	$3320, %edi
 	call	_Z4outltj
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$3324
+	movl	$3324, %edi
 	call	_Z3inlt
-	addl	$16, %esp
-	movzbl	-56(%ebp), %edx
-	andl	$2, %edx
-	sall	$3, %edx
-	movl	%edx, %ecx
-	shrl	%cl, %eax
-	movw	%ax, -22(%ebp)
-	movzwl	-22(%ebp), %eax
-	movl	-4(%ebp), %ebx
+	movl	%eax, %edx
+	movzbl	-48(%rbp), %eax
+	andl	$2, %eax
+	sall	$3, %eax
+	movl	%eax, %ecx
+	shrl	%cl, %edx
+	movl	%edx, %eax
+	movw	%ax, -14(%rbp)
+	movzwl	-14(%rbp), %eax
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -80,59 +73,50 @@ _Z17pciConfigReadWordhhhh:
 _Z19pciConfigReadDoublehhhh:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$52, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %ebx
-	movl	12(%ebp), %ecx
-	movl	16(%ebp), %edx
-	movl	20(%ebp), %eax
-	movb	%bl, -44(%ebp)
-	movb	%cl, -48(%ebp)
-	movb	%dl, -52(%ebp)
-	movb	%al, -56(%ebp)
-	movzbl	-44(%ebp), %eax
-	movl	%eax, -12(%ebp)
-	movzbl	-48(%ebp), %eax
-	movl	%eax, -16(%ebp)
-	movzbl	-52(%ebp), %eax
-	movl	%eax, -20(%ebp)
-	movl	$0, -24(%ebp)
-	movl	-12(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$48, %rsp
+	movl	%ecx, %eax
+	movl	%edi, %ecx
+	movb	%cl, -36(%rbp)
+	movl	%esi, %ecx
+	movb	%cl, -40(%rbp)
+	movb	%dl, -44(%rbp)
+	movb	%al, -48(%rbp)
+	movzbl	-36(%rbp), %eax
+	movl	%eax, -4(%rbp)
+	movzbl	-40(%rbp), %eax
+	movl	%eax, -8(%rbp)
+	movzbl	-44(%rbp), %eax
+	movl	%eax, -12(%rbp)
+	movl	$0, -16(%rbp)
+	movl	-4(%rbp), %eax
 	sall	$16, %eax
 	movl	%eax, %edx
-	movl	-16(%ebp), %eax
+	movl	-8(%rbp), %eax
 	sall	$11, %eax
 	orl	%eax, %edx
-	movl	-20(%ebp), %eax
+	movl	-12(%rbp), %eax
 	sall	$8, %eax
 	orl	%eax, %edx
-	movzbl	-56(%ebp), %eax
+	movzbl	-48(%rbp), %eax
 	andl	$252, %eax
 	orl	%edx, %eax
 	orl	$-2147483648, %eax
-	movl	%eax, -28(%ebp)
-	subl	$8, %esp
-	pushl	-28(%ebp)
-	pushl	$3320
+	movl	%eax, -20(%rbp)
+	movl	-20(%rbp), %eax
+	movl	%eax, %esi
+	movl	$3320, %edi
 	call	_Z4outltj
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$3324
+	movl	$3324, %edi
 	call	_Z3inlt
-	addl	$16, %esp
-	movl	%eax, -24(%ebp)
-	movl	-24(%ebp), %eax
-	movl	-4(%ebp), %ebx
+	movl	%eax, -16(%rbp)
+	movl	-16(%rbp), %eax
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -142,270 +126,249 @@ _Z19pciConfigReadDoublehhhh:
 _Z7pciInitv:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$40, %esp
-	subl	$12, %esp
-	pushl	$10
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movl	$14, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, pciNodeList
-	movl	pciNodeList, %eax
-	movl	%eax, -12(%ebp)
-	movb	$0, -13(%ebp)
-	movl	$0, -20(%ebp)
-	jmp	.L6
-.L16:
-	movl	$0, -24(%ebp)
-	jmp	.L7
-.L15:
-	movl	-24(%ebp), %eax
-	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movq	%rax, pciNodeList(%rip)
+	movq	pciNodeList(%rip), %rax
+	movq	%rax, -8(%rbp)
+	movb	$0, -9(%rbp)
+	movl	$0, -16(%rbp)
+.L18:
+	cmpl	$255, -16(%rbp)
+	jg	.L19
+	movl	$0, -20(%rbp)
+.L17:
+	cmpl	$31, -20(%rbp)
+	jg	.L7
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$14
-	pushl	$0
-	pushl	%edx
-	pushl	%eax
+	movl	$14, %ecx
+	movl	$0, %edx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
 	movzwl	%ax, %eax
 	andl	$128, %eax
 	testl	%eax, %eax
 	setne	%al
 	testb	%al, %al
 	je	.L8
-	movl	$0, -28(%ebp)
-	jmp	.L9
-.L12:
-	movl	-28(%ebp), %eax
-	movzbl	%al, %ecx
-	movl	-24(%ebp), %eax
+	movl	$0, -24(%rbp)
+.L13:
+	cmpl	$7, -24(%rbp)
+	jg	.L14
+	movl	-24(%rbp), %eax
 	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$10
-	pushl	%ecx
-	pushl	%edx
-	pushl	%eax
+	movl	$10, %ecx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	movw	%ax, -32(%ebp)
-	cmpw	$-1, -32(%ebp)
+	movw	%ax, -28(%rbp)
+	cmpw	$-1, -28(%rbp)
 	je	.L10
-	cmpb	$0, -13(%ebp)
+	cmpb	$0, -9(%rbp)
 	jne	.L11
-	movl	-20(%ebp), %eax
+	movl	-16(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, (%eax)
-	movl	-24(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, (%rax)
+	movl	-20(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 1(%eax)
-	movl	-28(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 1(%rax)
+	movl	-24(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 2(%eax)
-	movzwl	-32(%ebp), %eax
-	shrw	$8, %ax
+	movq	-8(%rbp), %rax
+	movb	%dl, 2(%rax)
+	movzwl	-28(%rbp), %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 3(%eax)
-	movzwl	-32(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 3(%rax)
+	movzwl	-28(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 4(%eax)
-	movl	-28(%ebp), %eax
-	movzbl	%al, %ecx
-	movl	-24(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 4(%rax)
+	movl	-24(%rbp), %eax
 	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$8
-	pushl	%ecx
-	pushl	%edx
-	pushl	%eax
+	movl	$8, %ecx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	shrw	$8, %ax
+	movzwl	%ax, %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 5(%eax)
-	movl	-12(%ebp), %eax
-	movl	$0, 6(%eax)
-	movb	$1, -13(%ebp)
+	movq	-8(%rbp), %rax
+	movb	%dl, 5(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 6(%rax)
+	movb	$1, -9(%rbp)
 	jmp	.L10
 .L11:
-	subl	$12, %esp
-	pushl	$10
+	movl	$14, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	-12(%ebp), %edx
-	movl	%eax, 6(%edx)
-	movl	-12(%ebp), %eax
-	movl	6(%eax), %eax
-	movl	%eax, -12(%ebp)
-	movl	-20(%ebp), %eax
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 6(%rax)
+	movq	-8(%rbp), %rax
+	movq	6(%rax), %rax
+	movq	%rax, -8(%rbp)
+	movl	-16(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, (%eax)
-	movl	-24(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, (%rax)
+	movl	-20(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 1(%eax)
-	movl	-28(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 1(%rax)
+	movl	-24(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 2(%eax)
-	movzwl	-32(%ebp), %eax
-	shrw	$8, %ax
+	movq	-8(%rbp), %rax
+	movb	%dl, 2(%rax)
+	movzwl	-28(%rbp), %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 3(%eax)
-	movzwl	-32(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 3(%rax)
+	movzwl	-28(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 4(%eax)
-	movl	-28(%ebp), %eax
-	movzbl	%al, %ecx
-	movl	-24(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 4(%rax)
+	movl	-24(%rbp), %eax
 	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$8
-	pushl	%ecx
-	pushl	%edx
-	pushl	%eax
+	movl	$8, %ecx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	shrw	$8, %ax
+	movzwl	%ax, %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 5(%eax)
-	movl	-12(%ebp), %eax
-	movl	$0, 6(%eax)
+	movq	-8(%rbp), %rax
+	movb	%dl, 5(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 6(%rax)
 .L10:
-	addl	$1, -28(%ebp)
-.L9:
-	cmpl	$7, -28(%ebp)
-	jle	.L12
+	addl	$1, -24(%rbp)
 	jmp	.L13
 .L8:
-	movl	-24(%ebp), %eax
-	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$10
-	pushl	$0
-	pushl	%edx
-	pushl	%eax
+	movl	$10, %ecx
+	movl	$0, %edx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	movw	%ax, -30(%ebp)
-	cmpw	$-1, -30(%ebp)
-	je	.L13
-	cmpb	$0, -13(%ebp)
-	jne	.L14
-	movl	-20(%ebp), %eax
+	movw	%ax, -26(%rbp)
+	cmpw	$-1, -26(%rbp)
+	je	.L14
+	cmpb	$0, -9(%rbp)
+	jne	.L15
+	movl	-16(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, (%eax)
-	movl	-24(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, (%rax)
+	movl	-20(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 1(%eax)
-	movl	-12(%ebp), %eax
-	movb	$0, 2(%eax)
-	movzwl	-30(%ebp), %eax
-	shrw	$8, %ax
+	movq	-8(%rbp), %rax
+	movb	%dl, 1(%rax)
+	movq	-8(%rbp), %rax
+	movb	$0, 2(%rax)
+	movzwl	-26(%rbp), %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 3(%eax)
-	movzwl	-30(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 3(%rax)
+	movzwl	-26(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 4(%eax)
-	movl	-24(%ebp), %eax
-	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 4(%rax)
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$8
-	pushl	$0
-	pushl	%edx
-	pushl	%eax
+	movl	$8, %ecx
+	movl	$0, %edx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	shrw	$8, %ax
+	movzwl	%ax, %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 5(%eax)
-	movl	-12(%ebp), %eax
-	movl	$0, 6(%eax)
-	movb	$1, -13(%ebp)
-	jmp	.L13
-.L14:
-	subl	$12, %esp
-	pushl	$10
+	movq	-8(%rbp), %rax
+	movb	%dl, 5(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 6(%rax)
+	movb	$1, -9(%rbp)
+	jmp	.L14
+.L15:
+	movl	$14, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	-12(%ebp), %edx
-	movl	%eax, 6(%edx)
-	movl	-12(%ebp), %eax
-	movl	6(%eax), %eax
-	movl	%eax, -12(%ebp)
-	movl	-20(%ebp), %eax
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 6(%rax)
+	movq	-8(%rbp), %rax
+	movq	6(%rax), %rax
+	movq	%rax, -8(%rbp)
+	movl	-16(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, (%eax)
-	movl	-24(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, (%rax)
+	movl	-20(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 1(%eax)
-	movl	-12(%ebp), %eax
-	movb	$0, 2(%eax)
-	movzwl	-30(%ebp), %eax
-	shrw	$8, %ax
+	movq	-8(%rbp), %rax
+	movb	%dl, 1(%rax)
+	movq	-8(%rbp), %rax
+	movb	$0, 2(%rax)
+	movzwl	-26(%rbp), %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 3(%eax)
-	movzwl	-30(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 3(%rax)
+	movzwl	-26(%rbp), %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 4(%eax)
-	movl	-24(%ebp), %eax
-	movzbl	%al, %edx
-	movl	-20(%ebp), %eax
+	movq	-8(%rbp), %rax
+	movb	%dl, 4(%rax)
+	movl	-20(%rbp), %eax
+	movzbl	%al, %esi
+	movl	-16(%rbp), %eax
 	movzbl	%al, %eax
-	pushl	$8
-	pushl	$0
-	pushl	%edx
-	pushl	%eax
+	movl	$8, %ecx
+	movl	$0, %edx
+	movl	%eax, %edi
 	call	_Z17pciConfigReadWordhhhh
-	addl	$16, %esp
-	shrw	$8, %ax
+	movzwl	%ax, %eax
+	sarl	$8, %eax
 	movl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movb	%dl, 5(%eax)
-	movl	-12(%ebp), %eax
-	movl	$0, 6(%eax)
-.L13:
-	addl	$1, -24(%ebp)
+	movq	-8(%rbp), %rax
+	movb	%dl, 5(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 6(%rax)
+.L14:
+	addl	$1, -20(%rbp)
+	jmp	.L17
 .L7:
-	cmpl	$31, -24(%ebp)
-	jle	.L15
-	addl	$1, -20(%ebp)
-.L6:
-	cmpl	$255, -20(%ebp)
-	jle	.L16
-	nop
+	addl	$1, -16(%rbp)
+	jmp	.L18
+.L19:
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
@@ -415,60 +378,46 @@ _Z7pciInitv:
 _Z12printPciListv:
 .LFB4:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	pciNodeList, %eax
-	movl	%eax, -12(%ebp)
-	jmp	.L18
-.L19:
-	movl	-12(%ebp), %eax
-	movzbl	3(%eax), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movq	pciNodeList(%rip), %rax
+	movq	%rax, -8(%rbp)
+.L22:
+	cmpq	$0, -8(%rbp)
+	je	.L23
+	movq	-8(%rbp), %rax
+	movzbl	3(%rax), %eax
 	movzbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movq	%rax, %rdi
 	call	_Z8printHexl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$32
+	movl	$32, %edi
 	call	_Z5printc
-	addl	$16, %esp
-	movl	-12(%ebp), %eax
-	movzbl	4(%eax), %eax
+	movq	-8(%rbp), %rax
+	movzbl	4(%rax), %eax
 	movzbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movq	%rax, %rdi
 	call	_Z8printHexl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$32
+	movl	$32, %edi
 	call	_Z5printc
-	addl	$16, %esp
-	movl	-12(%ebp), %eax
-	movzbl	5(%eax), %eax
+	movq	-8(%rbp), %rax
+	movzbl	5(%rax), %eax
 	movzbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movq	%rax, %rdi
 	call	_Z8printHexl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$10
+	movl	$10, %edi
 	call	_Z5printc
-	addl	$16, %esp
-	movl	-12(%ebp), %eax
-	movl	6(%eax), %eax
-	movl	%eax, -12(%ebp)
-.L18:
-	cmpl	$0, -12(%ebp)
-	jne	.L19
-	nop
+	movq	-8(%rbp), %rax
+	movq	6(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L22
+.L23:
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE4:
@@ -478,37 +427,35 @@ _Z12printPciListv:
 _Z13getClassCounth:
 .LFB5:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$20, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -20(%ebp)
-	movl	pciNodeList, %eax
-	movl	%eax, -4(%ebp)
-	movw	$0, -6(%ebp)
-	jmp	.L21
-.L23:
-	movl	-4(%ebp), %eax
-	movzbl	3(%eax), %eax
-	cmpb	%al, -20(%ebp)
-	jne	.L22
-	movzwl	-6(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %eax
+	movb	%al, -20(%rbp)
+	movq	pciNodeList(%rip), %rax
+	movq	%rax, -8(%rbp)
+	movw	$0, -10(%rbp)
+.L27:
+	cmpq	$0, -8(%rbp)
+	je	.L25
+	movq	-8(%rbp), %rax
+	movzbl	3(%rax), %eax
+	cmpb	%al, -20(%rbp)
+	jne	.L26
+	movzwl	-10(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -6(%ebp)
-.L22:
-	movl	-4(%ebp), %eax
-	movl	6(%eax), %eax
-	movl	%eax, -4(%ebp)
-.L21:
-	cmpl	$0, -4(%ebp)
-	jne	.L23
-	movzwl	-6(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	movw	%ax, -10(%rbp)
+.L26:
+	movq	-8(%rbp), %rax
+	movq	6(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L27
+.L25:
+	movzwl	-10(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE5:
@@ -518,130 +465,122 @@ _Z13getClassCounth:
 _Z16getClassCategoryh:
 .LFB6:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$40, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -28(%ebp)
-	movl	pciNodeList, %eax
-	movl	%eax, -12(%ebp)
-	movzbl	-28(%ebp), %eax
-	pushl	%eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$48, %rsp
+	movl	%edi, %eax
+	movb	%al, -36(%rbp)
+	movq	pciNodeList(%rip), %rax
+	movq	%rax, -8(%rbp)
+	movzbl	-36(%rbp), %eax
+	movl	%eax, %edi
 	call	_Z13getClassCounth
-	addl	$4, %esp
-	movw	%ax, -16(%ebp)
-	cmpw	$0, -16(%ebp)
-	jne	.L26
+	movw	%ax, -12(%rbp)
+	cmpw	$0, -12(%rbp)
+	jne	.L30
 	movl	$0, %eax
-	jmp	.L27
-.L26:
-	movswl	-16(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -20(%ebp)
-	movw	$0, -14(%ebp)
-	jmp	.L28
-.L31:
-	movl	-12(%ebp), %eax
-	movzbl	3(%eax), %eax
-	cmpb	%al, -28(%ebp)
-	jne	.L29
-	movswl	-14(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movzbl	(%eax), %eax
-	movb	%al, (%edx)
-	movswl	-14(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movzbl	1(%eax), %eax
-	movb	%al, 1(%edx)
-	movswl	-14(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movzbl	2(%eax), %eax
-	movb	%al, 2(%edx)
-	movswl	-14(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movzbl	3(%eax), %eax
-	movb	%al, 3(%edx)
-	movswl	-14(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movzbl	4(%eax), %eax
-	movb	%al, 4(%edx)
-	movswl	-14(%ebp), %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	movl	%eax, %edx
-	movl	-20(%ebp), %eax
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movzbl	5(%eax), %eax
-	movb	%al, 5(%edx)
-	movzwl	-14(%ebp), %eax
-	addl	$1, %eax
-	movw	%ax, -14(%ebp)
-.L29:
-	movl	-12(%ebp), %eax
-	movl	6(%eax), %eax
-	movl	%eax, -12(%ebp)
-.L28:
-	cmpl	$0, -12(%ebp)
-	je	.L30
-	movzwl	-14(%ebp), %eax
-	cmpw	-16(%ebp), %ax
-	jl	.L31
+	jmp	.L31
 .L30:
-	movl	-20(%ebp), %eax
-.L27:
+	movswq	-12(%rbp), %rax
+	imull	$14, %eax, %eax
+	movl	%eax, %edi
+	call	_Z6malloci
+	movq	%rax, -24(%rbp)
+	movw	$0, -10(%rbp)
+.L34:
+	cmpq	$0, -8(%rbp)
+	je	.L32
+	movzwl	-10(%rbp), %eax
+	cmpw	-12(%rbp), %ax
+	jge	.L32
+	movq	-8(%rbp), %rax
+	movzbl	3(%rax), %eax
+	cmpb	%al, -36(%rbp)
+	jne	.L33
+	movswq	-10(%rbp), %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movzbl	(%rax), %eax
+	movb	%al, (%rdx)
+	movswq	-10(%rbp), %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movzbl	1(%rax), %eax
+	movb	%al, 1(%rdx)
+	movswq	-10(%rbp), %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movzbl	2(%rax), %eax
+	movb	%al, 2(%rdx)
+	movswq	-10(%rbp), %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movzbl	3(%rax), %eax
+	movb	%al, 3(%rdx)
+	movswq	-10(%rbp), %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movzbl	4(%rax), %eax
+	movb	%al, 4(%rdx)
+	movswq	-10(%rbp), %rdx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movzbl	5(%rax), %eax
+	movb	%al, 5(%rdx)
+	movzwl	-10(%rbp), %eax
+	addl	$1, %eax
+	movw	%ax, -10(%rbp)
+.L33:
+	movq	-8(%rbp), %rax
+	movq	6(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L34
+.L32:
+	movq	-24(%rbp), %rax
+.L31:
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE6:
 	.size	_Z16getClassCategoryh, .-_Z16getClassCategoryh
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

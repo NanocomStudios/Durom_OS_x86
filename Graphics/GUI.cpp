@@ -49,7 +49,7 @@ Window* openWindow(short w_x, short w_y, short w_height, short w_width){
 
     Window* lastWindow = getLastWindow();
 
-    if((unsigned int)(lastWindow) != 0){
+    if((unsigned long)(lastWindow) != 0){
         lastWindow->next = newWindow;
         newWindow->prev = lastWindow;
     }else{
@@ -80,10 +80,10 @@ Window* openWindow(short w_x, short w_y, short w_height, short w_width){
 }
 
 void closeWindow(Window* inp){
-    if((unsigned int)inp->next > 0){
+    if((unsigned long)inp->next > 0){
         inp->next->prev = inp->prev;
     }
-    if((unsigned int)inp->prev > 0){
+    if((unsigned long)inp->prev > 0){
         inp->prev->next = inp->next;
     } 
     if(windowListHead == inp){
@@ -136,10 +136,10 @@ void drawWindows(){
 void bringWindowFront(Window* inp){
     Window* tmp = getLastWindow();
     
-    if((unsigned int)(inp->next) > 0){
+    if((unsigned long)(inp->next) > 0){
         inp->next->prev = inp->prev;
     }
-    if((unsigned int)(inp->prev) > 0){
+    if((unsigned long)(inp->prev) > 0){
         inp->prev->next = inp->next;
     } 
     if(windowListHead == inp){

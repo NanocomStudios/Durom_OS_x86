@@ -5,30 +5,32 @@
 _Z3powii:
 .LFB0:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
-	movl	$1, -4(%ebp)
-	movl	$0, -8(%ebp)
-	jmp	.L2
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, -20(%rbp)
+	movl	%esi, -24(%rbp)
+	movq	$1, -8(%rbp)
+	movl	$0, -12(%rbp)
 .L3:
-	movl	-4(%ebp), %eax
-	imull	8(%ebp), %eax
-	movl	%eax, -4(%ebp)
-	addl	$1, -8(%ebp)
+	movl	-12(%rbp), %eax
+	cmpl	-24(%rbp), %eax
+	jge	.L2
+	movl	-20(%rbp), %eax
+	cltq
+	movq	-8(%rbp), %rdx
+	imulq	%rdx, %rax
+	movq	%rax, -8(%rbp)
+	addl	$1, -12(%rbp)
+	jmp	.L3
 .L2:
-	movl	-8(%ebp), %eax
-	cmpl	12(%ebp), %eax
-	jl	.L3
-	movl	-4(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	movq	-8(%rbp), %rax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE0:
 	.size	_Z3powii, .-_Z3powii
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

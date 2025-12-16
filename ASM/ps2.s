@@ -5,52 +5,47 @@
 _Z7ps2Waith:
 .LFB0:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -12(%ebp)
-	movzbl	-12(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	movzbl	-4(%rbp), %eax
 	cmpl	$1, %eax
-	je	.L8
+	je	.L3
 	cmpl	$2, %eax
-	je	.L9
-	jmp	.L7
-.L8:
-	nop
-.L5:
-	subl	$12, %esp
-	pushl	$100
+	je	.L4
+	jmp	.L9
+.L3:
+	movl	$100, %edi
 	call	_Z3inbt
-	addl	$16, %esp
-	andb	-12(%ebp), %al
+	andb	-4(%rbp), %al
 	testb	%al, %al
 	sete	%al
 	testb	%al, %al
-	jne	.L5
-	jmp	.L4
-.L9:
-	nop
-.L6:
-	subl	$12, %esp
-	pushl	$100
+	je	.L7
+	jmp	.L3
+.L4:
+	movl	$100, %edi
 	call	_Z3inbt
-	addl	$16, %esp
-	andb	-12(%ebp), %al
+	andb	-4(%rbp), %al
 	testb	%al, %al
 	setne	%al
 	testb	%al, %al
-	jne	.L6
-	nop
-.L4:
+	je	.L8
+	jmp	.L4
 .L7:
 	nop
+	jmp	.L9
+.L8:
+	nop
+.L9:
+	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE0:
@@ -60,45 +55,36 @@ _Z7ps2Waith:
 _Z8ps2Writeh:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -12(%ebp)
-	subl	$12, %esp
-	pushl	$2
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	movl	$2, %edi
 	call	_Z7ps2Waith
-	addl	$16, %esp
-	subl	$8, %esp
-	pushl	$212
-	pushl	$100
+	movl	$212, %esi
+	movl	$100, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$2
+	movl	$2, %edi
 	call	_Z7ps2Waith
-	addl	$16, %esp
-	movzbl	-12(%ebp), %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$96
+	movzbl	-4(%rbp), %eax
+	movl	%eax, %esi
+	movl	$96, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	nop
-.L11:
+.L12:
 	call	_Z7ps2Readv
 	cmpb	$-6, %al
 	setne	%al
 	testb	%al, %al
-	jne	.L11
-	nop
+	je	.L13
+	jmp	.L12
+.L13:
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -108,25 +94,19 @@ _Z8ps2Writeh:
 _Z7ps2Readv:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	subl	$12, %esp
-	pushl	$1
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	$1, %edi
 	call	_Z7ps2Waith
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$96
+	movl	$96, %edi
 	call	_Z3inbt
-	addl	$16, %esp
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
 	.size	_Z7ps2Readv, .-_Z7ps2Readv
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

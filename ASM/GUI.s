@@ -2,11 +2,11 @@
 	.text
 	.globl	windowListHead
 	.section	.bss
-	.align 4
+	.align 8
 	.type	windowListHead, @object
-	.size	windowListHead, 4
+	.size	windowListHead, 8
 windowListHead:
-	.zero	4
+	.zero	8
 	.globl	borderColor
 	.type	borderColor, @object
 	.size	borderColor, 3
@@ -23,35 +23,33 @@ fillColor:
 _Z13getLastWindowv:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
-	movl	windowListHead, %eax
-	testl	%eax, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	windowListHead(%rip), %rax
+	testq	%rax, %rax
 	jne	.L2
 	movl	$0, %eax
 	jmp	.L3
 .L2:
-	movl	windowListHead, %eax
-	movl	%eax, -4(%ebp)
-	jmp	.L4
+	movq	windowListHead(%rip), %rax
+	movq	%rax, -8(%rbp)
 .L5:
-	movl	-4(%ebp), %eax
-	movl	12(%eax), %eax
-	movl	%eax, -4(%ebp)
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	testq	%rax, %rax
+	je	.L4
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L5
 .L4:
-	movl	-4(%ebp), %eax
-	movl	12(%eax), %eax
-	testl	%eax, %eax
-	jne	.L5
-	movl	-4(%ebp), %eax
+	movq	-8(%rbp), %rax
 .L3:
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -61,44 +59,42 @@ _Z13getLastWindowv:
 _Z16getGraphicObjectP6Windows:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$20, %esp
-	movl	12(%ebp), %eax
-	movw	%ax, -20(%ebp)
-	movl	8(%ebp), %eax
-	movl	8(%eax), %eax
-	movl	%eax, -4(%ebp)
-	jmp	.L7
-.L9:
-	movl	-4(%ebp), %eax
-	movl	4(%eax), %eax
-	movl	%eax, -4(%ebp)
-.L7:
-	movl	-4(%ebp), %eax
-	movl	4(%eax), %eax
-	testl	%eax, %eax
-	je	.L8
-	movl	-4(%ebp), %eax
-	movzwl	12(%eax), %eax
-	cmpw	%ax, -20(%ebp)
-	jne	.L9
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -24(%rbp)
+	movl	%esi, %eax
+	movw	%ax, -28(%rbp)
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -8(%rbp)
 .L8:
-	movl	-4(%ebp), %eax
-	movzwl	12(%eax), %eax
-	cmpw	%ax, -20(%ebp)
-	jne	.L10
-	movl	-4(%ebp), %eax
-	jmp	.L11
-.L10:
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L7
+	movq	-8(%rbp), %rax
+	movzwl	24(%rax), %eax
+	cmpw	%ax, -28(%rbp)
+	je	.L7
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L8
+.L7:
+	movq	-8(%rbp), %rax
+	movzwl	24(%rax), %eax
+	cmpw	%ax, -28(%rbp)
+	jne	.L9
+	movq	-8(%rbp), %rax
+	jmp	.L10
+.L9:
 	movl	$0, %eax
-.L11:
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+.L10:
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -108,114 +104,103 @@ _Z16getGraphicObjectP6Windows:
 _Z10openWindowssss:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$36, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %ebx
-	movl	12(%ebp), %ecx
-	movl	16(%ebp), %edx
-	movl	20(%ebp), %eax
-	movw	%bx, -28(%ebp)
-	movw	%cx, -32(%ebp)
-	movw	%dx, -36(%ebp)
-	movw	%ax, -40(%ebp)
-	subl	$12, %esp
-	pushl	$24
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$48, %rsp
+	movl	%ecx, %eax
+	movl	%edi, %ecx
+	movw	%cx, -36(%rbp)
+	movl	%esi, %ecx
+	movw	%cx, -40(%rbp)
+	movw	%dx, -44(%rbp)
+	movw	%ax, -48(%rbp)
+	movl	$40, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -12(%ebp)
-	cmpl	$0, -12(%ebp)
-	jne	.L13
+	movq	%rax, -8(%rbp)
+	cmpq	$0, -8(%rbp)
+	jne	.L12
 	movl	$0, %eax
-	jmp	.L14
-.L13:
-	movl	-12(%ebp), %eax
-	movzwl	-28(%ebp), %edx
-	movw	%dx, 4(%eax)
-	movl	-12(%ebp), %eax
-	movzwl	-32(%ebp), %edx
-	movw	%dx, 6(%eax)
-	movl	-12(%ebp), %eax
-	movzwl	-36(%ebp), %edx
-	movw	%dx, (%eax)
-	movl	-12(%ebp), %eax
-	movzwl	-40(%ebp), %edx
-	movw	%dx, 2(%eax)
-	movl	-12(%ebp), %eax
-	movb	$1, 20(%eax)
-	movl	-12(%ebp), %eax
-	movl	$0, 12(%eax)
-	call	_Z13getLastWindowv
-	movl	%eax, -16(%ebp)
-	cmpl	$0, -16(%ebp)
-	je	.L15
-	movl	-16(%ebp), %eax
-	movl	-12(%ebp), %edx
-	movl	%edx, 12(%eax)
-	movl	-12(%ebp), %eax
-	movl	-16(%ebp), %edx
-	movl	%edx, 16(%eax)
 	jmp	.L16
-.L15:
-	movl	-12(%ebp), %eax
-	movl	%eax, windowListHead
-	movl	-12(%ebp), %eax
-	movl	$0, 16(%eax)
-.L16:
-	subl	$12, %esp
-	pushl	$16
-	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -20(%ebp)
-	movl	-20(%ebp), %eax
-	movw	$0, 12(%eax)
-	movl	-20(%ebp), %eax
-	movw	$0, (%eax)
-	movl	-20(%ebp), %eax
-	movw	$0, 2(%eax)
-	movl	-20(%ebp), %eax
-	movl	$0, 4(%eax)
-	movl	-12(%ebp), %eax
-	movl	-20(%ebp), %edx
-	movl	%edx, 8(%eax)
-	subl	$12, %esp
-	pushl	$10
-	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -24(%ebp)
-	movl	-24(%ebp), %eax
-	movzwl	-40(%ebp), %edx
-	movw	%dx, 2(%eax)
-	movl	-24(%ebp), %eax
-	movzwl	-36(%ebp), %edx
-	movw	%dx, (%eax)
-	movl	-24(%ebp), %eax
-	movzwl	borderColor, %edx
-	movw	%dx, 4(%eax)
-	movzbl	borderColor+2, %edx
-	movb	%dl, 6(%eax)
-	movl	-24(%ebp), %eax
-	movzwl	fillColor, %edx
-	movw	%dx, 7(%eax)
-	movzbl	fillColor+2, %edx
-	movb	%dl, 9(%eax)
-	movl	-20(%ebp), %eax
-	movl	-24(%ebp), %edx
-	movl	%edx, 8(%eax)
-	movl	-20(%ebp), %eax
-	movb	$1, 14(%eax)
-	movl	-12(%ebp), %eax
+.L12:
+	movq	-8(%rbp), %rax
+	movzwl	-36(%rbp), %edx
+	movw	%dx, 4(%rax)
+	movq	-8(%rbp), %rax
+	movzwl	-40(%rbp), %edx
+	movw	%dx, 6(%rax)
+	movq	-8(%rbp), %rax
+	movzwl	-44(%rbp), %edx
+	movw	%dx, (%rax)
+	movq	-8(%rbp), %rax
+	movzwl	-48(%rbp), %edx
+	movw	%dx, 2(%rax)
+	movq	-8(%rbp), %rax
+	movb	$1, 32(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 16(%rax)
+	call	_Z13getLastWindowv
+	movq	%rax, -32(%rbp)
+	movq	-32(%rbp), %rax
+	testq	%rax, %rax
+	je	.L14
+	movq	-32(%rbp), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-32(%rbp), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 24(%rax)
+	jmp	.L15
 .L14:
-	movl	-4(%ebp), %ebx
+	movq	-8(%rbp), %rax
+	movq	%rax, windowListHead(%rip)
+	movq	-8(%rbp), %rax
+	movq	$0, 24(%rax)
+.L15:
+	movl	$32, %edi
+	call	_Z6malloci
+	movq	%rax, -16(%rbp)
+	movq	-16(%rbp), %rax
+	movw	$0, 24(%rax)
+	movq	-16(%rbp), %rax
+	movw	$0, (%rax)
+	movq	-16(%rbp), %rax
+	movw	$0, 2(%rax)
+	movq	-16(%rbp), %rax
+	movq	$0, 8(%rax)
+	movq	-8(%rbp), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movl	$10, %edi
+	call	_Z6malloci
+	movq	%rax, -24(%rbp)
+	movq	-24(%rbp), %rax
+	movzwl	-48(%rbp), %edx
+	movw	%dx, 2(%rax)
+	movq	-24(%rbp), %rax
+	movzwl	-44(%rbp), %edx
+	movw	%dx, (%rax)
+	movq	-24(%rbp), %rax
+	movzwl	borderColor(%rip), %edx
+	movw	%dx, 4(%rax)
+	movzbl	borderColor+2(%rip), %edx
+	movb	%dl, 6(%rax)
+	movq	-24(%rbp), %rax
+	movzwl	fillColor(%rip), %edx
+	movw	%dx, 7(%rax)
+	movzbl	fillColor+2(%rip), %edx
+	movb	%dl, 9(%rax)
+	movq	-16(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-16(%rbp), %rax
+	movb	$1, 26(%rax)
+	movq	-8(%rbp), %rax
+.L16:
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
@@ -225,47 +210,46 @@ _Z10openWindowssss:
 _Z11closeWindowP6Window:
 .LFB4:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	8(%ebp), %eax
-	movl	12(%eax), %eax
-	testl	%eax, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movq	%rdi, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	testq	%rax, %rax
 	je	.L18
-	movl	8(%ebp), %eax
-	movl	12(%eax), %eax
-	movl	8(%ebp), %edx
-	movl	16(%edx), %edx
-	movl	%edx, 16(%eax)
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	24(%rdx), %rdx
+	movq	%rdx, 24(%rax)
 .L18:
-	movl	8(%ebp), %eax
-	movl	16(%eax), %eax
-	testl	%eax, %eax
+	movq	-8(%rbp), %rax
+	movq	24(%rax), %rax
+	testq	%rax, %rax
 	je	.L19
-	movl	8(%ebp), %eax
-	movl	16(%eax), %eax
-	movl	8(%ebp), %edx
-	movl	12(%edx), %edx
-	movl	%edx, 12(%eax)
+	movq	-8(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	16(%rdx), %rdx
+	movq	%rdx, 16(%rax)
 .L19:
-	movl	windowListHead, %eax
-	cmpl	%eax, 8(%ebp)
+	movq	windowListHead(%rip), %rax
+	cmpq	%rax, -8(%rbp)
 	jne	.L20
-	movl	8(%ebp), %eax
-	movl	12(%eax), %eax
-	movl	%eax, windowListHead
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, windowListHead(%rip)
 .L20:
-	subl	$12, %esp
-	pushl	8(%ebp)
+	movq	-8(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4freePv
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE4:
@@ -275,22 +259,21 @@ _Z11closeWindowP6Window:
 _Z7initGUIv:
 .LFB5:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movl	$0, windowListHead
-	movb	$0, borderColor
-	movb	$0, borderColor+1
-	movb	$-1, borderColor+2
-	movb	$0, fillColor
-	movb	$-1, fillColor+1
-	movb	$-1, fillColor+2
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	$0, windowListHead(%rip)
+	movb	$0, borderColor(%rip)
+	movb	$0, borderColor+1(%rip)
+	movb	$-1, borderColor+2(%rip)
+	movb	$0, fillColor(%rip)
+	movb	$-1, fillColor+1(%rip)
+	movb	$-1, fillColor+2(%rip)
 	nop
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE5:
@@ -304,164 +287,135 @@ _Z7initGUIv:
 _Z11drawWindowsv:
 .LFB6:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebx
-	subl	$44, %esp
-	.cfi_offset 7, -12
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	.cfi_offset 3, -20
-	movl	windowListHead, %eax
-	movl	%eax, -28(%ebp)
-	jmp	.L23
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movq	windowListHead(%rip), %rax
+	movq	%rax, -8(%rbp)
 .L27:
-	movl	-28(%ebp), %eax
-	movl	8(%eax), %eax
-	movl	%eax, -32(%ebp)
-	jmp	.L24
+	cmpq	$0, -8(%rbp)
+	je	.L23
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -16(%rbp)
 .L26:
-	movl	-32(%ebp), %eax
-	movzbl	14(%eax), %eax
+	cmpq	$0, -16(%rbp)
+	je	.L24
+	movq	-16(%rbp), %rax
+	movzbl	26(%rax), %eax
 	cmpb	$1, %al
 	jne	.L25
-	movl	-32(%ebp), %eax
-	movl	8(%eax), %eax
-	movl	%eax, -36(%ebp)
-	movl	-28(%ebp), %eax
-	movzwl	6(%eax), %eax
+	movq	-16(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, -24(%rbp)
+	movq	-8(%rbp), %rax
+	movzwl	6(%rax), %eax
 	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	2(%eax), %eax
+	movq	-16(%rbp), %rax
+	movzwl	2(%rax), %eax
 	addl	%eax, %edx
-	movl	-36(%ebp), %eax
-	movzwl	(%eax), %eax
+	movq	-24(%rbp), %rax
+	movzwl	(%rax), %eax
 	addl	%edx, %eax
-	movswl	%ax, %edi
-	movl	-28(%ebp), %eax
-	movzwl	4(%eax), %eax
+	movswl	%ax, %ecx
+	movq	-8(%rbp), %rax
+	movzwl	4(%rax), %eax
 	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	(%eax), %eax
+	movq	-16(%rbp), %rax
+	movzwl	(%rax), %eax
 	addl	%eax, %edx
-	movl	-36(%ebp), %eax
-	movzwl	2(%eax), %eax
+	movq	-24(%rbp), %rax
+	movzwl	2(%rax), %eax
 	addl	%edx, %eax
+	movswl	%ax, %edx
+	movq	-8(%rbp), %rax
+	movzwl	6(%rax), %eax
+	movl	%eax, %esi
+	movq	-16(%rbp), %rax
+	movzwl	2(%rax), %eax
+	addl	%esi, %eax
 	movswl	%ax, %esi
-	movl	-28(%ebp), %eax
-	movzwl	6(%eax), %eax
-	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	2(%eax), %eax
-	addl	%edx, %eax
-	movswl	%ax, %ebx
-	movl	-28(%ebp), %eax
-	movzwl	4(%eax), %eax
-	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	(%eax), %eax
-	addl	%edx, %eax
-	cwtl
-	movl	%eax, -44(%ebp)
-	subl	$12, %esp
-	movl	-36(%ebp), %eax
-	subl	$4, %esp
-	movl	%esp, %edx
-	movzwl	4(%eax), %ecx
-	movw	%cx, (%edx)
-	movzbl	6(%eax), %eax
-	movb	%al, 2(%edx)
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebx
-	pushl	-44(%ebp)
+	movq	-8(%rbp), %rax
+	movzwl	4(%rax), %eax
+	movl	%eax, %edi
+	movq	-16(%rbp), %rax
+	movzwl	(%rax), %eax
+	addl	%edi, %eax
+	movswl	%ax, %edi
+	movq	-24(%rbp), %rax
+	movzwl	4(%rax), %r8d
+	movzbl	6(%rax), %eax
+	salq	$16, %rax
+	orq	%r8, %rax
+	movq	%rax, %r8
 	call	_Z13drawRectanglessss5Color
-	addl	$32, %esp
-	movl	-28(%ebp), %eax
-	movzwl	6(%eax), %eax
+	movq	-8(%rbp), %rax
+	movzwl	6(%rax), %eax
 	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	2(%eax), %eax
+	movq	-16(%rbp), %rax
+	movzwl	2(%rax), %eax
 	addl	%eax, %edx
-	movl	-36(%ebp), %eax
-	movzwl	(%eax), %eax
+	movq	-24(%rbp), %rax
+	movzwl	(%rax), %eax
 	addl	%edx, %eax
 	subl	$1, %eax
-	movswl	%ax, %edi
-	movl	-28(%ebp), %eax
-	movzwl	4(%eax), %eax
+	movswl	%ax, %ecx
+	movq	-8(%rbp), %rax
+	movzwl	4(%rax), %eax
 	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	(%eax), %eax
+	movq	-16(%rbp), %rax
+	movzwl	(%rax), %eax
 	addl	%eax, %edx
-	movl	-36(%ebp), %eax
-	movzwl	2(%eax), %eax
+	movq	-24(%rbp), %rax
+	movzwl	2(%rax), %eax
 	addl	%edx, %eax
 	subl	$1, %eax
+	movswl	%ax, %edx
+	movq	-8(%rbp), %rax
+	movzwl	6(%rax), %eax
+	movl	%eax, %esi
+	movq	-16(%rbp), %rax
+	movzwl	2(%rax), %eax
+	addl	%esi, %eax
+	addl	$1, %eax
 	movswl	%ax, %esi
-	movl	-28(%ebp), %eax
-	movzwl	6(%eax), %eax
-	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	2(%eax), %eax
-	addl	%edx, %eax
+	movq	-8(%rbp), %rax
+	movzwl	4(%rax), %eax
+	movl	%eax, %edi
+	movq	-16(%rbp), %rax
+	movzwl	(%rax), %eax
+	addl	%edi, %eax
 	addl	$1, %eax
-	movswl	%ax, %ebx
-	movl	-28(%ebp), %eax
-	movzwl	4(%eax), %eax
-	movl	%eax, %edx
-	movl	-32(%ebp), %eax
-	movzwl	(%eax), %eax
-	addl	%edx, %eax
-	addl	$1, %eax
-	cwtl
-	movl	%eax, -44(%ebp)
-	subl	$12, %esp
-	movl	-36(%ebp), %eax
-	subl	$4, %esp
-	movl	%esp, %edx
-	movzwl	7(%eax), %ecx
-	movw	%cx, (%edx)
-	movzbl	9(%eax), %eax
-	movb	%al, 2(%edx)
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebx
-	pushl	-44(%ebp)
+	movswl	%ax, %edi
+	movq	-24(%rbp), %rax
+	movzbl	7(%rax), %r8d
+	movzbl	8(%rax), %r9d
+	salq	$8, %r9
+	orq	%r9, %r8
+	movzbl	9(%rax), %eax
+	salq	$16, %rax
+	orq	%r8, %rax
+	movq	%rax, %r8
 	call	_Z13fillRectanglessss5Color
-	addl	$32, %esp
 .L25:
-	movl	-32(%ebp), %eax
-	movl	4(%eax), %eax
-	movl	%eax, -32(%ebp)
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -16(%rbp)
+	jmp	.L26
 .L24:
-	cmpl	$0, -32(%ebp)
-	jne	.L26
-	movl	-28(%ebp), %eax
-	movl	12(%eax), %eax
-	movl	%eax, -28(%ebp)
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L27
 .L23:
-	cmpl	$0, -28(%ebp)
-	jne	.L27
-	subl	$12, %esp
-	pushl	$.LC0
+	movl	$.LC0, %edi
 	call	_Z5printPKc
-	addl	$16, %esp
 	nop
-	leal	-12(%ebp), %esp
-	popl	%ebx
-	.cfi_restore 3
-	popl	%esi
-	.cfi_restore 6
-	popl	%edi
-	.cfi_restore 7
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	leave
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE6:
@@ -471,55 +425,55 @@ _Z11drawWindowsv:
 _Z16bringWindowFrontP6Window:
 .LFB7:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$24, %rsp
+	movq	%rdi, -24(%rbp)
 	call	_Z13getLastWindowv
-	movl	%eax, -4(%ebp)
-	movl	8(%ebp), %eax
-	movl	12(%eax), %eax
-	testl	%eax, %eax
+	movq	%rax, -8(%rbp)
+	movq	-24(%rbp), %rax
+	movq	16(%rax), %rax
+	testq	%rax, %rax
 	je	.L29
-	movl	8(%ebp), %eax
-	movl	12(%eax), %eax
-	movl	8(%ebp), %edx
-	movl	16(%edx), %edx
-	movl	%edx, 16(%eax)
+	movq	-24(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	24(%rdx), %rdx
+	movq	%rdx, 24(%rax)
 .L29:
-	movl	8(%ebp), %eax
-	movl	16(%eax), %eax
-	testl	%eax, %eax
+	movq	-24(%rbp), %rax
+	movq	24(%rax), %rax
+	testq	%rax, %rax
 	je	.L30
-	movl	8(%ebp), %eax
-	movl	16(%eax), %eax
-	movl	8(%ebp), %edx
-	movl	12(%edx), %edx
-	movl	%edx, 12(%eax)
+	movq	-24(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	16(%rdx), %rdx
+	movq	%rdx, 16(%rax)
 .L30:
-	movl	windowListHead, %eax
-	cmpl	%eax, 8(%ebp)
+	movq	windowListHead(%rip), %rax
+	cmpq	%rax, -24(%rbp)
 	jne	.L31
-	movl	8(%ebp), %eax
-	movl	12(%eax), %eax
-	movl	%eax, windowListHead
+	movq	-24(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, windowListHead(%rip)
 .L31:
-	movl	-4(%ebp), %eax
-	movl	8(%ebp), %edx
-	movl	%edx, 12(%eax)
-	movl	8(%ebp), %eax
-	movl	-4(%ebp), %edx
-	movl	%edx, 16(%eax)
-	movl	8(%ebp), %eax
-	movl	$0, 12(%eax)
+	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-24(%rbp), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, 24(%rax)
+	movq	-24(%rbp), %rax
+	movq	$0, 16(%rax)
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE7:
 	.size	_Z16bringWindowFrontP6Window, .-_Z16bringWindowFrontP6Window
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

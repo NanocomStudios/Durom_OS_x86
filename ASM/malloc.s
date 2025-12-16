@@ -2,11 +2,11 @@
 	.text
 	.globl	ram
 	.section	.bss
-	.align 4
+	.align 8
 	.type	ram, @object
-	.size	ram, 4
+	.size	ram, 8
 ram:
-	.zero	4
+	.zero	8
 	.globl	isInit
 	.type	isInit, @object
 	.size	isInit, 1
@@ -18,17 +18,16 @@ isInit:
 _Z10mallocInitv:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movl	$32256, ram
-	movb	$0, isInit
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	$32256, ram(%rip)
+	movb	$0, isInit(%rip)
 	nop
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -38,82 +37,85 @@ _Z10mallocInitv:
 _Z6malloci:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	cmpl	$32748, 8(%ebp)
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movl	%edi, -20(%rbp)
+	cmpl	$32748, -20(%rbp)
 	jg	.L3
-	cmpl	$0, 8(%ebp)
+	cmpl	$0, -20(%rbp)
 	jns	.L4
 .L3:
 	movl	$0, %eax
 	jmp	.L5
 .L4:
-	movl	8(%ebp), %eax
-	movl	%eax, -16(%ebp)
-	movzbl	isInit, %eax
+	movl	-20(%rbp), %eax
+	movl	%eax, -8(%rbp)
+	movzbl	isInit(%rip), %eax
 	testb	%al, %al
 	jne	.L6
-	movl	ram, %eax
-	addl	$4, %eax
-	movl	$-1, (%eax)
-	movl	ram, %eax
-	addl	$8, %eax
-	movl	$-1, (%eax)
-	movl	ram, %eax
-	movl	$20, (%eax)
-	movl	$20, -12(%ebp)
+	movq	ram(%rip), %rax
+	addq	$4, %rax
+	movl	$-1, (%rax)
+	movq	ram(%rip), %rax
+	addq	$8, %rax
+	movl	$-1, (%rax)
+	movq	ram(%rip), %rax
+	movl	$20, (%rax)
+	movl	$20, -4(%rbp)
 	jmp	.L7
 .L6:
-	subl	$12, %esp
-	pushl	-16(%ebp)
+	movl	-8(%rbp), %eax
+	movl	%eax, %edi
 	call	_Z12getFreeBlocki
-	addl	$16, %esp
-	movl	%eax, -12(%ebp)
+	movl	%eax, -4(%rbp)
 .L7:
-	cmpl	$-1, -12(%ebp)
+	cmpl	$-1, -4(%rbp)
 	je	.L8
-	movl	ram, %eax
-	movl	-12(%ebp), %edx
-	subl	$8, %edx
-	addl	%eax, %edx
-	movl	-16(%ebp), %eax
-	movl	%eax, (%edx)
-	movl	ram, %eax
-	movl	ram, %edx
-	movl	-12(%ebp), %ecx
-	subl	$4, %ecx
-	addl	%ecx, %edx
-	movl	8(%eax), %eax
-	movl	%eax, (%edx)
-	movl	ram, %eax
-	addl	$4, %eax
-	movl	(%eax), %eax
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$8, %rdx
+	addq	%rax, %rdx
+	movl	-8(%rbp), %eax
+	movl	%eax, (%rdx)
+	movq	ram(%rip), %rax
+	movq	ram(%rip), %rdx
+	movl	-4(%rbp), %ecx
+	movslq	%ecx, %rcx
+	subq	$4, %rcx
+	addq	%rcx, %rdx
+	movl	8(%rax), %eax
+	movl	%eax, (%rdx)
+	movq	ram(%rip), %rax
+	addq	$4, %rax
+	movl	(%rax), %eax
 	cmpl	$-1, %eax
 	je	.L9
-	movl	ram, %eax
-	movl	ram, %edx
-	addl	$4, %edx
-	movl	(%edx), %edx
-	subl	$4, %edx
-	addl	%eax, %edx
-	movl	-12(%ebp), %eax
-	movl	%eax, (%edx)
+	movq	ram(%rip), %rax
+	movq	ram(%rip), %rdx
+	addq	$4, %rdx
+	movl	(%rdx), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rax, %rdx
+	movl	-4(%rbp), %eax
+	movl	%eax, (%rdx)
 .L9:
-	movb	$1, isInit
-	movl	ram, %edx
-	movl	-12(%ebp), %eax
-	addl	%edx, %eax
+	movb	$1, isInit(%rip)
+	movq	ram(%rip), %rdx
+	movl	-4(%rbp), %eax
+	cltq
+	addq	%rdx, %rax
 	jmp	.L5
 .L8:
 	movl	$0, %eax
 .L5:
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -123,105 +125,115 @@ _Z6malloci:
 _Z4freePv:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
-	movl	ram, %eax
-	movl	8(%ebp), %edx
-	subl	%eax, %edx
-	movl	ram, %eax
-	movl	(%eax), %eax
-	cmpl	%eax, %edx
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -24(%rbp)
+	movq	-24(%rbp), %rax
+	movq	ram(%rip), %rdx
+	subq	%rdx, %rax
+	movq	%rax, %rdx
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	cltq
+	cmpq	%rax, %rdx
 	jne	.L11
-	movl	ram, %edx
-	movl	ram, %eax
-	movl	(%eax), %eax
-	subl	$4, %eax
-	addl	%edx, %eax
-	movl	(%eax), %eax
+	movq	ram(%rip), %rdx
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	cltq
+	subq	$4, %rax
+	addq	%rdx, %rax
+	movl	(%rax), %eax
 	cmpl	$-1, %eax
 	jne	.L12
-	movb	$0, isInit
+	movb	$0, isInit(%rip)
 	jmp	.L19
 .L12:
-	movl	ram, %edx
-	movl	ram, %eax
-	movl	(%eax), %eax
-	subl	$4, %eax
-	addl	%eax, %edx
-	movl	ram, %eax
-	movl	(%edx), %edx
-	movl	%edx, (%eax)
+	movq	ram(%rip), %rdx
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	cltq
+	subq	$4, %rax
+	addq	%rax, %rdx
+	movq	ram(%rip), %rax
+	movl	(%rdx), %edx
+	movl	%edx, (%rax)
 	jmp	.L19
 .L11:
-	movl	ram, %eax
-	movl	(%eax), %eax
-	movl	%eax, -4(%ebp)
-	jmp	.L14
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	movl	%eax, -4(%rbp)
 .L18:
-	movl	ram, %eax
-	movl	-4(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %ecx
-	movl	ram, %eax
-	movl	8(%ebp), %edx
-	subl	%eax, %edx
-	cmpl	%edx, %ecx
+	cmpl	$32759, -4(%rbp)
+	jg	.L19
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
+	cltq
+	movq	-24(%rbp), %rdx
+	movq	ram(%rip), %rcx
+	subq	%rcx, %rdx
+	cmpq	%rdx, %rax
 	jne	.L15
-	movl	ram, %eax
-	movl	-4(%ebp), %edx
-	subl	$4, %edx
-	addl	%eax, %edx
-	movl	8(%ebp), %eax
-	movl	-4(%eax), %eax
-	movl	%eax, (%edx)
-	jmp	.L13
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	movl	-4(%rax), %eax
+	movl	%eax, (%rdx)
+	jmp	.L14
 .L15:
-	movl	ram, %eax
-	movl	-4(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %ecx
-	movl	ram, %eax
-	movl	8(%ebp), %edx
-	subl	%eax, %edx
-	cmpl	%edx, %ecx
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
+	cltq
+	movq	-24(%rbp), %rdx
+	movq	ram(%rip), %rcx
+	subq	%rcx, %rdx
+	cmpq	%rdx, %rax
 	jle	.L16
-	movl	ram, %eax
-	movl	8(%ebp), %edx
-	subl	%eax, %edx
-	cmpl	%edx, -4(%ebp)
+	movl	-4(%rbp), %eax
+	cltq
+	movq	-24(%rbp), %rdx
+	movq	ram(%rip), %rcx
+	subq	%rcx, %rdx
+	cmpq	%rdx, %rax
 	jl	.L19
 .L16:
-	movl	ram, %eax
-	movl	-4(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %eax
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
 	cmpl	$-1, %eax
 	je	.L20
-	movl	ram, %eax
-	movl	-4(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %eax
-	movl	%eax, -4(%ebp)
-.L14:
-	cmpl	$32759, -4(%ebp)
-	jle	.L18
-	jmp	.L19
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
+	movl	%eax, -4(%rbp)
+	jmp	.L18
 .L20:
 	nop
-.L13:
+.L14:
 .L19:
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
@@ -231,127 +243,128 @@ _Z4freePv:
 _Z12getFreeBlocki:
 .LFB4:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$16, %esp
-	.cfi_offset 3, -12
-	movl	ram, %eax
-	movl	(%eax), %eax
-	leal	-19(%eax), %edx
-	movl	8(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, -20(%rbp)
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	leal	-20(%rax), %edx
+	movl	-20(%rbp), %eax
 	addl	$8, %eax
 	cmpl	%eax, %edx
-	jle	.L22
-	movl	ram, %eax
-	addl	$4, %eax
-	movl	$-1, (%eax)
-	movl	ram, %eax
-	movl	ram, %edx
-	addl	$8, %edx
-	movl	(%eax), %eax
-	movl	%eax, (%edx)
-	movl	ram, %eax
-	movl	(%eax), %eax
-	leal	-8(%eax), %edx
-	movl	ram, %eax
-	subl	8(%ebp), %edx
-	movl	%edx, (%eax)
-	movl	ram, %eax
-	movl	(%eax), %eax
+	jl	.L22
+	movq	ram(%rip), %rax
+	addq	$4, %rax
+	movl	$-1, (%rax)
+	movq	ram(%rip), %rax
+	movq	ram(%rip), %rdx
+	addq	$8, %rdx
+	movl	(%rax), %eax
+	movl	%eax, (%rdx)
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	leal	-8(%rax), %edx
+	movq	ram(%rip), %rax
+	subl	-20(%rbp), %edx
+	movl	%edx, (%rax)
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
 	jmp	.L23
 .L22:
-	movl	ram, %eax
-	movl	(%eax), %eax
-	movl	%eax, -8(%ebp)
-	jmp	.L24
+	movq	ram(%rip), %rax
+	movl	(%rax), %eax
+	movl	%eax, -4(%rbp)
 .L27:
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %eax
+	cmpl	$32759, -4(%rbp)
+	jg	.L24
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
 	cmpl	$-1, %eax
 	jne	.L25
-	movl	ram, %eax
-	leal	4(%eax), %edx
-	movl	-8(%ebp), %eax
-	movl	%eax, (%edx)
-	movl	ram, %eax
-	addl	$8, %eax
-	movl	$-1, (%eax)
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$8, %edx
-	addl	%edx, %eax
-	movl	(%eax), %edx
-	movl	-8(%ebp), %eax
+	movq	ram(%rip), %rax
+	leaq	4(%rax), %rdx
+	movl	-4(%rbp), %eax
+	movl	%eax, (%rdx)
+	movq	ram(%rip), %rax
+	addq	$8, %rax
+	movl	$-1, (%rax)
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$8, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %edx
+	movl	-4(%rbp), %eax
 	addl	%edx, %eax
 	addl	$8, %eax
 	jmp	.L23
 .L25:
-	movl	8(%ebp), %eax
-	leal	7(%eax), %ecx
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %eax
-	leal	-8(%eax), %ebx
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$8, %edx
-	addl	%edx, %eax
-	movl	(%eax), %eax
-	subl	%eax, %ebx
-	movl	%ebx, %edx
-	movl	%edx, %eax
-	subl	-8(%ebp), %eax
-	cmpl	%eax, %ecx
-	jge	.L26
-	movl	ram, %eax
-	leal	4(%eax), %edx
-	movl	-8(%ebp), %eax
-	movl	%eax, (%edx)
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	ram, %edx
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
+	leal	-8(%rax), %ecx
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$8, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
+	subl	%eax, %ecx
+	movl	%ecx, %eax
+	subl	-4(%rbp), %eax
+	movl	-20(%rbp), %edx
 	addl	$8, %edx
-	movl	(%eax), %eax
-	movl	%eax, (%edx)
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$8, %edx
-	addl	%edx, %eax
-	movl	(%eax), %edx
-	movl	-8(%ebp), %eax
+	cmpl	%edx, %eax
+	jl	.L26
+	movq	ram(%rip), %rax
+	leaq	4(%rax), %rdx
+	movl	-4(%rbp), %eax
+	movl	%eax, (%rdx)
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movq	ram(%rip), %rdx
+	addq	$8, %rdx
+	movl	(%rax), %eax
+	movl	%eax, (%rdx)
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$8, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %edx
+	movl	-4(%rbp), %eax
 	addl	%edx, %eax
 	addl	$8, %eax
 	jmp	.L23
 .L26:
-	movl	ram, %eax
-	movl	-8(%ebp), %edx
-	subl	$4, %edx
-	addl	%edx, %eax
-	movl	(%eax), %eax
-	movl	%eax, -8(%ebp)
+	movq	ram(%rip), %rax
+	movl	-4(%rbp), %edx
+	movslq	%edx, %rdx
+	subq	$4, %rdx
+	addq	%rdx, %rax
+	movl	(%rax), %eax
+	movl	%eax, -4(%rbp)
+	jmp	.L27
 .L24:
-	cmpl	$32759, -8(%ebp)
-	jle	.L27
 	movl	$-1, %eax
 .L23:
-	movl	-4(%ebp), %ebx
-	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE4:
 	.size	_Z12getFreeBlocki, .-_Z12getFreeBlocki
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (GNU) 7.5.0"

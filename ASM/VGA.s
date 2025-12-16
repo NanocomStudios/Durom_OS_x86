@@ -7,27 +7,28 @@
 _ZN7Color32aSERK5Color:
 .LFB0:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movl	12(%ebp), %eax
-	movzbl	(%eax), %edx
-	movl	8(%ebp), %eax
-	movb	%dl, (%eax)
-	movl	12(%ebp), %eax
-	movzbl	1(%eax), %edx
-	movl	8(%ebp), %eax
-	movb	%dl, 1(%eax)
-	movl	12(%ebp), %eax
-	movzbl	2(%eax), %edx
-	movl	8(%ebp), %eax
-	movb	%dl, 2(%eax)
-	movl	8(%ebp), %eax
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -8(%rbp)
+	movq	%rsi, -16(%rbp)
+	movq	-16(%rbp), %rax
+	movzbl	(%rax), %edx
+	movq	-8(%rbp), %rax
+	movb	%dl, (%rax)
+	movq	-16(%rbp), %rax
+	movzbl	1(%rax), %edx
+	movq	-8(%rbp), %rax
+	movb	%dl, 1(%rax)
+	movq	-16(%rbp), %rax
+	movzbl	2(%rax), %edx
+	movq	-8(%rbp), %rax
+	movb	%dl, 2(%rax)
+	movq	-8(%rbp), %rax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE0:
@@ -67,11 +68,11 @@ width:
 bpp:
 	.zero	1
 	.globl	screenRam
-	.align 4
+	.align 8
 	.type	screenRam, @object
-	.size	screenRam, 4
+	.size	screenRam, 8
 screenRam:
-	.zero	4
+	.zero	8
 	.globl	graphicMode
 	.type	graphicMode, @object
 	.size	graphicMode, 1
@@ -83,82 +84,79 @@ graphicMode:
 scroll:
 	.zero	1
 	.globl	vesaInfoBlock
-	.align 4
+	.align 8
 	.type	vesaInfoBlock, @object
-	.size	vesaInfoBlock, 4
+	.size	vesaInfoBlock, 8
 vesaInfoBlock:
-	.zero	4
+	.zero	8
 	.text
 	.globl	_Z11clearScreenv
 	.type	_Z11clearScreenv, @function
 _Z11clearScreenv:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	$0, -12(%ebp)
-	jmp	.L4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	$0, -4(%rbp)
 .L9:
-	movl	$0, -16(%ebp)
-	jmp	.L5
+	movzwl	height(%rip), %eax
+	movzwl	%ax, %eax
+	cmpl	%eax, -4(%rbp)
+	jge	.L10
+	movl	$0, -8(%rbp)
 .L8:
-	movzbl	bpp, %eax
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	cmpl	%eax, -8(%rbp)
+	jge	.L5
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
 	jne	.L6
-	movl	screenRam, %edx
-	movzwl	width, %eax
+	movq	screenRam(%rip), %rdx
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	-12(%ebp), %eax
+	imull	-4(%rbp), %eax
 	movl	%eax, %ecx
-	movl	-16(%ebp), %eax
+	movl	-8(%rbp), %eax
 	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	subl	$8, %esp
-	pushl	$backColor
-	pushl	%eax
+	cltq
+	salq	$2, %rax
+	addq	%rdx, %rax
+	movl	$backColor, %esi
+	movq	%rax, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
 	jmp	.L7
 .L6:
-	movl	screenRam, %edx
-	movzwl	width, %eax
+	movq	screenRam(%rip), %rcx
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	-12(%ebp), %eax
-	movl	%eax, %ecx
-	movl	-16(%ebp), %eax
-	addl	%ecx, %eax
-	movl	%eax, %ecx
-	movl	%ecx, %eax
-	addl	%eax, %eax
-	addl	%ecx, %eax
+	imull	-4(%rbp), %eax
+	movl	%eax, %edx
+	movl	-8(%rbp), %eax
 	addl	%edx, %eax
-	movzwl	backColor, %edx
-	movw	%dx, (%eax)
-	movzbl	backColor+2, %edx
-	movb	%dl, 2(%eax)
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	backColor(%rip), %edx
+	movw	%dx, (%rax)
+	movzbl	backColor+2(%rip), %edx
+	movb	%dl, 2(%rax)
 .L7:
-	addl	$1, -16(%ebp)
+	addl	$1, -8(%rbp)
+	jmp	.L8
 .L5:
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	cmpl	%eax, -16(%ebp)
-	jl	.L8
-	addl	$1, -12(%ebp)
-.L4:
-	movzwl	height, %eax
-	movzwl	%ax, %eax
-	cmpl	%eax, -12(%ebp)
-	jl	.L9
-	nop
+	addl	$1, -4(%rbp)
+	jmp	.L9
+.L10:
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -168,39 +166,32 @@ _Z11clearScreenv:
 _Z12clearConsolev:
 .LFB2:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	subl	$8, %esp
-	pushl	$0
-	pushl	$0
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	$0, %esi
+	movl	$0, %edi
 	call	_Z7moveCsrii
-	addl	$16, %esp
-	movb	$0, scroll
-	movl	$0, -12(%ebp)
-	jmp	.L11
-.L12:
-	subl	$12, %esp
-	pushl	$32
+	movb	$0, scroll(%rip)
+	movl	$0, -4(%rbp)
+.L13:
+	cmpl	$3359, -4(%rbp)
+	jg	.L12
+	movl	$32, %edi
 	call	_Z5printc
-	addl	$16, %esp
-	addl	$1, -12(%ebp)
-.L11:
-	cmpl	$3359, -12(%ebp)
-	jle	.L12
-	movb	$1, scroll
-	subl	$8, %esp
-	pushl	$0
-	pushl	$0
+	addl	$1, -4(%rbp)
+	jmp	.L13
+.L12:
+	movb	$1, scroll(%rip)
+	movl	$0, %esi
+	movl	$0, %edi
 	call	_Z7moveCsrii
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -214,66 +205,60 @@ _Z12clearConsolev:
 _Z10initScreenv:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movb	$-1, -9(%ebp)
-	movb	$-1, -10(%ebp)
-	movb	$-1, -11(%ebp)
-	movb	$0, -12(%ebp)
-	movb	$0, -13(%ebp)
-	movb	$0, -14(%ebp)
-	movl	$1280, vesaInfoBlock
-	movl	vesaInfoBlock, %eax
-	movl	40(%eax), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movb	$-1, -1(%rbp)
+	movb	$-1, -2(%rbp)
+	movb	$-1, -3(%rbp)
+	movb	$0, -4(%rbp)
+	movb	$0, -5(%rbp)
+	movb	$0, -6(%rbp)
+	movq	$1280, vesaInfoBlock(%rip)
+	movq	vesaInfoBlock(%rip), %rax
+	movl	40(%rax), %eax
 	testl	%eax, %eax
-	je	.L14
-	movl	vesaInfoBlock, %eax
-	movl	40(%eax), %eax
-	movl	%eax, screenRam
-	movl	vesaInfoBlock, %eax
-	movzwl	20(%eax), %eax
-	movw	%ax, height
-	movl	vesaInfoBlock, %eax
-	movzwl	18(%eax), %eax
-	movw	%ax, width
-	movl	vesaInfoBlock, %eax
-	movzbl	25(%eax), %eax
-	movb	%al, bpp
-	movb	$71, graphicMode
-	jmp	.L15
-.L14:
-	movb	$84, graphicMode
+	je	.L15
+	movq	vesaInfoBlock(%rip), %rax
+	movl	40(%rax), %eax
+	movl	%eax, %eax
+	movq	%rax, screenRam(%rip)
+	movq	vesaInfoBlock(%rip), %rax
+	movzwl	20(%rax), %eax
+	movw	%ax, height(%rip)
+	movq	vesaInfoBlock(%rip), %rax
+	movzwl	18(%rax), %eax
+	movw	%ax, width(%rip)
+	movq	vesaInfoBlock(%rip), %rax
+	movzbl	25(%rax), %eax
+	movb	%al, bpp(%rip)
+	movb	$71, graphicMode(%rip)
+	jmp	.L16
 .L15:
-	movb	$-1, foreColor
-	movb	$-1, foreColor+1
-	movb	$-1, foreColor+2
-	movb	$36, backColor
-	movb	$10, backColor+1
-	movb	$48, backColor+2
+	movb	$84, graphicMode(%rip)
+.L16:
+	movb	$-1, foreColor(%rip)
+	movb	$-1, foreColor+1(%rip)
+	movb	$-1, foreColor+2(%rip)
+	movb	$36, backColor(%rip)
+	movb	$10, backColor+1(%rip)
+	movb	$48, backColor+2(%rip)
 	call	_Z11clearScreenv
-	movb	$1, scroll
-	subl	$12, %esp
-	pushl	$.LC0
+	movb	$1, scroll(%rip)
+	movl	$.LC0, %edi
 	call	_Z5printPKc
-	addl	$16, %esp
-	movzbl	bpp, %eax
+	movzbl	bpp(%rip), %eax
 	movzbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movq	%rax, %rdi
 	call	_Z8printIntl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$10
+	movl	$10, %edi
 	call	_Z5printc
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
@@ -283,37 +268,36 @@ _Z10initScreenv:
 _Z5printPKc:
 .LFB4:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	$0, -12(%ebp)
-	jmp	.L17
-.L18:
-	movl	-12(%ebp), %edx
-	movl	8(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movsbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z5printc
-	addl	$16, %esp
-	addl	$1, -12(%ebp)
-.L17:
-	movl	-12(%ebp), %edx
-	movl	8(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movl	$0, -4(%rbp)
+.L19:
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
 	testb	%al, %al
-	jne	.L18
-	nop
+	je	.L20
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	-24(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movsbl	%al, %eax
+	movl	%eax, %edi
+	call	_Z5printc
+	addl	$1, -4(%rbp)
+	jmp	.L19
+.L20:
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE4:
@@ -323,96 +307,90 @@ _Z5printPKc:
 _Z8printIntl:
 .LFB5:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$40, %esp
-	subl	$12, %esp
-	pushl	8(%ebp)
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$64, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	-56(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z3lenl
-	addl	$16, %esp
-	movl	%eax, -20(%ebp)
-	subl	$12, %esp
-	pushl	-20(%ebp)
+	cltq
+	movq	%rax, -24(%rbp)
+	movq	-24(%rbp), %rax
+	movl	%eax, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -24(%ebp)
-	cmpl	$0, 8(%ebp)
-	jns	.L20
-	subl	$12, %esp
-	pushl	$45
+	movq	%rax, -32(%rbp)
+	cmpq	$0, -56(%rbp)
+	jns	.L22
+	movl	$45, %edi
 	call	_Z5printc
-	addl	$16, %esp
-	negl	8(%ebp)
-.L20:
-	movl	$0, -28(%ebp)
-	movl	$0, -12(%ebp)
-	jmp	.L21
+	negq	-56(%rbp)
 .L22:
-	movl	8(%ebp), %ecx
-	movl	$1717986919, %edx
-	movl	%ecx, %eax
-	imull	%edx
-	sarl	$2, %edx
-	movl	%ecx, %eax
-	sarl	$31, %eax
-	subl	%eax, %edx
-	movl	%edx, %eax
-	sall	$2, %eax
-	addl	%edx, %eax
-	addl	%eax, %eax
-	subl	%eax, %ecx
-	movl	%ecx, %edx
-	movl	%edx, %eax
-	leal	48(%eax), %ecx
-	movl	-12(%ebp), %edx
-	movl	-24(%ebp), %eax
-	addl	%edx, %eax
-	movl	%ecx, %edx
-	movb	%dl, (%eax)
-	movl	8(%ebp), %ecx
-	movl	$1717986919, %edx
-	movl	%ecx, %eax
-	imull	%edx
-	movl	%edx, %eax
-	sarl	$2, %eax
-	sarl	$31, %ecx
-	movl	%ecx, %edx
-	subl	%edx, %eax
-	movl	%eax, 8(%ebp)
-	addl	$1, -12(%ebp)
-.L21:
-	movl	-12(%ebp), %eax
-	cmpl	-20(%ebp), %eax
-	jl	.L22
-	movl	-20(%ebp), %eax
-	subl	$1, %eax
-	movl	%eax, -16(%ebp)
-	jmp	.L23
+	movq	$0, -40(%rbp)
+	movq	$0, -8(%rbp)
 .L24:
-	movl	-16(%ebp), %edx
-	movl	-24(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movsbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z5printc
-	addl	$16, %esp
-	subl	$1, -16(%ebp)
+	movq	-8(%rbp), %rax
+	cmpq	-24(%rbp), %rax
+	jge	.L23
+	movq	-56(%rbp), %rcx
+	movabsq	$7378697629483820647, %rdx
+	movq	%rcx, %rax
+	imulq	%rdx
+	sarq	$2, %rdx
+	movq	%rcx, %rax
+	sarq	$63, %rax
+	subq	%rax, %rdx
+	movq	%rdx, %rax
+	salq	$2, %rax
+	addq	%rdx, %rax
+	addq	%rax, %rax
+	subq	%rax, %rcx
+	movq	%rcx, %rdx
+	movl	%edx, %eax
+	leal	48(%rax), %ecx
+	movq	-8(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	addq	%rdx, %rax
+	movl	%ecx, %edx
+	movb	%dl, (%rax)
+	movq	-56(%rbp), %rcx
+	movabsq	$7378697629483820647, %rdx
+	movq	%rcx, %rax
+	imulq	%rdx
+	sarq	$2, %rdx
+	movq	%rcx, %rax
+	sarq	$63, %rax
+	subq	%rax, %rdx
+	movq	%rdx, %rax
+	movq	%rax, -56(%rbp)
+	addq	$1, -8(%rbp)
+	jmp	.L24
 .L23:
-	cmpl	$0, -16(%ebp)
-	jns	.L24
-	subl	$12, %esp
-	pushl	-24(%ebp)
+	movq	-24(%rbp), %rax
+	subq	$1, %rax
+	movq	%rax, -16(%rbp)
+.L26:
+	cmpq	$0, -16(%rbp)
+	js	.L25
+	movq	-16(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movsbl	%al, %eax
+	movl	%eax, %edi
+	call	_Z5printc
+	subq	$1, -16(%rbp)
+	jmp	.L26
+.L25:
+	movq	-32(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4freePv
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE5:
@@ -426,102 +404,91 @@ _Z8printIntl:
 _Z8printHexl:
 .LFB6:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$20, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %eax
-	subl	$12, %esp
-	pushl	%eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	pushq	%rbx
+	subq	$56, %rsp
+	.cfi_offset 3, -24
+	movq	%rdi, -56(%rbp)
+	movq	-56(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4lenHl
-	addl	$16, %esp
-	movl	%eax, -20(%ebp)
-	movl	-20(%ebp), %eax
+	cltq
+	movq	%rax, -40(%rbp)
+	movq	-40(%rbp), %rax
 	addl	%eax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -24(%ebp)
-	movw	$0, -10(%ebp)
-	jmp	.L26
-.L27:
-	movswl	-10(%ebp), %eax
-	leal	8(%eax), %eax
-	addl	%ebp, %eax
-	movzbl	(%eax), %eax
+	movq	%rax, -48(%rbp)
+	movw	$0, -18(%rbp)
+.L29:
+	movswq	-18(%rbp), %rax
+	cmpq	%rax, -40(%rbp)
+	jle	.L28
+	movswq	-18(%rbp), %rax
+	leaq	-56(%rbp), %rdx
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
 	movsbl	%al, %eax
 	andl	$15, %eax
-	movswl	-10(%ebp), %edx
+	movswl	-18(%rbp), %edx
 	addl	%edx, %edx
-	movl	%edx, %ecx
-	movl	-24(%ebp), %edx
-	leal	(%ecx,%edx), %ebx
-	subl	$12, %esp
-	pushl	%eax
+	movslq	%edx, %rcx
+	movq	-48(%rbp), %rdx
+	leaq	(%rcx,%rdx), %rbx
+	movl	%eax, %edi
 	call	_Z10hexToAsciic
-	addl	$16, %esp
-	movb	%al, (%ebx)
-	movswl	-10(%ebp), %eax
-	leal	8(%eax), %eax
-	addl	%ebp, %eax
-	movzbl	(%eax), %eax
+	movb	%al, (%rbx)
+	movswq	-18(%rbp), %rax
+	leaq	-56(%rbp), %rdx
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
 	shrb	$4, %al
 	movsbl	%al, %eax
-	movswl	-10(%ebp), %edx
+	movswl	-18(%rbp), %edx
 	addl	%edx, %edx
-	leal	1(%edx), %ecx
-	movl	-24(%ebp), %edx
-	leal	(%ecx,%edx), %ebx
-	subl	$12, %esp
-	pushl	%eax
+	movslq	%edx, %rdx
+	leaq	1(%rdx), %rcx
+	movq	-48(%rbp), %rdx
+	leaq	(%rcx,%rdx), %rbx
+	movl	%eax, %edi
 	call	_Z10hexToAsciic
-	addl	$16, %esp
-	movb	%al, (%ebx)
-	movzwl	-10(%ebp), %eax
+	movb	%al, (%rbx)
+	movzwl	-18(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -10(%ebp)
-.L26:
-	movswl	-10(%ebp), %eax
-	cmpl	%eax, -20(%ebp)
-	jg	.L27
-	subl	$12, %esp
-	pushl	$.LC1
-	call	_Z5printPKc
-	addl	$16, %esp
-	movl	-20(%ebp), %eax
-	addl	%eax, %eax
-	subl	$1, %eax
-	movl	%eax, -16(%ebp)
-	jmp	.L28
-.L29:
-	movl	-16(%ebp), %edx
-	movl	-24(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movsbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z5printc
-	addl	$16, %esp
-	subl	$1, -16(%ebp)
+	movw	%ax, -18(%rbp)
+	jmp	.L29
 .L28:
-	cmpl	$0, -16(%ebp)
-	jns	.L29
-	subl	$12, %esp
-	pushl	-24(%ebp)
+	movl	$.LC1, %edi
+	call	_Z5printPKc
+	movq	-40(%rbp), %rax
+	addq	%rax, %rax
+	subq	$1, %rax
+	movq	%rax, -32(%rbp)
+.L31:
+	cmpq	$0, -32(%rbp)
+	js	.L30
+	movq	-32(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movsbl	%al, %eax
+	movl	%eax, %edi
+	call	_Z5printc
+	subq	$1, -32(%rbp)
+	jmp	.L31
+.L30:
+	movq	-48(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4freePv
-	addl	$16, %esp
 	nop
-	movl	-4(%ebp), %ebx
-	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	addq	$56, %rsp
+	popq	%rbx
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE6:
@@ -531,98 +498,89 @@ _Z8printHexl:
 _Z9printHexVl:
 .LFB7:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$20, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %eax
-	subl	$12, %esp
-	pushl	%eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	pushq	%rbx
+	subq	$56, %rsp
+	.cfi_offset 3, -24
+	movq	%rdi, -56(%rbp)
+	movq	-56(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4lenHl
-	addl	$16, %esp
-	movl	%eax, -20(%ebp)
-	movl	-20(%ebp), %eax
+	cltq
+	movq	%rax, -40(%rbp)
+	movq	-40(%rbp), %rax
 	addl	%eax, %eax
-	subl	$12, %esp
-	pushl	%eax
+	movl	%eax, %edi
 	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -24(%ebp)
-	movw	$0, -10(%ebp)
-	jmp	.L31
-.L32:
-	movswl	-10(%ebp), %eax
-	leal	8(%eax), %eax
-	addl	%ebp, %eax
-	movzbl	(%eax), %eax
+	movq	%rax, -48(%rbp)
+	movw	$0, -18(%rbp)
+.L34:
+	movswq	-18(%rbp), %rax
+	cmpq	%rax, -40(%rbp)
+	jle	.L33
+	movswq	-18(%rbp), %rax
+	leaq	-56(%rbp), %rdx
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
 	movsbl	%al, %eax
 	andl	$15, %eax
-	movswl	-10(%ebp), %edx
+	movswl	-18(%rbp), %edx
 	addl	%edx, %edx
-	movl	%edx, %ecx
-	movl	-24(%ebp), %edx
-	leal	(%ecx,%edx), %ebx
-	subl	$12, %esp
-	pushl	%eax
+	movslq	%edx, %rcx
+	movq	-48(%rbp), %rdx
+	leaq	(%rcx,%rdx), %rbx
+	movl	%eax, %edi
 	call	_Z10hexToAsciic
-	addl	$16, %esp
-	movb	%al, (%ebx)
-	movswl	-10(%ebp), %eax
-	leal	8(%eax), %eax
-	addl	%ebp, %eax
-	movzbl	(%eax), %eax
+	movb	%al, (%rbx)
+	movswq	-18(%rbp), %rax
+	leaq	-56(%rbp), %rdx
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
 	shrb	$4, %al
 	movsbl	%al, %eax
-	movswl	-10(%ebp), %edx
+	movswl	-18(%rbp), %edx
 	addl	%edx, %edx
-	leal	1(%edx), %ecx
-	movl	-24(%ebp), %edx
-	leal	(%ecx,%edx), %ebx
-	subl	$12, %esp
-	pushl	%eax
+	movslq	%edx, %rdx
+	leaq	1(%rdx), %rcx
+	movq	-48(%rbp), %rdx
+	leaq	(%rcx,%rdx), %rbx
+	movl	%eax, %edi
 	call	_Z10hexToAsciic
-	addl	$16, %esp
-	movb	%al, (%ebx)
-	movzwl	-10(%ebp), %eax
+	movb	%al, (%rbx)
+	movzwl	-18(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -10(%ebp)
-.L31:
-	movswl	-10(%ebp), %eax
-	cmpl	%eax, -20(%ebp)
-	jg	.L32
-	movl	-20(%ebp), %eax
-	addl	%eax, %eax
-	subl	$1, %eax
-	movl	%eax, -16(%ebp)
-	jmp	.L33
-.L34:
-	movl	-16(%ebp), %edx
-	movl	-24(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	(%eax), %eax
-	movsbl	%al, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z5printc
-	addl	$16, %esp
-	subl	$1, -16(%ebp)
+	movw	%ax, -18(%rbp)
+	jmp	.L34
 .L33:
-	cmpl	$0, -16(%ebp)
-	jns	.L34
-	subl	$12, %esp
-	pushl	-24(%ebp)
+	movq	-40(%rbp), %rax
+	addq	%rax, %rax
+	subq	$1, %rax
+	movq	%rax, -32(%rbp)
+.L36:
+	cmpq	$0, -32(%rbp)
+	js	.L35
+	movq	-32(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	(%rax), %eax
+	movsbl	%al, %eax
+	movl	%eax, %edi
+	call	_Z5printc
+	subq	$1, -32(%rbp)
+	jmp	.L36
+.L35:
+	movq	-48(%rbp), %rax
+	movq	%rax, %rdi
 	call	_Z4freePv
-	addl	$16, %esp
 	nop
-	movl	-4(%ebp), %ebx
-	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	addq	$56, %rsp
+	popq	%rbx
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE7:
@@ -632,31 +590,29 @@ _Z9printHexVl:
 _Z10hexToAsciic:
 .LFB8:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$4, %esp
-	movl	8(%ebp), %eax
-	movb	%al, -4(%ebp)
-	cmpb	$9, -4(%ebp)
-	jg	.L36
-	movzbl	-4(%ebp), %eax
-	addl	$48, %eax
-	jmp	.L37
-.L36:
-	cmpb	$15, -4(%ebp)
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	cmpb	$9, -4(%rbp)
 	jg	.L38
-	movzbl	-4(%ebp), %eax
-	addl	$55, %eax
-	jmp	.L37
+	movzbl	-4(%rbp), %eax
+	addl	$48, %eax
+	jmp	.L39
 .L38:
+	cmpb	$15, -4(%rbp)
+	jg	.L40
+	movzbl	-4(%rbp), %eax
+	addl	$55, %eax
+	jmp	.L39
+.L40:
 	movl	$0, %eax
-.L37:
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+.L39:
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE8:
@@ -666,34 +622,35 @@ _Z10hexToAsciic:
 _Z3lenl:
 .LFB9:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
-	movl	$0, -4(%ebp)
-	cmpl	$0, 8(%ebp)
-	jns	.L41
-	negl	8(%ebp)
-.L41:
-	movl	8(%ebp), %ecx
-	movl	$1717986919, %edx
-	movl	%ecx, %eax
-	imull	%edx
-	movl	%edx, %eax
-	sarl	$2, %eax
-	sarl	$31, %ecx
-	movl	%ecx, %edx
-	subl	%edx, %eax
-	movl	%eax, 8(%ebp)
-	addl	$1, -4(%ebp)
-	cmpl	$0, 8(%ebp)
-	jg	.L41
-	movl	-4(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -24(%rbp)
+	movq	$0, -8(%rbp)
+	cmpq	$0, -24(%rbp)
+	jns	.L44
+	negq	-24(%rbp)
+.L44:
+	movq	-24(%rbp), %rcx
+	movabsq	$7378697629483820647, %rdx
+	movq	%rcx, %rax
+	imulq	%rdx
+	sarq	$2, %rdx
+	movq	%rcx, %rax
+	sarq	$63, %rax
+	subq	%rax, %rdx
+	movq	%rdx, %rax
+	movq	%rax, -24(%rbp)
+	addq	$1, -8(%rbp)
+	cmpq	$0, -24(%rbp)
+	jle	.L43
+	jmp	.L44
+.L43:
+	movq	-8(%rbp), %rax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE9:
@@ -703,30 +660,31 @@ _Z3lenl:
 _Z4lenHl:
 .LFB10:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
-	movl	$0, -4(%ebp)
-	cmpl	$0, 8(%ebp)
-	jns	.L45
-	negl	8(%ebp)
-.L45:
-	movl	8(%ebp), %eax
-	leal	255(%eax), %edx
-	testl	%eax, %eax
-	cmovs	%edx, %eax
-	sarl	$8, %eax
-	movl	%eax, 8(%ebp)
-	addl	$1, -4(%ebp)
-	cmpl	$0, 8(%ebp)
-	jg	.L45
-	movl	-4(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -24(%rbp)
+	movq	$0, -8(%rbp)
+	cmpq	$0, -24(%rbp)
+	jns	.L49
+	negq	-24(%rbp)
+.L49:
+	movq	-24(%rbp), %rax
+	leaq	255(%rax), %rdx
+	testq	%rax, %rax
+	cmovs	%rdx, %rax
+	sarq	$8, %rax
+	movq	%rax, -24(%rbp)
+	addq	$1, -8(%rbp)
+	cmpq	$0, -24(%rbp)
+	jle	.L48
+	jmp	.L49
+.L48:
+	movq	-8(%rbp), %rax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE10:
@@ -736,121 +694,126 @@ _Z4lenHl:
 _Z12scrollScreenv:
 .LFB11:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$20, %esp
-	.cfi_offset 3, -12
-	movl	$0, -12(%ebp)
-	jmp	.L48
-.L51:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L49
-	movl	screenRam, %eax
-	movzwl	width, %edx
-	movzwl	%dx, %edx
-	imull	$14, %edx, %ecx
-	movl	-12(%ebp), %edx
-	addl	%ecx, %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	movl	screenRam, %edx
-	movl	-12(%ebp), %ecx
-	sall	$2, %ecx
-	addl	%ecx, %edx
-	movl	(%eax), %eax
-	movl	%eax, (%edx)
-	jmp	.L50
-.L49:
-	movl	screenRam, %ecx
-	movl	-12(%ebp), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%eax, %edx
-	movzwl	width, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	$0, -4(%rbp)
+.L55:
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	$42, %eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %edx
-	movl	screenRam, %ebx
-	movl	-12(%ebp), %ecx
-	movl	%ecx, %eax
-	addl	%eax, %eax
-	addl	%ecx, %eax
-	addl	%ebx, %eax
-	movzwl	(%edx), %ecx
-	movw	%cx, (%eax)
-	movzbl	2(%edx), %edx
-	movb	%dl, 2(%eax)
-.L50:
-	addl	$1, -12(%ebp)
-.L48:
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	movzwl	height, %edx
+	movzwl	height(%rip), %edx
 	movzwl	%dx, %edx
 	subl	$1, %edx
 	imull	%edx, %eax
-	cmpl	%eax, -12(%ebp)
-	jl	.L51
-	movzwl	width, %eax
+	cmpl	%eax, -4(%rbp)
+	jge	.L52
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L53
+	movq	screenRam(%rip), %rcx
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rsi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %edx
+	movq	%rdx, %rax
+	salq	$3, %rax
+	subq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rsi, %rax
+	salq	$2, %rax
+	addq	%rcx, %rax
+	movq	screenRam(%rip), %rdx
+	movl	-4(%rbp), %ecx
+	movslq	%ecx, %rcx
+	salq	$2, %rcx
+	addq	%rcx, %rdx
+	movl	(%rax), %eax
+	movl	%eax, (%rdx)
+	jmp	.L54
+.L53:
+	movq	screenRam(%rip), %rcx
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	leaq	(%rax,%rdx), %rsi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %edx
+	movq	%rdx, %rax
+	salq	$2, %rax
+	addq	%rdx, %rax
+	salq	$2, %rax
+	addq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rsi, %rax
+	leaq	(%rcx,%rax), %rdx
+	movq	screenRam(%rip), %rsi
+	movl	-4(%rbp), %eax
+	movslq	%eax, %rcx
+	movq	%rcx, %rax
+	addq	%rax, %rax
+	addq	%rcx, %rax
+	addq	%rsi, %rax
+	movzwl	(%rdx), %ecx
+	movw	%cx, (%rax)
+	movzbl	2(%rdx), %edx
+	movb	%dl, 2(%rax)
+.L54:
+	addl	$1, -4(%rbp)
+	jmp	.L55
+.L52:
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	movzwl	height, %edx
+	movzwl	height(%rip), %edx
 	movzwl	%dx, %edx
 	subl	$14, %edx
 	imull	%edx, %eax
-	movl	%eax, -16(%ebp)
-	jmp	.L52
-.L55:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L53
-	movl	screenRam, %eax
-	movl	-16(%ebp), %edx
-	sall	$2, %edx
-	addl	%edx, %eax
-	subl	$8, %esp
-	pushl	$backColor
-	pushl	%eax
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L54
-.L53:
-	movl	screenRam, %ecx
-	movl	-16(%ebp), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	backColor, %edx
-	movw	%dx, (%eax)
-	movzbl	backColor+2, %edx
-	movb	%dl, 2(%eax)
-.L54:
-	addl	$1, -16(%ebp)
-.L52:
-	movzwl	width, %eax
+	movl	%eax, -8(%rbp)
+.L59:
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %edx
-	movzwl	height, %eax
+	movzwl	height(%rip), %eax
 	movzwl	%ax, %eax
 	imull	%edx, %eax
-	cmpl	%eax, -16(%ebp)
-	jl	.L55
-	subl	$8, %esp
-	pushl	$41
-	pushl	$0
+	cmpl	%eax, -8(%rbp)
+	jge	.L56
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L57
+	movq	screenRam(%rip), %rax
+	movl	-8(%rbp), %edx
+	movslq	%edx, %rdx
+	salq	$2, %rdx
+	addq	%rdx, %rax
+	movl	$backColor, %esi
+	movq	%rax, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L58
+.L57:
+	movq	screenRam(%rip), %rcx
+	movl	-8(%rbp), %eax
+	movslq	%eax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	backColor(%rip), %edx
+	movw	%dx, (%rax)
+	movzbl	backColor+2(%rip), %edx
+	movb	%dl, 2(%rax)
+.L58:
+	addl	$1, -8(%rbp)
+	jmp	.L59
+.L56:
+	movl	$41, %esi
+	movl	$0, %edi
 	call	_Z7moveCsrii
-	addl	$16, %esp
 	nop
-	movl	-4(%ebp), %ebx
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE11:
@@ -860,59 +823,20 @@ _Z12scrollScreenv:
 _Z5printc:
 .LFB12:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebx
-	subl	$28, %esp
-	.cfi_offset 7, -12
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	.cfi_offset 3, -20
-	movl	8(%ebp), %eax
-	movb	%al, -28(%ebp)
-	movsbl	-28(%ebp), %eax
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	movsbl	-4(%rbp), %eax
 	cmpl	$8, %eax
-	je	.L57
+	je	.L62
 	cmpl	$10, %eax
-	jne	.L58
-	movl	currentCursorLoc, %eax
-	cmpl	$3279, %eax
-	jle	.L59
-	call	_Z12scrollScreenv
-	jmp	.L61
-.L59:
-	movl	currentCursorLoc, %ecx
-	movl	$1717986919, %edx
-	movl	%ecx, %eax
-	imull	%edx
-	sarl	$5, %edx
-	movl	%ecx, %eax
-	sarl	$31, %eax
-	subl	%eax, %edx
-	leal	1(%edx), %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$0
-	call	_Z7moveCsrii
-	addl	$16, %esp
-	jmp	.L61
-.L57:
-	movl	currentCursorLoc, %eax
-	testl	%eax, %eax
-	jle	.L63
-	call	_Z6csrDecv
-	subl	$12, %esp
-	pushl	$32
-	call	_Z5printc
-	addl	$16, %esp
-	call	_Z6csrDecv
-	jmp	.L63
-.L58:
-	movl	currentCursorLoc, %ecx
+	jne	.L68
+	movl	currentCursorLoc(%rip), %ecx
 	movl	$1717986919, %edx
 	movl	%ecx, %eax
 	imull	%edx
@@ -921,11 +845,52 @@ _Z5printc:
 	sarl	$31, %eax
 	subl	%eax, %edx
 	movl	%edx, %eax
+	addl	$1, %eax
+	cmpl	$41, %eax
+	jle	.L64
+	call	_Z12scrollScreenv
+	jmp	.L66
+.L64:
+	movl	currentCursorLoc(%rip), %ecx
+	movl	$1717986919, %edx
+	movl	%ecx, %eax
+	imull	%edx
+	sarl	$5, %edx
+	movl	%ecx, %eax
+	sarl	$31, %eax
+	subl	%eax, %edx
+	movl	%edx, %eax
+	addl	$1, %eax
+	movl	%eax, %esi
+	movl	$0, %edi
+	call	_Z7moveCsrii
+	jmp	.L66
+.L62:
+	movl	currentCursorLoc(%rip), %eax
+	testl	%eax, %eax
+	jle	.L69
+	call	_Z6csrDecv
+	movl	$32, %edi
+	call	_Z5printc
+	call	_Z6csrDecv
+	jmp	.L69
+.L68:
+	movl	currentCursorLoc(%rip), %ecx
+	movl	$1717986919, %edx
+	movl	%ecx, %eax
+	imull	%edx
+	sarl	$5, %edx
+	movl	%ecx, %eax
+	sarl	$31, %eax
+	subl	%eax, %edx
+	movl	%edx, %eax
+	movl	%eax, %edx
+	movl	%edx, %eax
 	sall	$3, %eax
 	subl	%edx, %eax
 	addl	%eax, %eax
-	movswl	%ax, %ebx
-	movl	currentCursorLoc, %ecx
+	movswl	%ax, %edi
+	movl	currentCursorLoc(%rip), %ecx
 	movl	$1717986919, %edx
 	movl	%ecx, %eax
 	imull	%edx
@@ -942,42 +907,35 @@ _Z5printc:
 	movl	%edx, %eax
 	sall	$3, %eax
 	addl	%edx, %eax
-	movswl	%ax, %ecx
-	movsbl	-28(%ebp), %edi
-	subl	$12, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	backColor, %esi
-	movw	%si, (%eax)
-	movzbl	backColor+2, %edx
-	movb	%dl, 2(%eax)
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	foreColor, %esi
-	movw	%si, (%eax)
-	movzbl	foreColor+2, %edx
-	movb	%dl, 2(%eax)
-	pushl	%ebx
-	pushl	%ecx
-	pushl	%edi
+	movswl	%ax, %esi
+	movsbl	-4(%rbp), %eax
+	movzbl	backColor(%rip), %edx
+	movzbl	backColor+1(%rip), %ecx
+	salq	$8, %rcx
+	orq	%rdx, %rcx
+	movzbl	backColor+2(%rip), %edx
+	salq	$16, %rdx
+	orq	%rcx, %rdx
+	movq	%rdx, %r8
+	movzbl	foreColor(%rip), %edx
+	movzbl	foreColor+1(%rip), %ecx
+	salq	$8, %rcx
+	orq	%rdx, %rcx
+	movzbl	foreColor+2(%rip), %edx
+	salq	$16, %rdx
+	orq	%rcx, %rdx
+	movq	%rdx, %rcx
+	movl	%edi, %edx
+	movl	%eax, %edi
 	call	_Z8drawCharcss5ColorS_
-	addl	$32, %esp
 	call	_Z6csrIncv
-	jmp	.L61
-.L63:
+	jmp	.L66
+.L69:
 	nop
-.L61:
+.L66:
 	nop
-	leal	-12(%ebp), %esp
-	popl	%ebx
-	.cfi_restore 3
-	popl	%esi
-	.cfi_restore 6
-	popl	%edi
-	.cfi_restore 7
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	leave
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE12:
@@ -987,50 +945,43 @@ _Z5printc:
 _Z7moveCsrii:
 .LFB13:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	12(%ebp), %edx
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	movl	%edi, -4(%rbp)
+	movl	%esi, -8(%rbp)
+	movl	-8(%rbp), %edx
 	movl	%edx, %eax
 	sall	$2, %eax
 	addl	%edx, %eax
 	sall	$4, %eax
 	movl	%eax, %edx
-	movl	8(%ebp), %eax
+	movl	-4(%rbp), %eax
 	addl	%edx, %eax
-	movl	%eax, currentCursorLoc
-	subl	$8, %esp
-	pushl	$15
-	pushl	$980
+	movl	%eax, currentCursorLoc(%rip)
+	movl	$15, %esi
+	movl	$980, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	currentCursorLoc, %eax
+	movl	currentCursorLoc(%rip), %eax
 	movzbl	%al, %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$981
+	movl	%eax, %esi
+	movl	$981, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	subl	$8, %esp
-	pushl	$14
-	pushl	$980
+	movl	$14, %esi
+	movl	$980, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	currentCursorLoc, %eax
+	movl	currentCursorLoc(%rip), %eax
 	sarl	$8, %eax
 	movzbl	%al, %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$981
+	movl	%eax, %esi
+	movl	$981, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	nop
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE13:
@@ -1040,49 +991,39 @@ _Z7moveCsrii:
 _Z6csrIncv:
 .LFB14:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	currentCursorLoc, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	currentCursorLoc(%rip), %eax
 	addl	$1, %eax
-	movl	%eax, currentCursorLoc
-	movl	currentCursorLoc, %eax
+	movl	%eax, currentCursorLoc(%rip)
+	movl	currentCursorLoc(%rip), %eax
 	cmpl	$3359, %eax
-	jle	.L66
+	jle	.L72
 	call	_Z12scrollScreenv
-.L66:
-	subl	$8, %esp
-	pushl	$15
-	pushl	$980
+.L72:
+	movl	$15, %esi
+	movl	$980, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	currentCursorLoc, %eax
+	movl	currentCursorLoc(%rip), %eax
 	movzbl	%al, %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$981
+	movl	%eax, %esi
+	movl	$981, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	subl	$8, %esp
-	pushl	$14
-	pushl	$980
+	movl	$14, %esi
+	movl	$980, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	currentCursorLoc, %eax
+	movl	currentCursorLoc(%rip), %eax
 	sarl	$8, %eax
 	movzbl	%al, %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$981
+	movl	%eax, %esi
+	movl	$981, %edi
 	call	_Z4outbth
-	addl	$16, %esp
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE14:
@@ -1092,48 +1033,38 @@ _Z6csrIncv:
 _Z6csrDecv:
 .LFB15:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movl	currentCursorLoc, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	currentCursorLoc(%rip), %eax
 	testl	%eax, %eax
-	jle	.L69
-	movl	currentCursorLoc, %eax
+	jle	.L75
+	movl	currentCursorLoc(%rip), %eax
 	subl	$1, %eax
-	movl	%eax, currentCursorLoc
-	subl	$8, %esp
-	pushl	$15
-	pushl	$980
+	movl	%eax, currentCursorLoc(%rip)
+	movl	$15, %esi
+	movl	$980, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	currentCursorLoc, %eax
+	movl	currentCursorLoc(%rip), %eax
 	movzbl	%al, %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$981
+	movl	%eax, %esi
+	movl	$981, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	subl	$8, %esp
-	pushl	$14
-	pushl	$980
+	movl	$14, %esi
+	movl	$980, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-	movl	currentCursorLoc, %eax
+	movl	currentCursorLoc(%rip), %eax
 	sarl	$8, %eax
 	movzbl	%al, %eax
-	subl	$8, %esp
-	pushl	%eax
-	pushl	$981
+	movl	%eax, %esi
+	movl	$981, %edi
 	call	_Z4outbth
-	addl	$16, %esp
-.L69:
+.L75:
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE15:
@@ -1143,19 +1074,19 @@ _Z6csrDecv:
 _Z12setForeColor5Color:
 .LFB16:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movzwl	8(%ebp), %eax
-	movw	%ax, foreColor
-	movzbl	10(%ebp), %eax
-	movb	%al, foreColor+2
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -8(%rbp)
+	movzwl	-8(%rbp), %eax
+	movw	%ax, foreColor(%rip)
+	movzbl	-6(%rbp), %eax
+	movb	%al, foreColor+2(%rip)
 	nop
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE16:
@@ -1165,19 +1096,19 @@ _Z12setForeColor5Color:
 _Z12setBackColor5Color:
 .LFB17:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	movzwl	8(%ebp), %eax
-	movw	%ax, backColor
-	movzbl	10(%ebp), %eax
-	movb	%al, backColor+2
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -8(%rbp)
+	movzwl	-8(%rbp), %eax
+	movw	%ax, backColor(%rip)
+	movzbl	-6(%rbp), %eax
+	movb	%al, backColor+2(%rip)
 	nop
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE17:
@@ -1187,2190 +1118,1491 @@ _Z12setBackColor5Color:
 _Z8drawLinessss5Color:
 .LFB18:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$116, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %ebx
-	movl	12(%ebp), %ecx
-	movl	16(%ebp), %edx
-	movl	20(%ebp), %eax
-	movw	%bx, -76(%ebp)
-	movw	%cx, -80(%ebp)
-	movw	%dx, -84(%ebp)
-	movw	%ax, -88(%ebp)
-	movzwl	-76(%ebp), %eax
-	cmpw	-84(%ebp), %ax
-	jle	.L73
-	filds	-84(%ebp)
-	fstps	-12(%ebp)
-	jmp	.L74
-.L87:
-	filds	-80(%ebp)
-	movswl	-80(%ebp), %edx
-	movswl	-88(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	pushq	%rbx
+	subq	$120, %rsp
+	.cfi_offset 3, -24
+	movl	%ecx, %eax
+	movq	%r8, -104(%rbp)
+	movl	%edi, %ecx
+	movw	%cx, -84(%rbp)
+	movl	%esi, %ecx
+	movw	%cx, -88(%rbp)
+	movw	%dx, -92(%rbp)
+	movw	%ax, -96(%rbp)
+	movzwl	-84(%rbp), %eax
+	cmpw	-92(%rbp), %ax
+	jle	.L79
+	movswl	-92(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	%xmm0, -20(%rbp)
+.L96:
+	movswl	-84(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	ucomiss	-20(%rbp), %xmm0
+	jb	.L80
+	movswl	-88(%rbp), %eax
+	cvtsi2ss	%eax, %xmm1
+	movswl	-88(%rbp), %edx
+	movswl	-96(%rbp), %eax
 	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	movswl	-76(%ebp), %edx
-	movswl	-84(%ebp), %eax
+	movl	%edx, %eax
+	cvtsi2ss	%eax, %xmm0
+	movswl	-84(%rbp), %edx
+	movswl	-92(%rbp), %eax
 	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	fdivrp	%st, %st(1)
-	filds	-76(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fmulp	%st, %st(1)
-	faddp	%st, %st(1)
-	fstps	-16(%ebp)
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L141
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L77
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-64(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-64(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L78
-.L77:
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
 	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-.L78:
-	movzbl	bpp, %eax
+	cvtsi2ss	%eax, %xmm2
+	divss	%xmm2, %xmm0
+	movaps	%xmm0, %xmm2
+	movswl	-84(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm3
+	subss	%xmm0, %xmm3
+	movaps	%xmm3, %xmm0
+	mulss	%xmm2, %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -24(%rbp)
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm1, %xmm0
+	jbe	.L159
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L79
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	leal	-61(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	jne	.L84
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-72(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	1(%eax), %ecx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ecx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-61(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-72(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L80
-.L79:
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	1(%eax), %edx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L80
-.L141:
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L142
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L83
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	leal	-58(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-58(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L84
-.L83:
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
+	jmp	.L85
 .L84:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L85
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-55(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	-1(%eax), %ecx
-	movzwl	width, %eax
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ecx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-55(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L80
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
 .L85:
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	-1(%eax), %edx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L80
-.L142:
-	movzbl	bpp, %eax
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
 	jne	.L86
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-69(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	leal	1(%rdx), %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-69(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L80
-.L86:
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L80:
-	flds	-12(%ebp)
-	fld1
-	faddp	%st, %st(1)
-	fstps	-12(%ebp)
-.L74:
-	filds	-76(%ebp)
-	flds	-12(%ebp)
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jnb	.L87
 	jmp	.L88
-.L73:
-	movzwl	-76(%ebp), %eax
-	cmpw	-84(%ebp), %ax
-	jge	.L88
-	filds	-76(%ebp)
-	fstps	-12(%ebp)
-	jmp	.L89
-.L102:
-	filds	-80(%ebp)
-	movswl	-80(%ebp), %edx
-	movswl	-88(%ebp), %eax
-	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	movswl	-76(%ebp), %edx
-	movswl	-84(%ebp), %eax
-	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	fdivrp	%st, %st(1)
-	filds	-76(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fmulp	%st, %st(1)
-	faddp	%st, %st(1)
-	fstps	-16(%ebp)
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L143
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L92
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-52(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
+.L86:
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	leal	1(%rax), %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-52(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L88
+.L159:
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm0, %xmm1
+	jbe	.L160
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L91
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-66(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-66(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L93
+	jmp	.L92
+.L91:
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
 .L92:
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L93
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-63(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	leal	-1(%rdx), %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-63(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L88
 .L93:
-	movzbl	bpp, %eax
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	leal	-1(%rax), %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L88
+.L160:
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L94
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	leal	-49(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	1(%eax), %ecx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ecx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-49(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	jne	.L95
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-104(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L95
-.L94:
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	1(%eax), %edx
-	movzwl	width, %eax
+	jmp	.L88
+.L95:
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-104(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-102(%rbp), %edx
+	movb	%dl, 2(%rax)
+.L88:
+	movss	-20(%rbp), %xmm1
+	movss	.LC3(%rip), %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -20(%rbp)
+	jmp	.L96
+.L79:
+	movzwl	-84(%rbp), %eax
+	cmpw	-92(%rbp), %ax
+	jge	.L80
+	movswl	-84(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	%xmm0, -20(%rbp)
+.L112:
+	movswl	-92(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	ucomiss	-20(%rbp), %xmm0
+	jb	.L80
+	movswl	-88(%rbp), %eax
+	cvtsi2ss	%eax, %xmm1
+	movswl	-88(%rbp), %edx
+	movswl	-96(%rbp), %eax
+	subl	%eax, %edx
 	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L95
-.L143:
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L144
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L98
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	leal	-46(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-46(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L99
-.L98:
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
+	cvtsi2ss	%eax, %xmm0
+	movswl	-84(%rbp), %edx
+	movswl	-92(%rbp), %eax
+	subl	%eax, %edx
 	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-.L99:
-	movzbl	bpp, %eax
+	cvtsi2ss	%eax, %xmm2
+	divss	%xmm2, %xmm0
+	movaps	%xmm0, %xmm2
+	movswl	-84(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm3
+	subss	%xmm0, %xmm3
+	movaps	%xmm3, %xmm0
+	mulss	%xmm2, %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -24(%rbp)
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm1, %xmm0
+	jbe	.L161
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
 	jne	.L100
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-43(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-60(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	-1(%eax), %ecx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ecx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-43(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-60(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L95
+	jmp	.L101
 .L100:
-	flds	-16(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ebx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	leal	-1(%eax), %edx
-	movzwl	width, %eax
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L95
-.L144:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L101
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L95
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
 .L101:
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L95:
-	flds	-12(%ebp)
-	fld1
-	faddp	%st, %st(1)
-	fstps	-12(%ebp)
-.L89:
-	filds	-84(%ebp)
-	flds	-12(%ebp)
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jnb	.L102
-.L88:
-	movzwl	-80(%ebp), %eax
-	cmpw	-88(%ebp), %ax
-	jle	.L103
-	filds	-88(%ebp)
-	fstps	-16(%ebp)
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L102
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-57(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	leal	1(%rdx), %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-57(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
 	jmp	.L104
-.L117:
-	filds	-80(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	movswl	-80(%ebp), %edx
-	movswl	-88(%ebp), %eax
-	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	fdivrp	%st, %st(1)
-	movswl	-76(%ebp), %edx
-	movswl	-84(%ebp), %eax
-	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	fmulp	%st, %st(1)
-	filds	-76(%ebp)
-	faddp	%st, %st(1)
-	fstps	-12(%ebp)
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L145
-	movzbl	bpp, %eax
+.L102:
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	leal	1(%rax), %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L104
+.L161:
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm0, %xmm1
+	jbe	.L162
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
 	jne	.L107
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-40(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-54(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-40(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-54(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
 	jmp	.L108
 .L107:
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
 .L108:
-	movzbl	bpp, %eax
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
 	jne	.L109
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	leal	-37(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-51(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	addl	$1, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-37(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	leal	-1(%rdx), %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-51(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L110
+	jmp	.L104
 .L109:
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	leal	-1(%rax), %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%edx, %eax
-	leal	1(%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
 	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L110
-.L145:
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L146
-	movzbl	bpp, %eax
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L104
+.L162:
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L113
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	leal	-34(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-34(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	jne	.L111
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-104(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L114
-.L113:
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
+	jmp	.L104
+.L111:
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-.L114:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L115
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-31(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	addl	$1073741823, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-31(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L110
-.L115:
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	subl	$3, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L110
-.L146:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L116
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L110
-.L116:
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L110:
-	flds	-16(%ebp)
-	fld1
-	faddp	%st, %st(1)
-	fstps	-16(%ebp)
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-104(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-102(%rbp), %edx
+	movb	%dl, 2(%rax)
 .L104:
-	filds	-80(%ebp)
-	flds	-16(%ebp)
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jnb	.L117
-	jmp	.L149
-.L103:
-	movzwl	-80(%ebp), %eax
-	cmpw	-88(%ebp), %ax
-	jge	.L149
-	filds	-80(%ebp)
-	fstps	-16(%ebp)
-	jmp	.L119
-.L132:
-	filds	-80(%ebp)
-	flds	-16(%ebp)
-	fsubp	%st, %st(1)
-	movswl	-80(%ebp), %edx
-	movswl	-88(%ebp), %eax
-	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	fdivrp	%st, %st(1)
-	movswl	-76(%ebp), %edx
-	movswl	-84(%ebp), %eax
-	subl	%eax, %edx
-	movl	%edx, -108(%ebp)
-	fildl	-108(%ebp)
-	fmulp	%st, %st(1)
-	filds	-76(%ebp)
-	faddp	%st, %st(1)
-	fstps	-12(%ebp)
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L147
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L122
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-28(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-28(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L123
-.L122:
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-.L123:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L124
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	leal	-25(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	addl	$1, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-25(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L125
-.L124:
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%edx, %eax
-	leal	1(%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L125
-.L147:
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fldz
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jbe	.L148
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L128
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	leal	-22(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-22(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L129
-.L128:
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-.L129:
-	movzbl	bpp, %eax
-	cmpb	$32, %al
-	jne	.L130
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	leal	-19(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	addl	$1073741823, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	-19(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L125
+	movss	-20(%rbp), %xmm1
+	movss	.LC3(%rip), %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -20(%rbp)
+	jmp	.L112
+.L80:
+	movzwl	-88(%rbp), %eax
+	cmpw	-96(%rbp), %ax
+	jle	.L113
+	movswl	-96(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	%xmm0, -24(%rbp)
 .L130:
-	flds	-12(%ebp)
-	fnstcw	-86(%ebp)
-	movzwl	-86(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -82(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	fildl	-108(%ebp)
-	flds	-12(%ebp)
-	fsubp	%st, %st(1)
-	fld1
-	fsubp	%st, %st(1)
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
+	movswl	-88(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	ucomiss	-24(%rbp), %xmm0
+	jnb	.L153
+	jmp	.L167
+.L153:
+	movswl	-88(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movswl	-88(%rbp), %edx
+	movswl	-96(%rbp), %eax
+	subl	%eax, %edx
 	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	subl	$3, %eax
-	leal	(%ecx,%eax), %ebx
-	leal	-104(%ebp), %edx
-	subl	$4, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %ecx
-	movw	%cx, (%eax)
-	movzbl	26(%ebp), %ecx
-	movb	%cl, 2(%eax)
-	leal	-4(%esp), %esp
-	fstps	(%esp)
-	pushl	%edx
-	call	_Z12antiAliasingf5Color
-	addl	$12, %esp
-	movzwl	-104(%ebp), %eax
-	movw	%ax, (%ebx)
-	movzbl	-102(%ebp), %eax
-	movb	%al, 2(%ebx)
-	jmp	.L125
-.L148:
-	movzbl	bpp, %eax
+	cvtsi2ss	%eax, %xmm1
+	divss	%xmm1, %xmm0
+	movaps	%xmm0, %xmm1
+	movswl	-84(%rbp), %edx
+	movswl	-92(%rbp), %eax
+	subl	%eax, %edx
+	movl	%edx, %eax
+	cvtsi2ss	%eax, %xmm0
+	mulss	%xmm0, %xmm1
+	movswl	-84(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -20(%rbp)
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm1, %xmm0
+	jbe	.L163
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L131
-	movl	screenRam, %edx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %ecx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	jne	.L118
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-48(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L125
-.L131:
-	movl	screenRam, %ecx
-	flds	-12(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %eax
-	movl	%eax, %edx
-	flds	-16(%ebp)
-	fldcw	-82(%ebp)
-	fistpl	-108(%ebp)
-	fldcw	-86(%ebp)
-	movl	-108(%ebp), %ebx
-	movzwl	width, %eax
+	jmp	.L119
+.L118:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L125:
-	flds	-16(%ebp)
-	fld1
-	faddp	%st, %st(1)
-	fstps	-16(%ebp)
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
 .L119:
-	filds	-88(%ebp)
-	flds	-16(%ebp)
-	fxch	%st(1)
-	fcomip	%st(1), %st
-	fstp	%st(0)
-	jnb	.L132
-.L149:
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L120
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-45(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	addq	$1, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-45(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L122
+.L120:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	1(%rax), %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L122
+.L163:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm0, %xmm1
+	jbe	.L164
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L125
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-42(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-42(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L126
+.L125:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+.L126:
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L127
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-39(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	subq	$4, %rdx
+	addq	%rax, %rdx
+	leaq	-39(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L122
+.L127:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	subq	$3, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L122
+.L164:
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L129
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-104(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L122
+.L129:
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-104(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-102(%rbp), %edx
+	movb	%dl, 2(%rax)
+.L122:
+	movss	-24(%rbp), %xmm1
+	movss	.LC3(%rip), %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -24(%rbp)
+	jmp	.L130
+.L113:
+	movzwl	-88(%rbp), %eax
+	cmpw	-96(%rbp), %ax
+	jge	.L167
+	movswl	-88(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	%xmm0, -24(%rbp)
+.L146:
+	movswl	-96(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	ucomiss	-24(%rbp), %xmm0
+	jnb	.L156
+	jmp	.L167
+.L156:
+	movswl	-88(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-24(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movswl	-88(%rbp), %edx
+	movswl	-96(%rbp), %eax
+	subl	%eax, %edx
+	movl	%edx, %eax
+	cvtsi2ss	%eax, %xmm1
+	divss	%xmm1, %xmm0
+	movaps	%xmm0, %xmm1
+	movswl	-84(%rbp), %edx
+	movswl	-92(%rbp), %eax
+	subl	%eax, %edx
+	movl	%edx, %eax
+	cvtsi2ss	%eax, %xmm0
+	mulss	%xmm0, %xmm1
+	movswl	-84(%rbp), %eax
+	cvtsi2ss	%eax, %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -20(%rbp)
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm1, %xmm0
+	jbe	.L165
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L134
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-36(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-36(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L135
+.L134:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+.L135:
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L136
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-33(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	addq	$1, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-33(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L138
+.L136:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rdx, %rax
+	leaq	1(%rax), %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L138
+.L165:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	pxor	%xmm1, %xmm1
+	ucomiss	%xmm0, %xmm1
+	jbe	.L166
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L141
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-30(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-30(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L142
+.L141:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+.L142:
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L143
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	leaq	-27(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	subq	$4, %rdx
+	addq	%rax, %rdx
+	leaq	-27(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L138
+.L143:
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	cvtsi2ss	%eax, %xmm0
+	movss	-20(%rbp), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movss	.LC3(%rip), %xmm1
+	subss	%xmm0, %xmm1
+	movaps	%xmm1, %xmm0
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm1
+	cvttss2si	%xmm1, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm1
+	cvttss2si	%xmm1, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	subq	$3, %rax
+	leaq	(%rcx,%rax), %rbx
+	leaq	-128(%rbp), %rax
+	movq	-104(%rbp), %rsi
+	movq	%rax, %rdi
+	call	_Z12antiAliasingf5Color
+	movzwl	-128(%rbp), %eax
+	movw	%ax, (%rbx)
+	movzbl	-126(%rbp), %eax
+	movb	%al, 2(%rbx)
+	jmp	.L138
+.L166:
+	movzbl	bpp(%rip), %eax
+	cmpb	$32, %al
+	jne	.L145
+	movq	screenRam(%rip), %rax
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %edx
+	movslq	%edx, %rcx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-104(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L138
+.L145:
+	movq	screenRam(%rip), %rcx
+	movss	-20(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movslq	%eax, %rdx
+	movss	-24(%rbp), %xmm0
+	cvttss2si	%xmm0, %esi
+	movzwl	width(%rip), %eax
+	movzwl	%ax, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-104(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-102(%rbp), %edx
+	movb	%dl, 2(%rax)
+.L138:
+	movss	-24(%rbp), %xmm1
+	movss	.LC3(%rip), %xmm0
+	addss	%xmm1, %xmm0
+	movss	%xmm0, -24(%rbp)
+	jmp	.L146
+.L167:
 	nop
-	movl	-4(%ebp), %ebx
-	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	addq	$120, %rsp
+	popq	%rbx
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE18:
@@ -3380,109 +2612,51 @@ _Z8drawLinessss5Color:
 _Z13drawRectanglessss5Color:
 .LFB19:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebx
-	subl	$44, %esp
-	.cfi_offset 7, -12
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	.cfi_offset 3, -20
-	movl	8(%ebp), %ebx
-	movl	12(%ebp), %ecx
-	movl	16(%ebp), %edx
-	movl	20(%ebp), %eax
-	movw	%bx, -28(%ebp)
-	movw	%cx, -32(%ebp)
-	movw	%dx, -36(%ebp)
-	movw	%ax, -40(%ebp)
-	movswl	-32(%ebp), %esi
-	movswl	-36(%ebp), %ebx
-	movswl	-32(%ebp), %ecx
-	movswl	-28(%ebp), %eax
-	movl	%eax, -44(%ebp)
-	subl	$12, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %edi
-	movw	%di, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-	pushl	%esi
-	pushl	%ebx
-	pushl	%ecx
-	pushl	-44(%ebp)
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$32, %rsp
+	movl	%ecx, %eax
+	movq	%r8, -24(%rbp)
+	movl	%edi, %ecx
+	movw	%cx, -4(%rbp)
+	movl	%esi, %ecx
+	movw	%cx, -8(%rbp)
+	movw	%dx, -12(%rbp)
+	movw	%ax, -16(%rbp)
+	movswl	-8(%rbp), %ecx
+	movswl	-12(%rbp), %edx
+	movswl	-8(%rbp), %esi
+	movswl	-4(%rbp), %eax
+	movq	-24(%rbp), %r8
+	movl	%eax, %edi
 	call	_Z8drawLinessss5Color
-	addl	$32, %esp
-	movswl	-40(%ebp), %esi
-	movswl	-28(%ebp), %ebx
-	movswl	-32(%ebp), %ecx
-	movswl	-28(%ebp), %eax
-	movl	%eax, -44(%ebp)
-	subl	$12, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %edi
-	movw	%di, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-	pushl	%esi
-	pushl	%ebx
-	pushl	%ecx
-	pushl	-44(%ebp)
+	movswl	-16(%rbp), %ecx
+	movswl	-4(%rbp), %edx
+	movswl	-8(%rbp), %esi
+	movswl	-4(%rbp), %eax
+	movq	-24(%rbp), %r8
+	movl	%eax, %edi
 	call	_Z8drawLinessss5Color
-	addl	$32, %esp
-	movswl	-40(%ebp), %esi
-	movswl	-36(%ebp), %ebx
-	movswl	-32(%ebp), %ecx
-	movswl	-36(%ebp), %eax
-	movl	%eax, -44(%ebp)
-	subl	$12, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %edi
-	movw	%di, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-	pushl	%esi
-	pushl	%ebx
-	pushl	%ecx
-	pushl	-44(%ebp)
+	movswl	-16(%rbp), %ecx
+	movswl	-12(%rbp), %edx
+	movswl	-8(%rbp), %esi
+	movswl	-12(%rbp), %eax
+	movq	-24(%rbp), %r8
+	movl	%eax, %edi
 	call	_Z8drawLinessss5Color
-	addl	$32, %esp
-	movswl	-40(%ebp), %esi
-	movswl	-36(%ebp), %ebx
-	movswl	-40(%ebp), %ecx
-	movswl	-28(%ebp), %eax
-	movl	%eax, -44(%ebp)
-	subl	$12, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	24(%ebp), %edi
-	movw	%di, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-	pushl	%esi
-	pushl	%ebx
-	pushl	%ecx
-	pushl	-44(%ebp)
+	movswl	-16(%rbp), %ecx
+	movswl	-12(%rbp), %edx
+	movswl	-16(%rbp), %esi
+	movswl	-4(%rbp), %eax
+	movq	-24(%rbp), %r8
+	movl	%eax, %edi
 	call	_Z8drawLinessss5Color
-	addl	$32, %esp
 	nop
-	leal	-12(%ebp), %esp
-	popl	%ebx
-	.cfi_restore 3
-	popl	%esi
-	.cfi_restore 6
-	popl	%edi
-	.cfi_restore 7
-	popl	%ebp
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	leave
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE19:
@@ -3492,107 +2666,101 @@ _Z13drawRectanglessss5Color:
 _Z13fillRectanglessss5Color:
 .LFB20:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$36, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %ebx
-	movl	12(%ebp), %ecx
-	movl	16(%ebp), %edx
-	movl	20(%ebp), %eax
-	movw	%bx, -28(%ebp)
-	movw	%cx, -32(%ebp)
-	movw	%dx, -36(%ebp)
-	movw	%ax, -40(%ebp)
-	movzwl	-32(%ebp), %eax
-	cmpw	-40(%ebp), %ax
-	jle	.L152
-	movzwl	-40(%ebp), %eax
-	movw	%ax, -14(%ebp)
-	movzwl	-32(%ebp), %eax
-	movw	%ax, -40(%ebp)
-	movzwl	-14(%ebp), %eax
-	movw	%ax, -32(%ebp)
-.L152:
-	movzwl	-28(%ebp), %eax
-	cmpw	-36(%ebp), %ax
-	jle	.L153
-	movzwl	-36(%ebp), %eax
-	movw	%ax, -16(%ebp)
-	movzwl	-28(%ebp), %eax
-	movw	%ax, -36(%ebp)
-	movzwl	-16(%ebp), %eax
-	movw	%ax, -28(%ebp)
-.L153:
-	movzwl	-32(%ebp), %eax
-	movw	%ax, -10(%ebp)
-	jmp	.L154
-.L159:
-	movzwl	-28(%ebp), %eax
-	movw	%ax, -12(%ebp)
-	jmp	.L155
-.L158:
-	movzbl	bpp, %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$48, %rsp
+	movl	%ecx, %eax
+	movq	%r8, -40(%rbp)
+	movl	%edi, %ecx
+	movw	%cx, -20(%rbp)
+	movl	%esi, %ecx
+	movw	%cx, -24(%rbp)
+	movw	%dx, -28(%rbp)
+	movw	%ax, -32(%rbp)
+	movzwl	-24(%rbp), %eax
+	cmpw	-32(%rbp), %ax
+	jle	.L170
+	movzwl	-32(%rbp), %eax
+	movw	%ax, -6(%rbp)
+	movzwl	-24(%rbp), %eax
+	movw	%ax, -32(%rbp)
+	movzwl	-6(%rbp), %eax
+	movw	%ax, -24(%rbp)
+.L170:
+	movzwl	-20(%rbp), %eax
+	cmpw	-28(%rbp), %ax
+	jle	.L171
+	movzwl	-28(%rbp), %eax
+	movw	%ax, -8(%rbp)
+	movzwl	-20(%rbp), %eax
+	movw	%ax, -28(%rbp)
+	movzwl	-8(%rbp), %eax
+	movw	%ax, -20(%rbp)
+.L171:
+	movzwl	-24(%rbp), %eax
+	movw	%ax, -2(%rbp)
+.L177:
+	movzwl	-2(%rbp), %eax
+	cmpw	-32(%rbp), %ax
+	jg	.L178
+	movzwl	-20(%rbp), %eax
+	movw	%ax, -4(%rbp)
+.L176:
+	movzwl	-4(%rbp), %eax
+	cmpw	-28(%rbp), %ax
+	jg	.L173
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L156
-	movl	screenRam, %ecx
-	movswl	-12(%ebp), %ebx
-	movswl	-10(%ebp), %edx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%edx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	leal	(%ecx,%eax), %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	jne	.L174
+	movq	screenRam(%rip), %rax
+	movswq	-4(%rbp), %rcx
+	movswl	-2(%rbp), %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L157
-.L156:
-	movl	screenRam, %ecx
-	movswl	-12(%ebp), %ebx
-	movswl	-10(%ebp), %edx
-	movzwl	width, %eax
+	jmp	.L175
+.L174:
+	movq	screenRam(%rip), %rcx
+	movswq	-4(%rbp), %rdx
+	movswl	-2(%rbp), %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L157:
-	movzwl	-12(%ebp), %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-40(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-38(%rbp), %edx
+	movb	%dl, 2(%rax)
+.L175:
+	movzwl	-4(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -12(%ebp)
-.L155:
-	movzwl	-12(%ebp), %eax
-	cmpw	-36(%ebp), %ax
-	jle	.L158
-	movzwl	-10(%ebp), %eax
+	movw	%ax, -4(%rbp)
+	jmp	.L176
+.L173:
+	movzwl	-2(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -10(%ebp)
-.L154:
-	movzwl	-10(%ebp), %eax
-	cmpw	-40(%ebp), %ax
-	jle	.L159
+	movw	%ax, -2(%rbp)
+	jmp	.L177
+.L178:
 	nop
-	nop
-	movl	-4(%ebp), %ebx
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE20:
@@ -3602,56 +2770,41 @@ _Z13fillRectanglessss5Color:
 _Z12antiAliasingf5Color:
 .LFB21:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	movzbl	18(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movq	%rdi, -8(%rbp)
+	movss	%xmm0, -12(%rbp)
+	movq	%rsi, -24(%rbp)
+	movzbl	-22(%rbp), %eax
 	movzbl	%al, %eax
-	movl	%eax, -8(%ebp)
-	fildl	-8(%ebp)
-	fmuls	12(%ebp)
-	fnstcw	-2(%ebp)
-	movzwl	-2(%ebp), %eax
-	orb	$12, %ah
-	movw	%ax, -4(%ebp)
-	fldcw	-4(%ebp)
-	fistpl	-8(%ebp)
-	fldcw	-2(%ebp)
-	movzbl	-8(%ebp), %eax
-	movb	%al, 18(%ebp)
-	movzbl	17(%ebp), %eax
+	cvtsi2ss	%eax, %xmm0
+	mulss	-12(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movb	%al, -22(%rbp)
+	movzbl	-23(%rbp), %eax
 	movzbl	%al, %eax
-	movl	%eax, -8(%ebp)
-	fildl	-8(%ebp)
-	fmuls	12(%ebp)
-	fldcw	-4(%ebp)
-	fistpl	-8(%ebp)
-	fldcw	-2(%ebp)
-	movzbl	-8(%ebp), %eax
-	movb	%al, 17(%ebp)
-	movzbl	16(%ebp), %eax
+	cvtsi2ss	%eax, %xmm0
+	mulss	-12(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movb	%al, -23(%rbp)
+	movzbl	-24(%rbp), %eax
 	movzbl	%al, %eax
-	movl	%eax, -8(%ebp)
-	fildl	-8(%ebp)
-	fmuls	12(%ebp)
-	fldcw	-4(%ebp)
-	fistpl	-8(%ebp)
-	fldcw	-2(%ebp)
-	movzbl	-8(%ebp), %eax
-	movb	%al, 16(%ebp)
-	movl	8(%ebp), %eax
-	movzwl	16(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	18(%ebp), %edx
-	movb	%dl, 2(%eax)
-	movl	8(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
-	ret	$4
+	cvtsi2ss	%eax, %xmm0
+	mulss	-12(%rbp), %xmm0
+	cvttss2si	%xmm0, %eax
+	movb	%al, -24(%rbp)
+	movq	-8(%rbp), %rax
+	movzwl	-24(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-22(%rbp), %edx
+	movb	%dl, 2(%rax)
+	movq	-8(%rbp), %rax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
 	.cfi_endproc
 .LFE21:
 	.size	_Z12antiAliasingf5Color, .-_Z12antiAliasingf5Color
@@ -3660,193 +2813,196 @@ _Z12antiAliasingf5Color:
 _Z8drawCharcss5ColorS_:
 .LFB22:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	pushl	%ebx
-	subl	$36, %esp
-	.cfi_offset 3, -12
-	movl	8(%ebp), %ecx
-	movl	12(%ebp), %edx
-	movl	16(%ebp), %eax
-	movb	%cl, -28(%ebp)
-	movw	%dx, -32(%ebp)
-	movw	%ax, -36(%ebp)
-	movl	$0, -12(%ebp)
-	jmp	.L163
-.L172:
-	movl	$0, -16(%ebp)
-	jmp	.L164
-.L169:
-	movsbl	-28(%ebp), %eax
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$48, %rsp
+	movl	%edx, %eax
+	movq	%rcx, -40(%rbp)
+	movq	%r8, -48(%rbp)
+	movl	%edi, %edx
+	movb	%dl, -20(%rbp)
+	movl	%esi, %edx
+	movw	%dx, -24(%rbp)
+	movw	%ax, -28(%rbp)
+	movl	$0, -4(%rbp)
+.L192:
+	cmpl	$13, -4(%rbp)
+	jg	.L193
+	movl	$0, -8(%rbp)
+.L189:
+	cmpl	$7, -8(%rbp)
+	jg	.L183
+	movsbl	-20(%rbp), %eax
 	imull	$14, %eax, %eax
-	leal	4099(%eax), %edx
-	movl	-12(%ebp), %eax
+	leal	4099(%rax), %edx
+	movl	-4(%rbp), %eax
 	addl	%edx, %eax
-	movzbl	(%eax), %eax
+	cltq
+	movzbl	(%rax), %eax
 	movsbl	%al, %edx
-	movl	-16(%ebp), %eax
-	movl	$128, %ebx
+	movl	-8(%rbp), %eax
+	movl	$128, %esi
 	movl	%eax, %ecx
-	sarl	%cl, %ebx
-	movl	%ebx, %eax
+	sarl	%cl, %esi
+	movl	%esi, %eax
 	andl	%edx, %eax
 	testl	%eax, %eax
-	je	.L165
-	movzbl	bpp, %eax
+	je	.L184
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L166
-	movl	screenRam, %edx
-	movswl	-32(%ebp), %ecx
-	movl	-16(%ebp), %eax
-	addl	%ecx, %eax
-	movl	%eax, %ebx
-	movswl	-36(%ebp), %ecx
-	movl	-12(%ebp), %eax
-	addl	%eax, %ecx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ecx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	20(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	jne	.L185
+	movq	screenRam(%rip), %rax
+	movswl	-24(%rbp), %ecx
+	movl	-8(%rbp), %edx
+	addl	%ecx, %edx
+	movslq	%edx, %rcx
+	movswl	-28(%rbp), %esi
+	movl	-4(%rbp), %edx
+	addl	%edx, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L167
-.L166:
-	movl	screenRam, %ecx
-	movswl	-32(%ebp), %edx
-	movl	-16(%ebp), %eax
+	jmp	.L187
+.L185:
+	movq	screenRam(%rip), %rcx
+	movswl	-24(%rbp), %edx
+	movl	-8(%rbp), %eax
 	addl	%edx, %eax
-	movl	%eax, %ebx
-	movswl	-36(%ebp), %edx
-	movl	-12(%ebp), %eax
-	addl	%eax, %edx
-	movzwl	width, %eax
+	movslq	%eax, %rdx
+	movswl	-28(%rbp), %esi
+	movl	-4(%rbp), %eax
+	addl	%eax, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	20(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	22(%ebp), %edx
-	movb	%dl, 2(%eax)
-	jmp	.L167
-.L165:
-	movzbl	bpp, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-40(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-38(%rbp), %edx
+	movb	%dl, 2(%rax)
+	jmp	.L187
+.L184:
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L168
-	movl	screenRam, %edx
-	movswl	-32(%ebp), %ecx
-	movl	-16(%ebp), %eax
-	addl	%ecx, %eax
-	movl	%eax, %ebx
-	movswl	-36(%ebp), %ecx
-	movl	-12(%ebp), %eax
-	addl	%eax, %ecx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ecx, %eax
-	addl	%ebx, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
+	jne	.L188
+	movq	screenRam(%rip), %rax
+	movswl	-24(%rbp), %ecx
+	movl	-8(%rbp), %edx
+	addl	%ecx, %edx
+	movslq	%edx, %rcx
+	movswl	-28(%rbp), %esi
+	movl	-4(%rbp), %edx
+	addl	%edx, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
 	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L167
-.L168:
-	movl	screenRam, %ecx
-	movswl	-32(%ebp), %edx
-	movl	-16(%ebp), %eax
+	jmp	.L187
+.L188:
+	movq	screenRam(%rip), %rcx
+	movswl	-24(%rbp), %edx
+	movl	-8(%rbp), %eax
 	addl	%edx, %eax
-	movl	%eax, %ebx
-	movswl	-36(%ebp), %edx
-	movl	-12(%ebp), %eax
-	addl	%eax, %edx
-	movzwl	width, %eax
+	movslq	%eax, %rdx
+	movswl	-28(%rbp), %esi
+	movl	-4(%rbp), %eax
+	addl	%eax, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%edx, %eax
-	leal	(%ebx,%eax), %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L167:
-	addl	$1, -16(%ebp)
-.L164:
-	cmpl	$7, -16(%ebp)
-	jle	.L169
-	movzbl	bpp, %eax
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-48(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-46(%rbp), %edx
+	movb	%dl, 2(%rax)
+.L187:
+	addl	$1, -8(%rbp)
+	jmp	.L189
+.L183:
+	movzbl	bpp(%rip), %eax
 	cmpb	$32, %al
-	jne	.L170
-	movl	screenRam, %edx
-	movswl	-32(%ebp), %ecx
-	movswl	-36(%ebp), %ebx
-	movl	-12(%ebp), %eax
-	addl	%eax, %ebx
-	movzwl	width, %eax
-	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%ecx, %eax
+	jne	.L190
+	movq	screenRam(%rip), %rax
+	movswl	-24(%rbp), %edx
+	addl	$8, %edx
+	movslq	%edx, %rcx
+	movswl	-28(%rbp), %esi
+	movl	-4(%rbp), %edx
+	addl	%edx, %esi
+	movzwl	width(%rip), %edx
+	movzwl	%dx, %edx
+	imull	%esi, %edx
+	movslq	%edx, %rdx
+	addq	%rcx, %rdx
+	salq	$2, %rdx
+	addq	%rax, %rdx
+	leaq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	_ZN7Color32aSERK5Color
+	jmp	.L191
+.L190:
+	movq	screenRam(%rip), %rcx
+	movswl	-24(%rbp), %eax
 	addl	$8, %eax
-	sall	$2, %eax
-	addl	%eax, %edx
-	subl	$8, %esp
-	leal	24(%ebp), %eax
-	pushl	%eax
-	pushl	%edx
-	call	_ZN7Color32aSERK5Color
-	addl	$16, %esp
-	jmp	.L171
-.L170:
-	movl	screenRam, %ecx
-	movswl	-32(%ebp), %edx
-	movswl	-36(%ebp), %ebx
-	movl	-12(%ebp), %eax
-	addl	%eax, %ebx
-	movzwl	width, %eax
+	movslq	%eax, %rdx
+	movswl	-28(%rbp), %esi
+	movl	-4(%rbp), %eax
+	addl	%eax, %esi
+	movzwl	width(%rip), %eax
 	movzwl	%ax, %eax
-	imull	%ebx, %eax
-	addl	%eax, %edx
-	movl	%edx, %eax
-	addl	%eax, %eax
-	addl	%edx, %eax
-	addl	$24, %eax
-	addl	%ecx, %eax
-	movzwl	24(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	26(%ebp), %edx
-	movb	%dl, 2(%eax)
-.L171:
-	addl	$1, -12(%ebp)
-.L163:
-	cmpl	$13, -12(%ebp)
-	jle	.L172
+	imull	%esi, %eax
+	cltq
+	addq	%rax, %rdx
+	movq	%rdx, %rax
+	addq	%rax, %rax
+	addq	%rdx, %rax
+	addq	%rcx, %rax
+	movzwl	-48(%rbp), %edx
+	movw	%dx, (%rax)
+	movzbl	-46(%rbp), %edx
+	movb	%dl, 2(%rax)
+.L191:
+	addl	$1, -4(%rbp)
+	jmp	.L192
+.L193:
 	nop
-	nop
-	movl	-4(%ebp), %ebx
 	leave
-	.cfi_restore 5
-	.cfi_restore 3
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE22:
 	.size	_Z8drawCharcss5ColorS_, .-_Z8drawCharcss5ColorS_
-	.ident	"GCC: (GNU) 13.1.0"
+	.section	.rodata
+	.align 4
+.LC3:
+	.long	1065353216
+	.ident	"GCC: (GNU) 7.5.0"
