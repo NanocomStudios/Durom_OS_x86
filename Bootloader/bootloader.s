@@ -15,170 +15,157 @@
 _Z12searchKernelv:
 .LFB1:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$56, %esp
-	call	_Z15getHddEntryListv
-	movl	%eax, -20(%ebp)
-	call	_Z17getPartitionCountv
-	movw	%ax, -22(%ebp)
-	subl	$12, %esp
-	pushl	$512
-	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -28(%ebp)
-	movw	$0, -10(%ebp)
+	endbr64
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$64, %rsp
+	call	_Z15getHddEntryListv@PLT
+	movq	%rax, -16(%rbp)
+	call	_Z17getPartitionCountv@PLT
+	movw	%ax, -18(%rbp)
+	movl	$512, %edi
+	call	_Z6malloci@PLT
+	movq	%rax, -32(%rbp)
+	movw	$0, -2(%rbp)
 	jmp	.L2
 .L7:
-	movswl	-10(%ebp), %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z12getPartitions
-	addl	$16, %esp
-	movl	%eax, -32(%ebp)
-	movl	-32(%ebp), %eax
-	movzwl	16(%eax), %eax
+	movswl	-2(%rbp), %eax
+	movl	%eax, %edi
+	call	_Z12getPartitions@PLT
+	movq	%rax, -40(%rbp)
+	movq	-40(%rbp), %rax
+	movzwl	16(%rax), %eax
+	movswq	%ax, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzbl	1(%rax), %eax
+	movsbl	%al, %ecx
+	movq	-40(%rbp), %rax
+	movzwl	16(%rax), %eax
+	movswq	%ax, %rax
+	leaq	0(,%rax,4), %rdx
+	movq	-16(%rbp), %rax
+	addq	%rdx, %rax
+	movzwl	2(%rax), %eax
 	cwtl
-	leal	0(,%eax,4), %edx
-	movl	-20(%ebp), %eax
-	addl	%edx, %eax
-	movzbl	1(%eax), %eax
-	movsbl	%al, %edx
-	movl	-32(%ebp), %eax
-	movzwl	16(%eax), %eax
-	cwtl
-	leal	0(,%eax,4), %ecx
-	movl	-20(%ebp), %eax
-	addl	%ecx, %eax
-	movzwl	2(%eax), %eax
-	cwtl
-	subl	$4, %esp
-	pushl	$1
-	pushl	%edx
-	pushl	%eax
-	call	_Z8setDrivescc
-	addl	$16, %esp
-	call	_Z7hddWaitv
-	movl	-32(%ebp), %eax
-	movl	8(%eax), %eax
-	subl	$4, %esp
-	pushl	%eax
-	pushl	$1
-	pushl	-28(%ebp)
-	call	_Z11readSectorsPvhj
-	addl	$16, %esp
-	movl	-32(%ebp), %eax
-	movl	8(%eax), %edx
-	movl	-28(%ebp), %eax
-	movzwl	14(%eax), %eax
+	movl	$1, %edx
+	movl	%ecx, %esi
+	movl	%eax, %edi
+	call	_Z8setDrivescc@PLT
+	call	_Z7hddWaitv@PLT
+	movq	-40(%rbp), %rax
+	movl	8(%rax), %edx
+	movq	-32(%rbp), %rax
+	movl	$1, %esi
+	movq	%rax, %rdi
+	call	_Z11readSectorsPvhj@PLT
+	movq	-40(%rbp), %rax
+	movl	8(%rax), %edx
+	movq	-32(%rbp), %rax
+	movzwl	14(%rax), %eax
 	movzwl	%ax, %eax
-	leal	(%edx,%eax), %ecx
-	movl	-28(%ebp), %eax
-	movzbl	16(%eax), %eax
+	leal	(%rdx,%rax), %ecx
+	movq	-32(%rbp), %rax
+	movzbl	16(%rax), %eax
 	movzbl	%al, %edx
-	movl	-28(%ebp), %eax
-	movl	36(%eax), %eax
+	movq	-32(%rbp), %rax
+	movl	36(%rax), %eax
 	imull	%edx, %eax
 	addl	%ecx, %eax
-	movl	%eax, -36(%ebp)
-	movl	-28(%ebp), %eax
-	movzbl	13(%eax), %eax
+	movl	%eax, -44(%rbp)
+	movq	-32(%rbp), %rax
+	movzbl	13(%rax), %eax
 	movzbl	%al, %eax
 	sall	$9, %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z6malloci
-	addl	$16, %esp
-	movl	%eax, -40(%ebp)
-	movl	-28(%ebp), %eax
-	movzbl	13(%eax), %eax
-	movzbl	%al, %eax
-	subl	$4, %esp
-	pushl	-36(%ebp)
-	pushl	%eax
-	pushl	-40(%ebp)
-	call	_Z11readSectorsPvhj
-	addl	$16, %esp
-	movl	$0, -16(%ebp)
+	movl	%eax, %edi
+	call	_Z6malloci@PLT
+	movq	%rax, -56(%rbp)
+	movq	-32(%rbp), %rax
+	movzbl	13(%rax), %eax
+	movzbl	%al, %ecx
+	movl	-44(%rbp), %edx
+	movq	-56(%rbp), %rax
+	movl	%ecx, %esi
+	movq	%rax, %rdi
+	call	_Z11readSectorsPvhj@PLT
+	movl	$0, -8(%rbp)
 	jmp	.L3
 .L6:
-	movl	-16(%ebp), %eax
-	sall	$5, %eax
-	movl	%eax, %edx
-	movl	-40(%ebp), %eax
-	addl	%edx, %eax
-	pushl	$11
-	pushl	$.LC0
-	pushl	$11
-	pushl	%eax
-	call	_Z6strcmpPKclS0_l
-	addl	$16, %esp
-	testl	%eax, %eax
+	movl	-8(%rbp), %eax
+	cltq
+	salq	$5, %rax
+	movq	%rax, %rdx
+	movq	-56(%rbp), %rax
+	addq	%rdx, %rax
+	movq	%rax, %rdi
+	movl	$11, %ecx
+	leaq	.LC0(%rip), %rax
+	movq	%rax, %rdx
+	movl	$11, %esi
+	call	_Z6strcmpPKclS0_l@PLT
+	testq	%rax, %rax
 	sete	%al
 	testb	%al, %al
 	je	.L4
-	subl	$12, %esp
-	pushl	$.LC1
-	call	_Z5printPKc
-	addl	$16, %esp
-	movl	-16(%ebp), %eax
-	sall	$5, %eax
-	movl	%eax, %edx
-	movl	-40(%ebp), %eax
-	addl	%edx, %eax
-	movl	28(%eax), %eax
-	subl	$12, %esp
-	pushl	%eax
-	call	_Z8printIntl
-	addl	$16, %esp
-	subl	$12, %esp
-	pushl	$.LC2
-	call	_Z5printPKc
-	addl	$16, %esp
+	leaq	.LC1(%rip), %rax
+	movq	%rax, %rdi
+	call	_Z5printPKc@PLT
+	movl	-8(%rbp), %eax
+	cltq
+	salq	$5, %rax
+	movq	%rax, %rdx
+	movq	-56(%rbp), %rax
+	addq	%rdx, %rax
+	movl	28(%rax), %eax
+	movl	%eax, %eax
+	movq	%rax, %rdi
+	call	_Z8printIntl@PLT
+	leaq	.LC2(%rip), %rax
+	movq	%rax, %rdi
+	call	_Z5printPKc@PLT
 	jmp	.L1
 .L4:
-	addl	$1, -16(%ebp)
+	addl	$1, -8(%rbp)
 .L3:
-	movl	-28(%ebp), %eax
-	movzbl	13(%eax), %eax
+	movq	-32(%rbp), %rax
+	movzbl	13(%rax), %eax
 	movzbl	%al, %eax
 	sall	$4, %eax
-	cmpl	%eax, -16(%ebp)
+	cmpl	%eax, -8(%rbp)
 	jl	.L6
-	subl	$12, %esp
-	pushl	$.LC3
-	call	_Z5printPKc
-	addl	$16, %esp
-	movzwl	-10(%ebp), %eax
+	leaq	.LC3(%rip), %rax
+	movq	%rax, %rdi
+	call	_Z5printPKc@PLT
+	movzwl	-2(%rbp), %eax
 	addl	$1, %eax
-	movw	%ax, -10(%ebp)
+	movw	%ax, -2(%rbp)
 .L2:
-	movzwl	-10(%ebp), %eax
-	cmpw	-22(%ebp), %ax
+	movzwl	-2(%rbp), %eax
+	cmpw	-18(%rbp), %ax
 	jl	.L7
-	movb	$0, -43(%ebp)
-	movb	$-1, -42(%ebp)
-	movb	$-1, -41(%ebp)
-	subl	$12, %esp
-	subl	$4, %esp
-	movl	%esp, %eax
-	movzwl	-43(%ebp), %edx
-	movw	%dx, (%eax)
-	movzbl	-41(%ebp), %edx
-	movb	%dl, 2(%eax)
-	pushl	$20
-	pushl	$400
-	pushl	$100
-	pushl	$20
-	call	_Z8drawLinessss5Color
-	addl	$32, %esp
+	movb	$0, -59(%rbp)
+	movb	$-1, -58(%rbp)
+	movb	$-1, -57(%rbp)
+	movzbl	-59(%rbp), %edx
+	movzbl	-58(%rbp), %eax
+	salq	$8, %rax
+	orq	%rax, %rdx
+	movzbl	-57(%rbp), %eax
+	salq	$16, %rax
+	orq	%rdx, %rax
+	movq	%rax, %r8
+	movl	$20, %ecx
+	movl	$400, %edx
+	movl	$100, %esi
+	movl	$20, %edi
+	call	_Z8drawLinessss5Color@PLT
 .L1:
 	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE1:
@@ -188,31 +175,21 @@ _Z12searchKernelv:
 main:
 .LFB2:
 	.cfi_startproc
-	leal	4(%esp), %ecx
-	.cfi_def_cfa 1, 0
-	andl	$-16, %esp
-	pushl	-4(%ecx)
-	pushl	%ebp
-	movl	%esp, %ebp
-	.cfi_escape 0x10,0x5,0x2,0x75,0
-	pushl	%ecx
-	.cfi_escape 0xf,0x3,0x75,0x7c,0x6
-	subl	$4, %esp
-	call	_Z12printPciListv
-	subl	$12, %esp
-	pushl	$10
-	call	_Z5printc
-	addl	$16, %esp
-	call	_Z7listHddv
-	call	_Z18printPartitionListv
+	endbr64
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	call	_Z12printPciListv@PLT
+	movl	$10, %edi
+	call	_Z5printc@PLT
+	call	_Z7listHddv@PLT
+	call	_Z18printPartitionListv@PLT
 	call	_Z12searchKernelv
 	nop
-	movl	-4(%ebp), %ecx
-	.cfi_def_cfa 1, 0
-	leave
-	.cfi_restore 5
-	leal	-4(%ecx), %esp
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE2:
@@ -222,25 +199,41 @@ main:
 init:
 .LFB3:
 	.cfi_startproc
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
-	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	call	_Z10initScreenv
-	call	_Z10mallocInitv
-	call	_Z7initGUIv
-	call	_Z7pciInitv
-	call	_Z7hddInitv
-	call	_Z15initFat32Drivesv
+	endbr64
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	call	_Z10initScreenv@PLT
+	call	_Z10mallocInitv@PLT
+	call	_Z7initGUIv@PLT
+	call	_Z7pciInitv@PLT
+	call	_Z7hddInitv@PLT
+	call	_Z15initFat32Drivesv@PLT
 	call	main
 	nop
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
+	popq	%rbp
+	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE3:
 	.size	init, .-init
-	.ident	"GCC: (GNU) 13.1.0"
+	.ident	"GCC: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0"
+	.section	.note.GNU-stack,"",@progbits
+	.section	.note.gnu.property,"a"
+	.align 8
+	.long	1f - 0f
+	.long	4f - 1f
+	.long	5
+0:
+	.string	"GNU"
+1:
+	.align 8
+	.long	0xc0000002
+	.long	3f - 2f
+2:
+	.long	0x3
+3:
+	.align 8
+4:
