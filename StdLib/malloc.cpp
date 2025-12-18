@@ -37,7 +37,7 @@ void mallocInit(){
                 }
         }
 
-        ram = &heap_start;
+        ram = (char*)(ramBase + 0xFFFF800000000000);
         isInit = 0;
 }
 
@@ -50,7 +50,7 @@ void printMemoryInfo(){
 }
 
 void* malloc(int blockSize){
-        if((blockSize > HEAP - HEAP_START) || (blockSize < 0)){
+        if((blockSize > ramSize - HEAP_START) || (blockSize < 0)){
                 return 0;
         }
         int size = (int) blockSize;
@@ -88,7 +88,7 @@ void free(void* ptr){
                         *(int*)(ram + BLOCK_START) = *(int*)(ram + *(int*)(ram + BLOCK_START) - NEXT_BLOCK_PTR);
                 }
         }else{
-                for(int i = *(int*)(ram + BLOCK_START); i < (HEAP - META_BLOCK);){
+                for(int i = *(int*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
                         if(*(int*)(ram + i - NEXT_BLOCK_PTR) == ((char*)ptr - ram)){ // Free the pointer
                                 *(int*)(ram + i - NEXT_BLOCK_PTR) = *(int*)((char*)ptr - NEXT_BLOCK_PTR);
                                 break;
@@ -114,7 +114,7 @@ int getFreeBlock(int size){
 
                 }
 
-                for(int i = *(int*)(ram + BLOCK_START); i < (HEAP - META_BLOCK);){
+                for(int i = *(int*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
                         if(*(int*)(ram + (i - NEXT_BLOCK_PTR)) == -1){
                                 // Allocate at the end of the list
                                 *(int*)(ram + PREVBLOCK) = i;

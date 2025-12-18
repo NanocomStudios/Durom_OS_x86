@@ -10,8 +10,12 @@ struct pciNode{
     unsigned char classCode;
     unsigned char subClass;
     unsigned char progIF;
+    unsigned short deviceID;
+    unsigned short vendorID;
     pciNode* next;
 };
+
+
 
 unsigned short pciConfigReadWord(unsigned char bus, unsigned char slot, unsigned char func, unsigned char offset);
 unsigned int pciConfigReadDouble(unsigned char bus, unsigned char slot, unsigned char func, unsigned char offset);

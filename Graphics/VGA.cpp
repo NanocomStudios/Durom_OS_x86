@@ -1,4 +1,5 @@
 #include <limine.h>
+#include <cstddef>
 
 #include "VGA.h"
 #include "../StdLib/malloc.h"
@@ -20,6 +21,8 @@ unsigned char bpp;
 unsigned screenWidth;
 
 void* screenRam;
+void* physicalScreenRam;
+
 char graphicMode;
 
 char scroll;
@@ -42,6 +45,10 @@ volatile limine_framebuffer_request framebuffer_request = {
 
 }
 
+extern "C"{
+    void *memcpy(void *__restrict dest, const void *__restrict src, std::size_t n);
+}
+
 
 void clearScreen(){
     
@@ -55,16 +62,12 @@ void clearScreen(){
             
         }
     }
+    renderScreen();
 }
 
 void clearConsole(){
     moveCsr(0,0);
-    scroll = 0;
-    for(int i = 0; i < (consoleHeight * consoleWidth);i++){
-        print(' ');
-    }
-    scroll = 1;
-    moveCsr(0,0);
+    clearScreen();
 }
 
 void initScreen(){
@@ -87,12 +90,14 @@ void initScreen(){
     // Fetch the first framebuffer.
     limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
-    screenRam = (void*)(long)framebuffer->address;
+    physicalScreenRam = (void*)framebuffer->address;
     height = framebuffer->height;
     width = framebuffer->width;
     bpp = framebuffer->bpp;
     pitch = framebuffer->pitch;
     graphicMode ='G';
+
+    screenRam = (void*)malloc(pitch * height);
 
     consoleWidth = width / charWidth;
     consoleHeight = height / charHeight; 
@@ -236,7 +241,7 @@ void scrollScreen(){
                
             }
             moveCsr(0, consoleHeight - 1);
-            
+            renderScreen();
 }
 
 void print(char inp){
@@ -478,6 +483,7 @@ void drawLine(short x1, short y1, short x2, short y2, Color color){
             }
 		}
 	}
+    renderScreen();
 }
 
 void drawRectangle(short x1, short y1, short x2, short y2, Color color){
@@ -508,6 +514,7 @@ void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
             
         }
     }
+    renderScreen();
 }
 
 Color antiAliasing(int val, Color color){//float
@@ -527,23 +534,33 @@ void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
                 if(((*(char*)(long)((&font_start) + (inp * 14) + i)) & (128 >> j))){
                     if(bpp == 32){
                         *((Color32*)screenRam + (j + x) + ((i + y) * screenWidth)) = fgColor;
+                        *((Color32*)physicalScreenRam + (j + x) + ((i + y) * screenWidth)) = fgColor;
                     }else{
                         *((Color*)screenRam + (j + x) + ((i + y) * screenWidth)) = fgColor;
+                        *((Color*)physicalScreenRam + (j + x) + ((i + y) * screenWidth)) = fgColor;
                     }
                     
                 }else{
                     if(bpp == 32){
                         *((Color32*)screenRam + (j + x) + ((i + y) * screenWidth)) = bgColor;
+                        *((Color32*)physicalScreenRam + (j + x) + ((i + y) * screenWidth)) = bgColor;
                     }else{
                         *((Color*)screenRam + (j + x) + ((i + y) * screenWidth)) = bgColor;
+                        *((Color*)physicalScreenRam + (j + x) + ((i + y) * screenWidth)) = bgColor;
                     }
                 }
             }
             if(bpp == 32){
                 *((Color32*)screenRam + (8 + x) + ((i + y) * screenWidth)) = bgColor;
+                *((Color32*)physicalScreenRam + (8 + x) + ((i + y) * screenWidth)) = bgColor;
             }else{
                 *((Color*)screenRam + (8 + x) + ((i + y) * screenWidth)) = bgColor;
+                *((Color*)physicalScreenRam + (8 + x) + ((i + y) * screenWidth)) = bgColor;
             }
            
     }
+}
+
+void renderScreen(){
+    memcpy(physicalScreenRam, screenRam, pitch * height);
 }

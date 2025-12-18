@@ -63,6 +63,8 @@ void pciInit(){
                             pciNodeTmp->classCode = (unsigned char)(tmp >> 8);
                             pciNodeTmp->subClass = (unsigned char)(tmp & (unsigned short)255);
                             pciNodeTmp->progIF = (unsigned char)(pciConfigReadWord(bus,slot,func,8) >> 8);
+                            pciNodeTmp->deviceID = pciConfigReadWord(bus,slot,func,0);
+                            pciNodeTmp->vendorID = pciConfigReadWord(bus,slot,func,2);
                             pciNodeTmp->next = 0;
                             isInit = 1;
                         }else{
@@ -75,6 +77,8 @@ void pciInit(){
                             pciNodeTmp->classCode = (unsigned char)(tmp >> 8);
                             pciNodeTmp->subClass = (unsigned char)(tmp & (unsigned short)255);
                             pciNodeTmp->progIF = (unsigned char)(pciConfigReadWord(bus,slot,func,8) >> 8);
+                            pciNodeTmp->deviceID = pciConfigReadWord(bus,slot,func,0);
+                            pciNodeTmp->vendorID = pciConfigReadWord(bus,slot,func,2);
                             pciNodeTmp->next = 0;
                         }
                 }
@@ -89,6 +93,8 @@ void pciInit(){
                             pciNodeTmp->classCode = (unsigned char)(tmp >> 8);
                             pciNodeTmp->subClass = (unsigned char)(tmp & (unsigned short)255);
                             pciNodeTmp->progIF = (unsigned char)(pciConfigReadWord(bus,slot,0,8) >> 8);
+                            pciNodeTmp->deviceID = pciConfigReadWord(bus,slot,0,0);
+                            pciNodeTmp->vendorID = pciConfigReadWord(bus,slot,0,2);
                             pciNodeTmp->next = 0;
                             isInit = 1;
                         }else{
@@ -100,6 +106,8 @@ void pciInit(){
                             pciNodeTmp->classCode = (unsigned char)(tmp >> 8);
                             pciNodeTmp->subClass = (unsigned char)(tmp & (unsigned short)255);
                             pciNodeTmp->progIF = (unsigned char)(pciConfigReadWord(bus,slot,0,8) >> 8);
+                            pciNodeTmp->deviceID = pciConfigReadWord(bus,slot,0,0);
+                            pciNodeTmp->vendorID = pciConfigReadWord(bus,slot,0,2);
                             pciNodeTmp->next = 0;
                         }
                 }
@@ -116,6 +124,10 @@ void printPciList(){
         printHex(pciNodeTmp->subClass);
         print(' ');
         printHex(pciNodeTmp->progIF);
+        print(" -> ");
+        printHex(pciNodeTmp->vendorID);
+        print(':');
+        printHex(pciNodeTmp->deviceID);
         print('\n');
         pciNodeTmp = pciNodeTmp->next;
     }
