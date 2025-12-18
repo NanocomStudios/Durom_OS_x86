@@ -1,14 +1,52 @@
 #include "malloc.h"
 #include "../Graphics/VGA.h"
 
+#include <limine.h>
+
 char* ram;
 char isInit;
 
 extern char heap_start;
 
+unsigned long ramBase = 0;
+unsigned long ramSize = 0;
+
+namespace {
+
+__attribute__((used, section(".limine_requests")))
+volatile limine_memmap_request memmap_request = {
+    .id = LIMINE_MEMMAP_REQUEST_ID,
+    .revision = 0,
+    .response = nullptr
+};
+
+}
+
+
 void mallocInit(){
+
+        if (memmap_request.response == nullptr
+                || memmap_request.response->entry_count < 1) {
+                while(1);
+        }
+
+        for(int i = 0; i < memmap_request.response->entry_count; i++){
+                if(memmap_request.response->entries[i]->type == 0){
+                        ramBase = memmap_request.response->entries[i]->base;
+                        ramSize = memmap_request.response->entries[i]->length;
+                }
+        }
+
         ram = &heap_start;
         isInit = 0;
+}
+
+void printMemoryInfo(){
+        print("RAM Base : ");
+        printHex(ramBase);
+        print("\nRAM Length : ");
+        printInt(ramSize);
+        print('\n');
 }
 
 void* malloc(int blockSize){

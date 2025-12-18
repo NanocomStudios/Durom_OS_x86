@@ -1,8 +1,11 @@
 #ifndef SCREEN
 #define SCREEN
 
-#define consoleWidth 80
-#define consoleHeight 42
+// #define consoleWidth 80
+// #define consoleHeight 42
+
+#define charWidth 9
+#define charHeight 14
 
 #define BLACK {0,0,0}
 #define BLUE {127,0,0}
@@ -49,6 +52,7 @@ class Color32{
 void clearScreen();
 void clearConsole();
 void initScreen();
+void printDisplayInfo();
 void print(const char* inp);
 void moveCsr(int col, int row);
 void print(char inp);

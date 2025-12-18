@@ -10,8 +10,14 @@ Color backColor;
 
 unsigned short height;
 unsigned short width;
+unsigned short pitch;
+
+unsigned short consoleHeight = 25;
+unsigned short consoleWidth = 80 ;
 
 unsigned char bpp;
+
+unsigned screenWidth;
 
 void* screenRam;
 char graphicMode;
@@ -40,11 +46,11 @@ volatile limine_framebuffer_request framebuffer_request = {
 void clearScreen(){
     
     for(int row = 0; row < height; row++){
-        for(int col = 0; col < width; col++){
+        for(int col = 0; col < screenWidth; col++){
             if(bpp == 32){
-                *((Color32*)screenRam + (col + (row * width))) = backColor;
+                *((Color32*)screenRam + (col + (row * screenWidth))) = backColor;
             }else{
-                *((Color*)screenRam + (col + (row * width))) = backColor;
+                *((Color*)screenRam + (col + (row * screenWidth))) = backColor;
             }
             
         }
@@ -85,17 +91,37 @@ void initScreen(){
     height = framebuffer->height;
     width = framebuffer->width;
     bpp = framebuffer->bpp;
+    pitch = framebuffer->pitch;
     graphicMode ='G';
 
-    
+    consoleWidth = width / charWidth;
+    consoleHeight = height / charHeight; 
+
+    screenWidth = pitch * 8 / bpp;
+
     foreColor = {255,255,255};
     backColor = {36,10,48};
     clearScreen();
     scroll = 1;
+    
+}
+
+void printDisplayInfo(){
     print("BPP :");
     printInt(bpp);
     print('\n');
-    
+
+    print("Height :");
+    printInt(height);
+    print('\n');
+
+    print("Width :");
+    printInt(width);
+    print('\n');
+
+    print("Pitch :");
+    printInt(pitch);
+    print('\n');
 }
 
 void print(const char* inp){
@@ -193,15 +219,15 @@ int lenH(long inp){
 }
 
 void scrollScreen(){
-            for(int i = 0; i < (width * (height - 14)); i++){
+            for(int i = 0; i < (screenWidth * (height - 14)); i++){
                 if(bpp == 32){
-                    *((Color32*)screenRam + i) = *((Color32*)screenRam + i + (width * 14));
+                    *((Color32*)screenRam + i) = *((Color32*)screenRam + i + (screenWidth * 14));
                 }else{
-                    *((Color*)screenRam + i) = *((Color*)screenRam + i + (width * 14));
+                    *((Color*)screenRam + i) = *((Color*)screenRam + i + (screenWidth * 14));
                 }
                 
             }
-            for(int i = (width * (height - 14)); i < (width * height); i++){
+            for(int i = (screenWidth * (height - 14)); i < (screenWidth * height); i++){
                 if(bpp == 32){
                     *((Color32*)screenRam + i) = backColor;
                 }else{
@@ -303,36 +329,36 @@ void drawLine(short x1, short y1, short x2, short y2, Color color){
 
             if((y - int(y)) > 0){
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                    *((Color32*)screenRam + (int)x + (((int)y + 1) * screenWidth)) = antiAliasing(y - int(y),color);
                 }else{
-                    *((Color*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                    *((Color*)screenRam + (int)x + (((int)y + 1) * screenWidth)) = antiAliasing(y - int(y),color);
                 }
                 
             }else if((y - int(y)) < 0){
                 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(y - int(y),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(y - int(y),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color32*)screenRam + (int)x + (((int)y - 1) * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }else{
-                    *((Color*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color*)screenRam + (int)x + (((int)y - 1) * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }
 
             }else{
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }
             }
 
@@ -345,36 +371,36 @@ void drawLine(short x1, short y1, short x2, short y2, Color color){
 			y = y1 + (((y1 - y2) / (int)(x1 - x2)) * (x - x1));
 			if((y - int(y)) > 0){
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                    *((Color32*)screenRam + (int)x + (((int)y + 1) * screenWidth)) = antiAliasing(y - int(y),color);
                 }else{
-                    *((Color*)screenRam + (int)x + (((int)y + 1) * width)) = antiAliasing(y - int(y),color);
+                    *((Color*)screenRam + (int)x + (((int)y + 1) * screenWidth)) = antiAliasing(y - int(y),color);
                 }
                 
             }else if((y - int(y)) < 0){
                 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(y - int(y),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(y - int(y),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(y - int(y),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color32*)screenRam + (int)x + (((int)y - 1) * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }else{
-                    *((Color*)screenRam + (int)x + (((int)y - 1) * width)) = antiAliasing(1 - (y - int(y)),color);
+                    *((Color*)screenRam + (int)x + (((int)y - 1) * screenWidth)) = antiAliasing(1 - (y - int(y)),color);
                 }
 
             }else{
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }
             }
 		}
@@ -385,33 +411,33 @@ void drawLine(short x1, short y1, short x2, short y2, Color color){
 			x = (((y - y1) / (int)(y1 - y2)) * (x1 - x2)) + x1;
 			if((x - int(x)) > 0){
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color32*)screenRam + (int)x + 1 + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }else{
-                    *((Color*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color*)screenRam + (int)x + 1 + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }
             }else if((x - int(x)) < 0){
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color32*)screenRam + (int)x - 1 + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }else{
-                    *((Color*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color*)screenRam + (int)x - 1 + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }
             }else{
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }
             }
 		}
@@ -421,33 +447,33 @@ void drawLine(short x1, short y1, short x2, short y2, Color color){
 			x = (((y - y1) / (int)(y1 - y2)) * (x1 - x2)) + x1;
 			if((x - int(x)) > 0){
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color32*)screenRam + (int)x + 1 + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }else{
-                    *((Color*)screenRam + (int)x + 1 + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color*)screenRam + (int)x + 1 + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }
             }else if((x - int(x)) < 0){
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = antiAliasing(x - int(x),color);
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = antiAliasing(x - int(x),color);
                 }
 
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color32*)screenRam + (int)x - 1 + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }else{
-                    *((Color*)screenRam + (int)x - 1 + ((int)y * width)) = antiAliasing(1 - (x - int(x)),color);
+                    *((Color*)screenRam + (int)x - 1 + ((int)y * screenWidth)) = antiAliasing(1 - (x - int(x)),color);
                 }
             }else{
                 if(bpp == 32){
-                    *((Color32*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color32*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }else{
-                    *((Color*)screenRam + (int)x + ((int)y * width)) = color;
+                    *((Color*)screenRam + (int)x + ((int)y * screenWidth)) = color;
                 }
             }
 		}
@@ -475,9 +501,9 @@ void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor){
     for(short y = y1; y <= y2; y++){
         for(short x = x1; x <= x2; x++){
             if(bpp == 32){
-                *((Color32*)screenRam + x + y * width) = fillColor;
+                *((Color32*)screenRam + x + y * screenWidth) = fillColor;
             }else{
-                *((Color*)screenRam + x + y * width) = fillColor;
+                *((Color*)screenRam + x + y * screenWidth) = fillColor;
             }
             
         }
@@ -500,23 +526,23 @@ void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
             for(int j = 0; j < 8; j++){
                 if(((*(char*)(long)((&font_start) + (inp * 14) + i)) & (128 >> j))){
                     if(bpp == 32){
-                        *((Color32*)screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                        *((Color32*)screenRam + (j + x) + ((i + y) * screenWidth)) = fgColor;
                     }else{
-                        *((Color*)screenRam + (j + x) + ((i + y) * width)) = fgColor;
+                        *((Color*)screenRam + (j + x) + ((i + y) * screenWidth)) = fgColor;
                     }
                     
                 }else{
                     if(bpp == 32){
-                        *((Color32*)screenRam + (j + x) + ((i + y) * width)) = bgColor;
+                        *((Color32*)screenRam + (j + x) + ((i + y) * screenWidth)) = bgColor;
                     }else{
-                        *((Color*)screenRam + (j + x) + ((i + y) * width)) = bgColor;
+                        *((Color*)screenRam + (j + x) + ((i + y) * screenWidth)) = bgColor;
                     }
                 }
             }
             if(bpp == 32){
-                *((Color32*)screenRam + (8 + x) + ((i + y) * width)) = bgColor;
+                *((Color32*)screenRam + (8 + x) + ((i + y) * screenWidth)) = bgColor;
             }else{
-                *((Color*)screenRam + (8 + x) + ((i + y) * width)) = bgColor;
+                *((Color*)screenRam + (8 + x) + ((i + y) * screenWidth)) = bgColor;
             }
            
     }

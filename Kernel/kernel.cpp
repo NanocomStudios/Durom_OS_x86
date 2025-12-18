@@ -19,7 +19,7 @@ int main(){
     
     Color border = {0,255,0};
 
-    print("DuRom x86 V1.0\n#>");
+    print("DuRom x86_64 V2.0\n");
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
@@ -85,7 +85,7 @@ int main(){
     //     }
     // }
 
-    printPciList();
+    // printPciList();
     // MBR* mbr = (MBR*)malloc(512);
 
     // VolumeInfo* vol1 = (VolumeInfo*)malloc(512);
@@ -137,6 +137,8 @@ int main(){
         printHex(ps2Read());
         print('\n');
     }
+
+    print("#>");
 
     while(1){
         ps2Wait(READ);
@@ -200,6 +202,12 @@ int main(){
                         drawWindows();
                     }else if(inpBufferPtr == 0){
 
+                    }else if(!strcmp(inpBuffer, 255, "pci", 3)){
+                        printPciList();
+                    }else if(!strcmp(inpBuffer, 255, "display", 7)){
+                        printDisplayInfo();
+                    }else if(!strcmp(inpBuffer, 255, "memory", 6)){
+                        printMemoryInfo();
                     }else{
                         print('\'');
                         print(inpBuffer);

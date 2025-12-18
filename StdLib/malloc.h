@@ -19,5 +19,6 @@ void mallocInit();
 void* malloc(int blockSize);
 void free(void* ptr);
 int getFreeBlock(int size);
+void printMemoryInfo();
 
 #endif
