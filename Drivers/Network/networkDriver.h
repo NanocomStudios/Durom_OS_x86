@@ -6,4 +6,6 @@ class NetworkDriver{
         void init();
 };
 
+NetworkDriver* networkDriverInit();
+
 #endif

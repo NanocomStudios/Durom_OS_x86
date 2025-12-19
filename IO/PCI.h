@@ -53,4 +53,6 @@ void pciInit();
 void printPciList();
 short getClassCount(unsigned char classCode);
 pciNode* getClassCategory(unsigned char classCode);
+pciNode* getPciNodeList(unsigned char classCode, unsigned char subClass, unsigned char progIF);
+pciHeader* getPciHeader(pciNode* node);
 #endif

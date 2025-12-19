@@ -170,3 +170,33 @@ pciNode* getClassCategory(unsigned char classCode){
     }
     return buffer;
 }
+
+pciNode* getPciNodeList(unsigned char classCode, unsigned char subClass, unsigned char progIF){
+    pciNode* pciNodeTmp = pciNodeList;
+    pciNode* returnListHead = 0;
+    pciNode* returnList = 0;
+    while(pciNodeTmp != 0){
+        if((pciNodeTmp->classCode == classCode) && (pciNodeTmp->subClass == subClass) && (pciNodeTmp->progIF == progIF)){
+            if(returnList == 0){
+                returnList = pciNodeTmp;
+                returnListHead = returnList;
+                returnList->next = 0;
+            }else{
+                returnList->next = pciNodeTmp;
+                returnList = returnList->next;
+                returnList->next = 0;
+            }
+        }
+        pciNodeTmp = pciNodeTmp->next;
+    }
+    return returnListHead;
+}
+
+pciHeader* getPciHeader(pciNode* node){
+    pciHeader* header = (pciHeader*)malloc(sizeof(pciHeader));
+
+    for(char i = 0; i < sizeof(pciHeader); i += 4){
+        *(unsigned int*)((char*)header + i) = pciConfigReadDouble(node->bus, node->slot, node->func, i);
+    }
+    return header;
+}

@@ -12,6 +12,8 @@
 #include "../Storage/fat32.h"
 #include "../IO/PCI.h"
 
+#include "../Drivers/Network/networkDriver.h"
+
 typedef char * string;
 
 int step;
@@ -122,6 +124,7 @@ int main(){
     //     print(' ');
     // }
 
+    networkDriverInit();
 
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
@@ -137,7 +140,7 @@ int main(){
         printHex(ps2Read());
         print('\n');
     }
-
+    
     print("#>");
 
     while(1){
