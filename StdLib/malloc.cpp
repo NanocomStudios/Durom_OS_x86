@@ -2,6 +2,7 @@
 #include "../Graphics/VGA.h"
 
 #include <limine.h>
+#include <cstddef>
 
 char* ram;
 char isInit;
@@ -49,7 +50,7 @@ void printMemoryInfo(){
         print('\n');
 }
 
-void* malloc(int blockSize){
+void* malloc(size_t blockSize){
         if((blockSize > ramSize - HEAP_START) || (blockSize < 0)){
                 return 0;
         }
@@ -58,20 +59,20 @@ void* malloc(int blockSize){
 
         if(isInit == 0){
                 //Create the first block, Initialize the RAM
-                *(int*)(ram + PREVBLOCK) = -1;
-                *(int*)(ram + NEXTBLOCK) = -1;
-		*(int*)(ram + BLOCK_START) = HEAP_START;
+                *(long*)(ram + PREVBLOCK) = -1;
+                *(long*)(ram + NEXTBLOCK) = -1;
+		*(long*)(ram + BLOCK_START) = HEAP_START;
                 newBlock = HEAP_START;
         }else{
                 newBlock = getFreeBlock(size);
         }
         if (newBlock != -1){ // Can create a valid allocation
-                *(int*)(ram + (newBlock - BLOCK_SIZE)) = size;
-                *(int*)(ram + (newBlock - NEXT_BLOCK_PTR)) = *(int*)(ram + NEXTBLOCK);
+                *(long*)(ram + (newBlock - BLOCK_SIZE)) = size;
+                *(long*)(ram + (newBlock - NEXT_BLOCK_PTR)) = *(long*)(ram + NEXTBLOCK);
 
-                if(*(int*)(ram + PREVBLOCK) != -1){ // 
+                if(*(long*)(ram + PREVBLOCK) != -1){ // 
                         // Connect new block into the list
-                        *(int*)(ram + (*(int*)(ram + PREVBLOCK) - NEXT_BLOCK_PTR)) = newBlock;
+                        *(long*)(ram + (*(long*)(ram + PREVBLOCK) - NEXT_BLOCK_PTR)) = newBlock;
                 }
                 
                 isInit = 1;
@@ -81,55 +82,55 @@ void* malloc(int blockSize){
 }
 
 void free(void* ptr){
-        if(((char*)ptr - ram) == *(int*)(ram + BLOCK_START)){ // Free the first block
-                if(*(int*)(ram + *(int*)(ram + BLOCK_START) - NEXT_BLOCK_PTR) == -1){ // Only first block in the list
+        if(((char*)ptr - ram) == *(long*)(ram + BLOCK_START)){ // Free the first block
+                if(*(long*)(ram + *(long*)(ram + BLOCK_START) - NEXT_BLOCK_PTR) == -1){ // Only first block in the list
                         isInit = 0;
                 }else{ // List has more blocks than the first block.
-                        *(int*)(ram + BLOCK_START) = *(int*)(ram + *(int*)(ram + BLOCK_START) - NEXT_BLOCK_PTR);
+                        *(long*)(ram + BLOCK_START) = *(long*)(ram + *(long*)(ram + BLOCK_START) - NEXT_BLOCK_PTR);
                 }
         }else{
-                for(int i = *(int*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
-                        if(*(int*)(ram + i - NEXT_BLOCK_PTR) == ((char*)ptr - ram)){ // Free the pointer
-                                *(int*)(ram + i - NEXT_BLOCK_PTR) = *(int*)((char*)ptr - NEXT_BLOCK_PTR);
+                for(int i = *(long*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
+                        if(*(long*)(ram + i - NEXT_BLOCK_PTR) == ((char*)ptr - ram)){ // Free the pointer
+                                *(long*)(ram + i - NEXT_BLOCK_PTR) = *(long*)((char*)ptr - NEXT_BLOCK_PTR);
                                 break;
-                        }else if((*(int*)(ram + i - NEXT_BLOCK_PTR) > ((char*)ptr - ram)) && (i < ((char*)ptr - ram))){ // Invalid pointer
+                        }else if((*(long*)(ram + i - NEXT_BLOCK_PTR) > ((char*)ptr - ram)) && (i < ((char*)ptr - ram))){ // Invalid pointer
                                 break;
-                        }else if(*(int*)(ram + i - NEXT_BLOCK_PTR) == -1){ // End of the list
+                        }else if(*(long*)(ram + i - NEXT_BLOCK_PTR) == -1){ // End of the list
                                 break;
                         }else{
-                                i = *(int*)(ram + (i - NEXT_BLOCK_PTR));
+                                i = *(long*)(ram + (i - NEXT_BLOCK_PTR));
                         }
                 }
         }
 }
 
-int getFreeBlock(int size){
+int getFreeBlock(size_t size){
         
-                if((*(int*)(ram + BLOCK_START) - META_BLOCK - MEM_START) >= (size + META_BLOCK)){ 
+                if((*(long*)(ram + BLOCK_START) - META_BLOCK - MEM_START) >= (size + META_BLOCK)){ 
                         // Has free space before the first block
-                        *(int*)(ram + PREVBLOCK) = -1;
-                        *(int*)(ram + NEXTBLOCK) = *(int*)(ram + BLOCK_START);
-			*(int*)(ram + BLOCK_START) = *(int*)(ram + BLOCK_START) - META_BLOCK - size;
-                        return *(int*)(ram + BLOCK_START);
+                        *(long*)(ram + PREVBLOCK) = -1;
+                        *(long*)(ram + NEXTBLOCK) = *(long*)(ram + BLOCK_START);
+			*(long*)(ram + BLOCK_START) = *(long*)(ram + BLOCK_START) - META_BLOCK - size;
+                        return *(long*)(ram + BLOCK_START);
 
                 }
 
-                for(int i = *(int*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
-                        if(*(int*)(ram + (i - NEXT_BLOCK_PTR)) == -1){
+                for(int i = *(long*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
+                        if(*(long*)(ram + (i - NEXT_BLOCK_PTR)) == -1){
                                 // Allocate at the end of the list
-                                *(int*)(ram + PREVBLOCK) = i;
-                                *(int*)(ram + NEXTBLOCK) = -1;
-                                return i + *(int*)(ram + (i - BLOCK_SIZE)) + META_BLOCK;
+                                *(long*)(ram + PREVBLOCK) = i;
+                                *(long*)(ram + NEXTBLOCK) = -1;
+                                return i + *(long*)(ram + (i - BLOCK_SIZE)) + META_BLOCK;
 
-                        }else if((*(int*)(ram + (i - NEXT_BLOCK_PTR)) - META_BLOCK - *(int*)(ram + (i - BLOCK_SIZE)) - i) >= (size + META_BLOCK)){
+                        }else if((*(long*)(ram + (i - NEXT_BLOCK_PTR)) - META_BLOCK - *(long*)(ram + (i - BLOCK_SIZE)) - i) >= (size + META_BLOCK)){
                                 // Allocate in the middle
-                                *(int*)(ram + PREVBLOCK) = i;
-                                *(int*)(ram + NEXTBLOCK) = *(int*)(ram + (i - NEXT_BLOCK_PTR));
+                                *(long*)(ram + PREVBLOCK) = i;
+                                *(long*)(ram + NEXTBLOCK) = *(long*)(ram + (i - NEXT_BLOCK_PTR));
 
-                                return i + *(int*)(ram + (i - BLOCK_SIZE)) + META_BLOCK;
+                                return i + *(long*)(ram + (i - BLOCK_SIZE)) + META_BLOCK;
 
                         }else{
-                                i = *(int*)(ram + (i - NEXT_BLOCK_PTR));
+                                i = *(long*)(ram + (i - NEXT_BLOCK_PTR));
                         }
                 }
                 return -1;                 

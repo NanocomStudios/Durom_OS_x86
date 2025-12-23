@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "interrupt.h"
 
 #include "../Graphics/VGA.h"
 #include "../StdLib/malloc.h"
@@ -51,7 +52,7 @@ int main(){
     // print('\n');
 
     // free(dBuffer);
-    pciInit();
+    
     // int i = 0 ;
     // outb(0x1f7,0x20);
     // while((i < (512)) && (inb(0x1f7) & (unsigned char)8)){
@@ -124,7 +125,7 @@ int main(){
     //     print(' ');
     // }
 
-    networkDriverInit();
+    
 
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
@@ -211,6 +212,17 @@ int main(){
                         printDisplayInfo();
                     }else if(!strcmp(inpBuffer, 255, "memory", 6)){
                         printMemoryInfo();
+                    }else if(!strcmp(inpBuffer, 255, "break", 5)){
+                        asm("INT3");
+                    }else if(!strcmp(inpBuffer, 255, "div0", 4)){
+                        for(int i = -1;i < 2; i++){
+                            printInt(5 / i);
+                            print('\n');
+                        }
+                    }else if(!strcmp(inpBuffer, 255, "page", 4)){
+                        *(long*)0 = 214;
+                    }else if(!strcmp(inpBuffer, 255, "int", 3)){
+                        asm("int $0x80");
                     }else{
                         print('\'');
                         print(inpBuffer);
@@ -250,12 +262,21 @@ int main(){
     return 0;
 }
 
+void init_drivers(){
+    (long)networkDriverInit();
+}
+
 void init_kernel(){
     mallocInit();
     initScreen();
 
     initGUI();
+    idt_init();
 
+    pciInit();
+    init_drivers();
+
+    print("Init Complete.\n");
     main();
     return;
 }

@@ -1,4 +1,5 @@
 #include "networkDriver.h"
+#include "intel_8254x.h"
 
 #include "../../IO/PCI.h"
 #include "../../Graphics/VGA.h"
@@ -16,12 +17,13 @@ NetworkDriver* networkDriverInit(){
         switch(header->vendorID){
             case 0x8086: //Intel
                 switch(header->deviceID){
-                    case 0x100E: //Intel PRO/1000 MT Desktop Adapter
+                    case 0x100E:
                         print("Intel PRO/1000 MT Desktop Adapter Found!\n");
-                        //Initialize driver here
+                        return new intel_8254x;
                         break;
                     default:
                         print("Unknown Intel Network Device Found!\n");
+                        return 0;
                         break;
                 }
                 break;
@@ -31,9 +33,11 @@ NetworkDriver* networkDriverInit(){
                     case 0x8168:
                     case 0x8169:
                         print("Realtek Network Adaptor Found!\n");
+                        return 0;
                         break;
                     default:
                         print("Unknown Realtek Network Device Found!\n");
+                        return 0;
                         break;
                 }
                 break;
