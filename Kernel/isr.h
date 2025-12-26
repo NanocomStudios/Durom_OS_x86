@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#define PIC_TIMER 0
+#define PIC_KEYBOARD 1
+
 typedef struct InterruptData
 {
     uint64_t registers[14];

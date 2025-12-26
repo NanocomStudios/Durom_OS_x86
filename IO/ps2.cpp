@@ -3,12 +3,12 @@
 
 void ps2Wait(unsigned char mode){
     switch(mode){
-        case READ:    
-            while((inb(0x64) & mode) == 0);
+        case READ: 
+            while((inb(0x64) & mode) == 0)asm("hlt");
             break;
         
-        case WRITE:   
-            while((inb(0x64) & mode) != 0);
+        case WRITE: 
+            while((inb(0x64) & mode) != 0)asm("hlt");
             break;
     }
 }

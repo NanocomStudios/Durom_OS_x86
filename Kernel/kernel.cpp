@@ -1,5 +1,6 @@
 #include "kernel.h"
 #include "interrupt.h"
+#include "isr.h"
 
 #include "../Graphics/VGA.h"
 #include "../StdLib/malloc.h"
@@ -12,6 +13,8 @@
 #include "../Storage/hdd.h"
 #include "../Storage/fat32.h"
 #include "../IO/PCI.h"
+#include "../Drivers/PIC/PIC.h"
+#include "../Drivers/Audio/pc_speaker.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
@@ -127,6 +130,9 @@ int main(){
 
     
 
+
+
+
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
         //     print("Keyboard -> ");
@@ -223,6 +229,12 @@ int main(){
                         *(long*)0 = 214;
                     }else if(!strcmp(inpBuffer, 255, "int", 3)){
                         asm("int $0x80");
+                    }else if(!strcmp(inpBuffer, 255, "beep", 4)){
+                        beep();
+                    }else if(!strcmp(inpBuffer, 255, "boop", 4)){
+                        play_sound(500);
+                    }else if(!strcmp(inpBuffer, 255, "stop", 4)){
+                        nosound();
                     }else{
                         print('\'');
                         print(inpBuffer);
@@ -269,14 +281,26 @@ void init_drivers(){
 void init_kernel(){
     mallocInit();
     initScreen();
-
-    initGUI();
     idt_init();
+    initGUI();
+    
 
     pciInit();
     init_drivers();
 
+    PIC_remap(32,40);
+    IRQ_set_mask_all();
+    IRQ_clear_mask(PIC_TIMER);
+    IRQ_clear_mask(PIC_KEYBOARD);
+    sti();
+
+    int x = 6;
+    printHex((long)&x);
+    print('\n');
+
     print("Init Complete.\n");
+    printHex((unsigned char)(0 | (2 << 6) | (3 << 4) | (2 << 1) | 0));
+    print('\n');
     main();
     return;
 }

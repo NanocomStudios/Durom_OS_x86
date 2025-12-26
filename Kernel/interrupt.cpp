@@ -28,7 +28,7 @@ void idt_init() {
     }
 
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
-    __asm__ volatile ("sti"); // set the interrupt flag
+    
 }
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
@@ -43,3 +43,10 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
     descriptor->reserved       = 0;
 }
 
+void sti(){
+    __asm__ volatile ("sti"); // set the interrupt flag
+}
+
+void cli(){
+    __asm__ volatile ("cli"); // set the interrupt flag
+}

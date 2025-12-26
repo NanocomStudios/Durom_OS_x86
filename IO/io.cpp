@@ -35,3 +35,7 @@ unsigned int inl(unsigned short port){
    asm volatile ("inl %1, %0" : "=a" (ret) : "dN" (port));
    return ret;
 } 
+
+void io_wait(void){
+    outb(0x80, 0);
+}

@@ -96,8 +96,9 @@ void initScreen(){
     bpp = framebuffer->bpp;
     pitch = framebuffer->pitch;
     graphicMode ='G';
-
+    
     screenRam = (void*)malloc(pitch * height);
+    
 
     consoleWidth = width / charWidth;
     consoleHeight = height / charHeight; 

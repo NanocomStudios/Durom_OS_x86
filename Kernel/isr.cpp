@@ -1,11 +1,12 @@
 #include "isr.h"
 #include "../Graphics/VGA.h"
+#include "../Drivers/PIC/PIC.h"
 
 extern "C"{
     
     void exception_handler(InterruptData* intr) {
         print("Exception: ");
-        
+
         switch (intr->int_no){
             case 0:
                 print("Divide by zero.\n");
@@ -32,9 +33,30 @@ extern "C"{
     }
     
     void irq_handler(InterruptData* intr) {
-        print("IRQ ");
-        printInt(intr->int_no);
-        print("!\n");
+        
+
+        switch ((intr->int_no) - 64){
+            case PIC_TIMER:
+
+            break;
+            case PIC_KEYBOARD:
+                
+                break;
+            default:
+            if(((intr->int_no) - 64) < 16){
+                    print("PIC ");
+                    printInt((intr->int_no) - 64);
+                }else{
+                    print("IRQ ");
+                    printInt((intr->int_no) - 32);
+                }
+                print("!\n");
+        }
+
+        if(((intr->int_no) - 64) < 16){
+            PIC_sendEOI((intr->int_no) - 64);
+        }
+
         return;
     }
 }

@@ -12,4 +12,5 @@ void outl(unsigned short port, unsigned int value);
 
 unsigned int inl(unsigned short port);
 
+void io_wait(void);
 #endif
