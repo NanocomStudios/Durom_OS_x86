@@ -18,6 +18,8 @@
 
 #include "../Drivers/Network/networkDriver.h"
 
+#include <limine.h>
+
 typedef char * string;
 
 int step;
@@ -230,9 +232,19 @@ int main(){
                     }else if(!strcmp(inpBuffer, 255, "int", 3)){
                         asm("int $0x80");
                     }else if(!strcmp(inpBuffer, 255, "beep", 4)){
-                        beep();
-                    }else if(!strcmp(inpBuffer, 255, "boop", 4)){
-                        play_sound(500);
+                        
+                        char tmp[20];
+                        int chCnt = 0;
+                        
+                        for(int i = 5;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                            if(i > 3){ 
+                                tmp[chCnt] = inpBuffer[i];
+                                chCnt++;
+                            }
+                        }
+                        tmp[chCnt] = 0;
+                        play_sound(toInt(tmp, chCnt));
+
                     }else if(!strcmp(inpBuffer, 255, "stop", 4)){
                         nosound();
                     }else{
@@ -278,6 +290,26 @@ void init_drivers(){
     (long)networkDriverInit();
 }
 
+namespace {
+
+__attribute__((used, section(".limine_requests")))
+volatile limine_executable_address_request executable_address_request = {
+    .id = LIMINE_EXECUTABLE_ADDRESS_REQUEST_ID,
+    .revision = 0,
+    .response = nullptr
+};
+
+__attribute__((used, section(".limine_requests")))
+volatile limine_executable_file_request executable_file_request  = {
+    .id = LIMINE_EXECUTABLE_FILE_REQUEST_ID,
+    .revision = 0,
+    .response = nullptr
+};
+
+}
+
+
+
 void init_kernel(){
     mallocInit();
     initScreen();
@@ -294,12 +326,22 @@ void init_kernel(){
     IRQ_clear_mask(PIC_KEYBOARD);
     sti();
 
-    int x = 6;
-    printHex((long)&x);
+    if (executable_address_request.response == nullptr) {
+                while(1);
+        }
+    printHex(executable_address_request.response->physical_base);
+    print('\n');
+    printHex(executable_address_request.response->virtual_base);
+    print('\n');
+    
+    if (executable_file_request.response == nullptr) {
+                while(1);
+        }
+    printInt(executable_file_request.response->executable_file->size);
     print('\n');
 
+
     print("Init Complete.\n");
-    printHex((unsigned char)(0 | (2 << 6) | (3 << 4) | (2 << 1) | 0));
     print('\n');
     main();
     return;

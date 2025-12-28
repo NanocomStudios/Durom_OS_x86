@@ -110,7 +110,6 @@ void hcf() {
 }
 
 
-
 // Extern declarations for global constructors array.
 extern void (*__init_array[])();
 extern void (*__init_array_end[])();
