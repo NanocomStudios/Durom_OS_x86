@@ -7,3 +7,11 @@ long pow(int inp, int exp){
     }
     return tmp;
 }
+
+uint64_t ceiling_div(uint64_t num, uint64_t div){
+    if(num % div == 0){
+        return num / div;
+    }else{
+        return (num / div) + 1;
+    }
+}
