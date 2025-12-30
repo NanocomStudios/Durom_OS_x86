@@ -33,7 +33,7 @@ void pmm_init(){
     }
     page_count = ceiling_div(ramSize, 0x1000);
     page_alloc_bitmap_end = ramBase + ceiling_div(ceiling_div(page_count, 8), 0x1000) * 0x1000;
-    page_alloc_bitmap = (char*)(DEFAULT_HHDM_OFFSET + ramBase);
+    page_alloc_bitmap = (uint64_t*)(DEFAULT_HHDM_OFFSET + ramBase);
 
     for(uint64_t i = 0; i < ceiling_div(page_count, 8); i++){
         page_alloc_bitmap[i] = 0;

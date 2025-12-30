@@ -19,12 +19,14 @@ extern "C"{
                 print("Page Fault (");
                 printHex(intr->cr2);
                 print(")\n");
+                printHex(intr->err_code);
+                print('\n');
                 break;
             default:
                 print("Exception ");
                 printInt(intr->int_no);
                 print(" Code ");
-                printInt(intr->err_code);
+                printHex(intr->err_code);
                 print('\n');
         }
         asm("cli");

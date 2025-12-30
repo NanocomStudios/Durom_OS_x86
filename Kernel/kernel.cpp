@@ -340,6 +340,7 @@ void init_kernel(){
     printInt(executable_file_request.response->executable_file->size);
     print('\n');
 
+    // *(char*)(executable_address_request.response->physical_base) = 55;
 
     print("Init Complete.\n");
     print('\n');
