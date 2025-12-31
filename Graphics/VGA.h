@@ -74,6 +74,7 @@ void fillRectangle(short x1, short y1, short x2, short y2, Color fillColor);
 Color antiAliasing(float inp, Color color);
 void drawChar(char inp, short x, short y, Color fgColor, Color bgColor);
 void renderScreen();
+void hexdump(char* addr, int len);
 
 struct VesaInfoBlock{
     unsigned short attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.

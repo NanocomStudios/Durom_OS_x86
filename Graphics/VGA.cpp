@@ -565,3 +565,16 @@ void drawChar(char inp, short x, short y, Color fgColor, Color bgColor){
 void renderScreen(){
     memcpy(physicalScreenRam, screenRam, pitch * height);
 }
+
+void hexdump(char* addr, int len){
+    for(int i = 0; i < len; i++){
+        if(i % 16 == 0){
+            print('\n');
+            printHex((long)(addr + i));
+            print(": ");
+        }
+        printHexV((long)(*(addr + i)));
+        print(' ');
+    }
+    print('\n');
+}

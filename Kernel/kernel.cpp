@@ -15,6 +15,7 @@
 #include "../IO/PCI.h"
 #include "../Drivers/PIC/PIC.h"
 #include "../Drivers/Audio/pc_speaker.h"
+#include "../Memory/PMM.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
@@ -340,7 +341,12 @@ void init_kernel(){
     printInt(executable_file_request.response->executable_file->size);
     print('\n');
 
-    // *(char*)(executable_address_request.response->physical_base) = 55;
+    uint64_t cr3;
+    asm volatile("mov %%cr3, %0" : "=r"(cr3));
+    print("CR3 Page Table Address: ");
+    printHex(cr3);
+    print('\n');
+    hexdump((char*)(cr3 + DEFAULT_HHDM_OFFSET + 16), 8);
 
     print("Init Complete.\n");
     print('\n');
