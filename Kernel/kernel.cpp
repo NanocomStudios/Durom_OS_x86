@@ -343,10 +343,13 @@ void init_kernel(){
 
     uint64_t cr3;
     asm volatile("mov %%cr3, %0" : "=r"(cr3));
+    cr3 = cr3 & (0xFFFFFFFFF000);
     print("CR3 Page Table Address: ");
     printHex(cr3);
     print('\n');
-    hexdump((char*)(cr3 + DEFAULT_HHDM_OFFSET + 16), 8);
+
+    printHex(*(uint64_t*)(cr3 + DEFAULT_HHDM_OFFSET + 2048));
+    print('\n');
 
     print("Init Complete.\n");
     print('\n');
