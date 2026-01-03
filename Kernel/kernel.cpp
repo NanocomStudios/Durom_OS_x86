@@ -16,6 +16,7 @@
 #include "../Drivers/PIC/PIC.h"
 #include "../Drivers/Audio/pc_speaker.h"
 #include "../Memory/PMM.h"
+#include "../Memory/Paging.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
@@ -312,11 +313,21 @@ volatile limine_executable_file_request executable_file_request  = {
 
 
 void init_kernel(){
+
+    pmm_init();
+    pagingInit();
+
     mallocInit();
     initScreen();
     idt_init();
     initGUI();
     
+    allocateToPageTable(0x00007FFFFFFFF000, (uint64_t)page_alloc(), 0x3);
+    allocateToPageTable(0x00007FFFFFFFE000, (uint64_t)page_alloc(), 0x3);
+    allocateToPageTable(0x00007FFFFFFFD000, (uint64_t)page_alloc(), 0x3);
+    allocateToPageTable(0x00007FFFFFFFC000, (uint64_t)page_alloc(), 0x3);
+
+    asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000 + 0xFFF));
 
     pciInit();
     init_drivers();
@@ -348,7 +359,10 @@ void init_kernel(){
     printHex(cr3);
     print('\n');
 
-    printHex(*(uint64_t*)(cr3 + DEFAULT_HHDM_OFFSET + 2048));
+    uint64_t rsp;
+    asm volatile("mov %%rsp, %0" : "=r"(rsp));
+    print("Stack Pointer :- ");
+    printHex(rsp);
     print('\n');
 
     print("Init Complete.\n");

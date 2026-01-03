@@ -9,49 +9,31 @@ char isInit;
 
 extern char heap_start;
 
-unsigned long ramBase = 0;
-unsigned long ramSize = 0;
+unsigned long heapBase = 0;
+unsigned long heapSize = 0;
 
-namespace {
-
-__attribute__((used, section(".limine_requests")))
-volatile limine_memmap_request memmap_request = {
-    .id = LIMINE_MEMMAP_REQUEST_ID,
-    .revision = 0,
-    .response = nullptr
-};
-
-}
-
+extern long page_frames_start;
+extern long ramSize;
 
 void mallocInit(){
 
-        if (memmap_request.response == nullptr
-                || memmap_request.response->entry_count < 1) {
-                while(1);
-        }
+        heapBase = page_frames_start + 0x200000; // Start the heap 2MB after the base of RAM
+        heapSize = ramSize - 0x200000; // Reduce the heap size to account for the 2MB offset
 
-        for(int i = 0; i < memmap_request.response->entry_count; i++){
-                if(memmap_request.response->entries[i]->type == 0){
-                        ramBase = memmap_request.response->entries[i]->base;
-                        ramSize = memmap_request.response->entries[i]->length;
-                }
-        }
-
-        ram = (char*)(ramBase + 0xFFFF800000000000);
+        ram = (char*)(heapBase + 0xFFFF800000000000);
         isInit = 0;
 }
 
 void printMemoryInfo(){
         print("RAM Base : ");
-        printHex(ramBase);
+        printHex(heapBase);
         print("\nRAM Length : ");
-        printInt(ramSize);
+        printInt(heapSize);
         print('\n');
 }
 
 void* malloc(size_t blockSize){
-        if((blockSize > ramSize - HEAP_START) || (blockSize < 0)){
+        if((blockSize > heapSize - HEAP_START) || (blockSize < 0)){
                 return 0;
         }
         int size = (int) blockSize;
@@ -89,7 +71,7 @@ void free(void* ptr){
                         *(long*)(ram + BLOCK_START) = *(long*)(ram + *(long*)(ram + BLOCK_START) - NEXT_BLOCK_PTR);
                 }
         }else{
-                for(int i = *(long*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
+                for(int i = *(long*)(ram + BLOCK_START); i < (heapSize - META_BLOCK);){
                         if(*(long*)(ram + i - NEXT_BLOCK_PTR) == ((char*)ptr - ram)){ // Free the pointer
                                 *(long*)(ram + i - NEXT_BLOCK_PTR) = *(long*)((char*)ptr - NEXT_BLOCK_PTR);
                                 break;
@@ -115,7 +97,7 @@ int getFreeBlock(size_t size){
 
                 }
 
-                for(int i = *(long*)(ram + BLOCK_START); i < (ramSize - META_BLOCK);){
+                for(int i = *(long*)(ram + BLOCK_START); i < (heapSize - META_BLOCK);){
                         if(*(long*)(ram + (i - NEXT_BLOCK_PTR)) == -1){
                                 // Allocate at the end of the list
                                 *(long*)(ram + PREVBLOCK) = i;
