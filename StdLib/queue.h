@@ -1,16 +1,18 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include "../Graphics/VGA.h"
+
 template <typename ObjectType>
 class Queue {
 
 private:
 
-    class QueueNode {
-    public:
+    struct QueueNode {
         ObjectType obj;
         QueueNode* next;
-        QueueNode(ObjectType o) : obj(o), next(nullptr) {}
+
+        QueueNode(const ObjectType& o) : obj(o), next(nullptr) {}
     };
 
     QueueNode* head = nullptr;
@@ -18,9 +20,16 @@ private:
 
 public:
     
+    ~Queue() {
+        while (!isEmpty()) {
+            dequeue();
+        }
+    }
+
     void enqueue(const ObjectType& obj) {
         QueueNode* newNode = new QueueNode(obj);
-        if (tail) {
+        
+        if (tail != nullptr) {
             tail->next = newNode;
         }
         tail = newNode;

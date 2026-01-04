@@ -19,6 +19,7 @@
 #include "../Memory/Paging.h"
 
 #include "../StdLib/queue.h"
+#include "../StdLib/rb_tree.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
@@ -313,7 +314,6 @@ volatile limine_executable_file_request executable_file_request  = {
 }
 
 
-
 void init_kernel(){
 
     pmm_init();
@@ -329,7 +329,7 @@ void init_kernel(){
     allocateToPageTable(0x00007FFFFFFFD000, (uint64_t)page_alloc(), 0x3);
     allocateToPageTable(0x00007FFFFFFFC000, (uint64_t)page_alloc(), 0x3);
 
-    asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000 + 0xFFF));
+    asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000));
 
     pciInit();
     init_drivers();
@@ -370,23 +370,9 @@ void init_kernel(){
     print("Init Complete.\n");
     print('\n');
 
-
-    Queue<int> myQueue;
-    myQueue.enqueue(10);
-    myQueue.enqueue(20);
-    myQueue.enqueue(30);
-    myQueue.enqueue(40);
-    printInt(myQueue.dequeue());
-    print('\n');
-    printInt(myQueue.dequeue());
-    print('\n');
-    printInt(myQueue.dequeue());
-    print('\n');
-    printInt(myQueue.dequeue());
-    print('\n');
-
-
-
     main();
+
+    while(1)asm("hlt");
+    
     return;
 }

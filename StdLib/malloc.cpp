@@ -15,9 +15,11 @@ unsigned long heapSize = 0;
 extern long page_frames_start;
 extern long ramSize;
 
-void mallocInit(uint64_t base, uint64_t size){
-        heapBase = base;
-        heapSize = size;
+void mallocInit(){
+
+        heapBase = page_frames_start + 0x200000; // Start the heap 2MB after the base of RAM
+        heapSize = ramSize - 0x200000; // Reduce the heap size to account for the 2MB offset
+
         ram = (char*)(heapBase + 0xFFFF800000000000);
         isInit = 0;
 }
