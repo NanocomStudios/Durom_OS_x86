@@ -20,6 +20,7 @@
 
 #include "../StdLib/queue.h"
 #include "../StdLib/rb_tree.h"
+#include "../StdLib/vector.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
