@@ -18,6 +18,8 @@
 #include "../Memory/PMM.h"
 #include "../Memory/Paging.h"
 
+#include "../StdLib/queue.h"
+
 #include "../Drivers/Network/networkDriver.h"
 
 #include <limine.h>
@@ -367,6 +369,24 @@ void init_kernel(){
 
     print("Init Complete.\n");
     print('\n');
+
+
+    Queue<int> myQueue;
+    myQueue.enqueue(10);
+    myQueue.enqueue(20);
+    myQueue.enqueue(30);
+    myQueue.enqueue(40);
+    printInt(myQueue.dequeue());
+    print('\n');
+    printInt(myQueue.dequeue());
+    print('\n');
+    printInt(myQueue.dequeue());
+    print('\n');
+    printInt(myQueue.dequeue());
+    print('\n');
+
+
+
     main();
     return;
 }
