@@ -3,6 +3,7 @@
 
 #define HEAP 32768
 #include <cstddef>
+#include <cstdint>
 
 #define BLOCK_START 0
 #define PREVBLOCK 8
@@ -16,10 +17,10 @@
 #define MEM_START 24
 #define HEAP_START (24 + META_BLOCK)
 
-void mallocInit();
-void* malloc(size_t blockSize);
+void mallocInit(uint64_t baseAddress, uint64_t size);
+void* malloc(uint64_t blockSize);
 void free(void* ptr);
-int getFreeBlock(size_t size);
+long getFreeBlock(uint64_t size);
 void printMemoryInfo();
 
 #endif

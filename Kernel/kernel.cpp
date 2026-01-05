@@ -315,20 +315,33 @@ volatile limine_executable_file_request executable_file_request  = {
 }
 
 
+// void stackTest(int a){
+//     printInt(a);
+//     uint64_t rsp;
+//     asm volatile("mov %%rsp, %0" : "=r"(rsp));
+//     print("Stack Pointer :- ");
+//     printHex(rsp);
+//     print('\n');
+//     stackTest(a + 1);
+//     print('\n');
+// }
+
 void init_kernel(){
 
     pmm_init();
     pagingInit();
 
-    mallocInit();
+    mallocInit(0x0000700000000000, 0x00007FFFFFFFB000 - 0x0000700000000000);
     initScreen();
     idt_init();
     initGUI();
     
-    allocateToPageTable(0x00007FFFFFFFF000, (uint64_t)page_alloc(), 0x3);
-    allocateToPageTable(0x00007FFFFFFFE000, (uint64_t)page_alloc(), 0x3);
-    allocateToPageTable(0x00007FFFFFFFD000, (uint64_t)page_alloc(), 0x3);
-    allocateToPageTable(0x00007FFFFFFFC000, (uint64_t)page_alloc(), 0x3);
+    allocateToPageTable(0x00007FFFFFFFF000, (uint64_t)page_alloc(), 0x3); // Buffer
+
+    allocateToPageTable(0x00007FFFFFFFE000, (uint64_t)page_alloc(), 0x3);// Stack
+    allocateToPageTable(0x00007FFFFFFFD000, (uint64_t)page_alloc(), 0x3);// Stack
+    allocateToPageTable(0x00007FFFFFFFC000, (uint64_t)page_alloc(), 0x3);// Stack
+    allocateToPageTable(0x00007FFFFFFFB000, (uint64_t)page_alloc(), 0x3);// Stack
 
     asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000));
 
