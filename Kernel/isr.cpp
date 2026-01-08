@@ -1,6 +1,7 @@
 #include "isr.h"
 #include "../Graphics/VGA.h"
 #include "../Drivers/PIC/PIC.h"
+#include "../SystemCalls/systemCalls.h"
 
 extern "C"{
     
@@ -48,11 +49,16 @@ extern "C"{
             if(((intr->int_no) - 64) < 16){
                     print("PIC ");
                     printInt((intr->int_no) - 64);
+                    print("!\n");
                 }else{
-                    print("IRQ ");
-                    printInt((intr->int_no) - 32);
+                    if(((intr->int_no) - 32) == 0x80){
+                        systemCallHandler(intr);
+                    }else{
+                        print("Unknown IRQ ");
+                        printInt((intr->int_no) - 64);
+                        print("!\n");
+                    }
                 }
-                print("!\n");
         }
 
         if(((intr->int_no) - 64) < 16){

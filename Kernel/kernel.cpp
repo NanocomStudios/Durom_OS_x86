@@ -237,6 +237,15 @@ int main(){
                         *(long*)0 = 214;
                     }else if(!strcmp(inpBuffer, 255, "int", 3)){
                         asm("int $0x80");
+                    }else if(!strcmp(inpBuffer, 255, "char", 4)){
+                            asm volatile (
+                                "movq $1, %%rax\n"
+                                "movq $0x41, %%rbx\n"
+                                "int $0x80\n"
+                                :
+                                :
+                                : "rax", "rbx"
+                            );
                     }else if(!strcmp(inpBuffer, 255, "beep", 4)){
                         
                         char tmp[20];

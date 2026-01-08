@@ -3,9 +3,9 @@ extern irq_handler
 
 %macro PUSH_ALL 0
     push rax
+    push rbx
     push rcx
     push rdx
-    push rbx
     push rsi
     push rdi
     push r8
@@ -37,9 +37,9 @@ extern irq_handler
     pop r8
     pop rdi
     pop rsi
-    pop rbx
     pop rdx
     pop rcx
+    pop rbx
     pop rax
 %endmacro
 
