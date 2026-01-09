@@ -1,4 +1,4 @@
-#include "../Kernel/isr.h"
+#include "isr.h"
 #include "../Graphics/VGA.h"
 
 #include <cstdint>
@@ -11,7 +11,7 @@ void systemCallHandler(InterruptData* intr){
 
         //     break;
         case 1:
-            print((char)intr->rbx); // rbx
+            printChar((char)intr->rbx); // rbx
             break;
         default:
             print("Unknown System Call: ");

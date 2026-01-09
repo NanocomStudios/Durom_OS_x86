@@ -1,7 +1,7 @@
 #include "isr.h"
 #include "../Graphics/VGA.h"
 #include "../Drivers/PIC/PIC.h"
-#include "../SystemCalls/systemCalls.h"
+#include "systemCalls.h"
 
 extern "C"{
     

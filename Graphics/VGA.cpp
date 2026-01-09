@@ -245,13 +245,18 @@ void scrollScreen(){
             renderScreen();
 }
 
-// void print(char inp){
-//     asm volatile("mov $1, %rax");
-//     asm volatile("mov %0, %%rbx" :: "r"((long)inp));
-//     asm volatile("int $0x80");
-// }
-
 void print(char inp){
+    asm volatile (
+                    "movq $1, %%rax\n"
+                    "movq %0, %%rbx\n"
+                    "int $0x80\n"
+                    :
+                    : "r"((long)inp)
+                    : "rax", "rbx"
+                );
+}
+
+void printChar(char inp){
     switch (inp)
     {
     case '\n':
