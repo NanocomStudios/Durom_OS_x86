@@ -21,6 +21,7 @@
 #include "../StdLib/queue.h"
 #include "../StdLib/rb_tree.h"
 #include "../StdLib/vector.h"
+#include "../StdLib/lock.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
@@ -137,7 +138,7 @@ int main(){
     // }
 
     
-
+    Spinlock lock;
 
 
 
@@ -246,6 +247,12 @@ int main(){
                                 :
                                 : "rax", "rbx"
                             );
+                    }else if(!strcmp(inpBuffer, 255, "acquire", 7)){
+                        lock.acquire();
+                        print("Lock Acquired!\n");
+                    }else if(!strcmp(inpBuffer, 255, "release", 7)){
+                        lock.release();
+                        print("Lock Released!\n");
                     }else if(!strcmp(inpBuffer, 255, "beep", 4)){
                         
                         char tmp[20];

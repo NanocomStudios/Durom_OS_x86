@@ -31,3 +31,22 @@ void allocateToPageTable(uint64_t virtualAddr, uint64_t physicalAddr, uint64_t f
     uint64_t index = (virtualAddr >> 12) & 0x1FF;
     pageTable[index] = physicalAddr | flags | 0x1; // Present
 }
+
+uint64_t getPhysicalAddress(uint64_t virtualAddr){
+    uint64_t* pageTable = (uint64_t*)(DEFAULT_HHDM_OFFSET + pageStructureRoot);
+
+    for(int level = 4; level > 0; level--){
+
+        uint64_t index = (virtualAddr >> (12 + (level -1) * 9)) & 0x1FF;
+
+        if((pageTable[index] & 0x1) == 0){
+            return 0;
+        }
+        if(level == 1){
+            return (pageTable[index] & 0xFFFFFFFFFFFFF000) | (virtualAddr & 0xFFF);
+        }
+        pageTable = (uint64_t*)((pageTable[index] & 0xFFFFFFFFFFFFF000) + DEFAULT_HHDM_OFFSET);
+        
+    }
+    return 0;
+}

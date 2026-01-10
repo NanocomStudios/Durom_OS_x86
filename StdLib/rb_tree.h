@@ -14,18 +14,18 @@ class RedBlackTree {
 private:
     // Structure for a node in Red-Black Tree
     struct Node {
-        KeyType data;
-        ValueType value;
+        KeyType key_data;
+        ValueType value_data;
         NodeColor color;
         Node* parent;
         Node* left;
         Node* right;
 
-        // Constructor to initialize node with data and
+        // Constructor to initialize node with key_data and
         // color
         Node(KeyType key, ValueType val)
-            : data(key)
-            , value(val)
+            : key_data(key)
+            , value_data(val)
             , color(TREE_NODE_RED)
             , parent(nullptr)
             , left(nullptr)
@@ -208,6 +208,15 @@ private:
         return current;
     }
 
+    // Utility function: Find Node with Maximum Value
+    Node* maxValueNode(Node*& node)
+    {
+        Node* current = node;
+        while (current->right != nullptr)
+            current = current->right;
+        return current;
+    }
+
     // Utility function: Transplant nodes in Red-Black Tree
     void transplant(Node*& root, Node*& u, Node*& v)
     {
@@ -242,15 +251,24 @@ public:
     // Destructor: Delete Red-Black Tree
     ~RedBlackTree() { deleteTree(root); }
 
-    // Public function: Insert a value into Red-Black Tree
-    void insert(KeyType key, ValueType value)
+
+    Node* getMin(){
+        return minValueNode(root);
+    }
+
+    Node* getMax(){
+        return maxValueNode(root);
+    }
+
+    // Public function: Insert a value_data into Red-Black Tree
+    void insert(KeyType key, ValueType value_data)
     {
-        Node* node = new Node(key, value);
+        Node* node = new Node(key, value_data);
         Node* parent = nullptr;
         Node* current = root;
         while (current != nullptr) {
             parent = current;
-            if (node->data < current->data)
+            if (node->key_data < current->key_data)
                 current = current->left;
             else
                 current = current->right;
@@ -258,14 +276,14 @@ public:
         node->parent = parent;
         if (parent == nullptr)
             root = node;
-        else if (node->data < parent->data)
+        else if (node->key_data < parent->key_data)
             parent->left = node;
         else
             parent->right = node;
         fixInsert(node);
     }
 
-    // Public function: Remove a value from Red-Black Tree
+    // Public function: Remove a value_data from Red-Black Tree
     void remove(KeyType key)
     {
         Node* node = root;
@@ -273,11 +291,11 @@ public:
         Node* x = nullptr;
         Node* y = nullptr;
         while (node != nullptr) {
-            if (node->data == key) {
+            if (node->key_data == key) {
                 z = node;
             }
 
-            if (node->data <= key) {
+            if (node->key_data <= key) {
                 node = node->right;
             }
             else {
@@ -327,17 +345,21 @@ public:
     {
         Node* current = root;
         while (current != nullptr) {
-            if (key == current->data) {
-                return current->value;
+            if (key == current->key_data) {
+                return current->value_data;
             }
-            else if (key < current->data) {
+            else if (key < current->key_data) {
                 current = current->left;
             }
             else {
                 current = current->right;
             }
         }
-        return 0; // Return default value if not found
+        return 0; // Return default value_data if not found
+    }
+
+    bool isEmpty(){
+        return(root == nullptr ? 1:0);
     }
 
 };
