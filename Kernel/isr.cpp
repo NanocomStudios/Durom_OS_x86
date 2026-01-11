@@ -2,6 +2,12 @@
 #include "../Graphics/VGA.h"
 #include "../Drivers/PIC/PIC.h"
 #include "systemCalls.h"
+#include "../StdLib/queue.h"
+#include "../StdLib/rb_tree.h"
+#include "kernel.h"
+
+extern Queue <uint64_t> readyQueue;
+extern RedBlackTree <uint64_t, ThreadInformationBlock*> threadTable;
 
 extern "C"{
     
@@ -41,10 +47,18 @@ extern "C"{
         switch ((intr->int_no) - 64){
             case PIC_TIMER:
 
-            break;
+
+
+                // uint64_t newTID = readyQueue.dequeue();
+                // ThreadInformationBlock* tcb = threadTable.search(newTID);
+
+
+
+                break;
             case PIC_KEYBOARD:
                 
                 break;
+
             default:
             if(((intr->int_no) - 64) < 16){
                     print("PIC ");

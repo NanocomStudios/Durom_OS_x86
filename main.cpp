@@ -135,7 +135,7 @@ extern "C" void kmain() {
     //     volatile std::uint32_t *fb_ptr = static_cast<volatile std::uint32_t *>(framebuffer->address);
     //     fb_ptr[i * (framebuffer->pitch / 4) + i] = 0xffffff;
     // }
-
+  
     init_kernel();
 
     // We're done, just hang...

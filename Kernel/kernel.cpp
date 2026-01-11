@@ -253,6 +253,9 @@ int main(){
                     }else if(!strcmp(inpBuffer, 255, "release", 7)){
                         lock.release();
                         print("Lock Released!\n");
+                    }else if(!strcmp(inpBuffer, 255, "stack", 5)){
+                        stackTest(0);
+                        print("Lock Released!\n");
                     }else if(!strcmp(inpBuffer, 255, "beep", 4)){
                         
                         char tmp[20];
@@ -331,22 +334,23 @@ volatile limine_executable_file_request executable_file_request  = {
 }
 
 
-// void stackTest(int a){
-//     printInt(a);
-//     uint64_t rsp;
-//     asm volatile("mov %%rsp, %0" : "=r"(rsp));
-//     print("Stack Pointer :- ");
-//     printHex(rsp);
-//     print('\n');
-//     stackTest(a + 1);
-//     print('\n');
-// }
+void stackTest(int a){
+    printInt(a);
+    uint64_t rsp;
+    asm volatile("mov %%rsp, %0" : "=r"(rsp));
+    print("Stack Pointer :- ");
+    printHex(rsp);
+    print(' ');
+    printHex((uint64_t)&rsp);
+    print('\n');
+    stackTest(a + 1);
+    print('\n');
+}
 
 void init_kernel(){
 
     pmm_init();
     pagingInit();
-
     mallocInit(0x0000700000000000, 0x00007FFFFFFFB000 - 0x0000700000000000);
     initScreen();
     idt_init();
