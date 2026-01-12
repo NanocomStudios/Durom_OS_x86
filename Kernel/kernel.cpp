@@ -140,8 +140,6 @@ int main(){
     
     Spinlock lock;
 
-
-
     while(0){
         // if((inb(0x64) & (unsigned char)32) == 0){
         //     print("Keyboard -> ");

@@ -47,7 +47,7 @@ extern "C"{
         switch ((intr->int_no) - 64){
             case PIC_TIMER:
 
-
+                
 
                 // uint64_t newTID = readyQueue.dequeue();
                 // ThreadInformationBlock* tcb = threadTable.search(newTID);
@@ -56,7 +56,7 @@ extern "C"{
 
                 break;
             case PIC_KEYBOARD:
-                
+
                 break;
 
             default:

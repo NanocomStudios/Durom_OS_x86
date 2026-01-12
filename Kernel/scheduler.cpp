@@ -29,12 +29,8 @@ uint64_t newThread(void (*function)(void)){
     tib->stack_3 = (uint64_t)page_alloc();
     tib->stack_4 = (uint64_t)page_alloc();
 
-    // InterruptData *frame = (InterruptData*)(tib->stack_1 + DEFAULT_HHDM_OFFSET);
-    // frame->rip = (uint64_t)function;
-    // frame->cs = 0x08;
-    // frame->rflags = 0x202;
-    // frame->rsp = 0x00007FFFFFFFF000; // Top of kernel stack
-    // tib->rsp = frame->rsp - sizeof(InterruptData);
+    tib->rsp = 0x00007FFFFFFFE000;
+    tib->state = NEW;
 
     threadTable.insert(newTID, tib);
     lock.release();
@@ -42,11 +38,4 @@ uint64_t newThread(void (*function)(void)){
     readyQueue.enqueue(newTID);
     return newTID;
 }
-
-/*Scheduler on the isr
-stack to the top buffer
-swap the pages
-return the stack
-do all in the same function and use jmp and not call
-*/
 
