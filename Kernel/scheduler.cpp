@@ -1,3 +1,4 @@
+#include "scheduler.h"
 #include "kernel.h"
 #include "../Memory/Paging.h"
 #include "../Memory/PMM.h"
@@ -31,6 +32,8 @@ uint64_t newThread(void (*function)(void)){
 
     tib->rsp = 0x00007FFFFFFFE000;
     tib->state = NEW;
+
+    tib->function = function;
 
     threadTable.insert(newTID, tib);
     lock.release();

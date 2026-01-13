@@ -21,6 +21,7 @@ extern "C"{
 
 void exception_handler(InterruptData* intr);
 void irq_handler(InterruptData* intr);
+void new_thread_wrapper(uint64_t int_no, void (*function)(void));
 
 }
 

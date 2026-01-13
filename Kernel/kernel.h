@@ -10,6 +10,7 @@ struct ThreadInformationBlock{
     uint64_t rsp;
     uint64_t stack_1, stack_2, stack_3, stack_4;
     ThreadState state;
+    void (*function)(void);
 };
 
 void stackTest(int a);

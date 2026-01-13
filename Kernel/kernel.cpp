@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "interrupt.h"
 #include "isr.h"
+#include "scheduler.h"
 
 #include "../Graphics/VGA.h"
 #include "../StdLib/malloc.h"
@@ -14,6 +15,7 @@
 #include "../Storage/fat32.h"
 #include "../IO/PCI.h"
 #include "../Drivers/PIC/PIC.h"
+#include "../Drivers/PIC/timer.h"
 #include "../Drivers/Audio/pc_speaker.h"
 #include "../Memory/PMM.h"
 #include "../Memory/Paging.h"
@@ -27,10 +29,24 @@
 
 #include <limine.h>
 
+void thr1(){
+    while(1){
+        print("Thread 1\n");
+    }
+}
+
+void thr2(){
+    while(1){
+        print("Thread 2\n");
+    }
+}
+
+
+
 typedef char * string;
 
 int step;
-int main(){
+void main(){
     
     Color border = {0,255,0};
 
@@ -156,6 +172,9 @@ int main(){
     }
     
     print("#>");
+    
+    newThread(thr1);
+    newThread(thr2);
 
     while(1){
         ps2Wait(READ);
@@ -306,7 +325,7 @@ int main(){
 
         
     }
-    return 0;
+    return;
 }
 
 void init_drivers(){
@@ -345,6 +364,7 @@ void stackTest(int a){
     print('\n');
 }
 
+
 void init_kernel(){
 
     pmm_init();
@@ -353,24 +373,28 @@ void init_kernel(){
     initScreen();
     idt_init();
     initGUI();
-    
-    allocateToPageTable(0x00007FFFFFFFF000, (uint64_t)page_alloc(), 0x3); // Buffer
-
-    allocateToPageTable(0x00007FFFFFFFE000, (uint64_t)page_alloc(), 0x3);// Stack
-    allocateToPageTable(0x00007FFFFFFFD000, (uint64_t)page_alloc(), 0x3);// Stack
-    allocateToPageTable(0x00007FFFFFFFC000, (uint64_t)page_alloc(), 0x3);// Stack
-    allocateToPageTable(0x00007FFFFFFFB000, (uint64_t)page_alloc(), 0x3);// Stack
-
-    asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000));
-
-    pciInit();
-    init_drivers();
 
     PIC_remap(32,40);
     IRQ_set_mask_all();
+    
+    setTimer(1000, 0);
+
     IRQ_clear_mask(PIC_TIMER);
     IRQ_clear_mask(PIC_KEYBOARD);
     sti();
+    
+    
+    allocateToPageTable(0x00007FFFFFFFF000, (uint64_t)page_alloc(), 0x3); // Buffer
+
+    // allocateToPageTable(0x00007FFFFFFFE000, (uint64_t)page_alloc(), 0x3);// Stack
+    // allocateToPageTable(0x00007FFFFFFFD000, (uint64_t)page_alloc(), 0x3);// Stack
+    // allocateToPageTable(0x00007FFFFFFFC000, (uint64_t)page_alloc(), 0x3);// Stack
+    // allocateToPageTable(0x00007FFFFFFFB000, (uint64_t)page_alloc(), 0x3);// Stack
+
+    // asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000));
+
+    pciInit();
+    init_drivers();
 
     if (executable_address_request.response == nullptr) {
                 while(1);
@@ -402,8 +426,10 @@ void init_kernel(){
     print("Init Complete.\n");
     print('\n');
 
-    main();
-
+    
+    newThread(main);
+    
+    
     while(1)asm("hlt");
     
     return;
