@@ -4,6 +4,7 @@
 #include "VGA.h"
 #include "../StdLib/malloc.h"
 #include "../IO/io.h"
+#include "../StdLib/lock.h"
 
 int currentCursorLoc;
 Color foreColor;
@@ -244,20 +245,23 @@ void scrollScreen(){
             moveCsr(0, consoleHeight - 1);
             renderScreen();
 }
-void printChar(char inp){}
+// void printChar(char inp){}
 
 void print(char inp){
-//     asm volatile (
-//                     "movq $1, %%rax\n"
-//                     "movq %0, %%rbx\n"
-//                     "int $0x80\n"
-//                     :
-//                     : "r"((long)inp)
-//                     : "rax", "rbx"
-//                 );
-// }
+    asm volatile (
+                    "movq $1, %%rax\n"
+                    "movq %0, %%rbx\n"
+                    "int $0x80\n"
+                    :
+                    : "r"((long)inp)
+                    : "rax", "rbx"
+                );
+}
 
-// void printChar(char inp){
+Spinlock printLock;
+
+void printChar(char inp){
+    printLock.acquire();
     switch (inp)
     {
     case '\n':
@@ -283,6 +287,7 @@ void print(char inp){
         csrInc();
         break;
     }
+    printLock.release();
 }
 
 void moveCsr(int col, int row){

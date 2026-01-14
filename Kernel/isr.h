@@ -14,7 +14,7 @@ typedef struct InterruptData
     uint64_t rdi, rsi, rdx, rcx, rbx, rax;
     uint64_t int_no;
     uint64_t err_code;
-    uint64_t rsp, rflags, cs, rip;
+    uint64_t rip, cs, rflags, rsp, ss;
 }__attribute__((packed)) InterruptFrame;
 
 extern "C"{ 

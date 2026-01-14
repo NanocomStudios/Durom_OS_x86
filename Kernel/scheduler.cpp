@@ -17,7 +17,7 @@ Spinlock lock;
 
 uint64_t newThread(void (*function)(void)){
     lock.acquire();
-    uint64_t newTID = 0;
+    uint64_t newTID = 1;
     
     if (!threadTable.isEmpty()){
         newTID = (threadTable.getMax())->key_data + 1;
@@ -30,7 +30,7 @@ uint64_t newThread(void (*function)(void)){
     tib->stack_3 = (uint64_t)page_alloc();
     tib->stack_4 = (uint64_t)page_alloc();
 
-    tib->rsp = 0x00007FFFFFFFE000;
+    tib->rsp = 0x00007FFFFFFFF000;
     tib->state = NEW;
 
     tib->function = function;

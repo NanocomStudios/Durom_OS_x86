@@ -6,6 +6,7 @@
 #include "../StdLib/rb_tree.h"
 #include "kernel.h"
 #include "../Memory/Paging.h"
+#include "../Memory/PMM.h"
 
 extern Queue <uint64_t> readyQueue;
 extern RedBlackTree <uint64_t, ThreadInformationBlock*> threadTable;
@@ -44,25 +45,46 @@ extern "C"{
         while(1) asm("hlt");
         
     }
-    
+    uint64_t rsp;
+    int i = 0;
+
     void irq_handler(InterruptData* intr) {
         
 
         switch ((intr->int_no) - 64){
             case PIC_TIMER:
+                
 
-                nextThread = threadTable.search(readyQueue.dequeue());
-
-                if(nextThread == nullptr){
+                if(readyQueue.isEmpty()){
                     PIC_sendEOI((intr->int_no) - 64);
                     return;
                 }
+                
+                nextThread = threadTable.search(readyQueue.dequeue());
 
+            
                 if(nextThread->state == TERMINATED){
-                    // Free thread resources
-                    nextThread = threadTable.search(readyQueue.dequeue());
-                }else if(nextThread->state == READY){
 
+                    print("Thread ");
+                    printInt(nextThread->tid);
+                    print(" Terminated.\n");
+
+                    page_free(nextThread->stack_1);
+                    page_free(nextThread->stack_2);
+                    page_free(nextThread->stack_3);
+                    page_free(nextThread->stack_4);
+                    
+                    threadTable.remove(nextThread->tid);
+
+                    if(readyQueue.isEmpty()){
+                        PIC_sendEOI((intr->int_no) - 64);
+                        return;
+                    }
+                    nextThread = threadTable.search(readyQueue.dequeue());
+                }
+                
+                if(nextThread->state == READY){
+                    
                     if(currentThread != nullptr && currentThread->state == RUNNING){
                         currentThread->state = READY;
                         asm volatile(
@@ -87,10 +109,29 @@ extern "C"{
                     allocateToPageTable(0x00007FFFFFFFB000, currentThread->stack_4, 0x03);
                     
                     asm volatile(
-                        "mov %%rsp, %0\n"
-                        : "=r"(currentThread->rsp)
+                        "mov %0, %%rsp\n"
+                        :
+                        : "r"(currentThread->rsp)
                     );
+
                 }else if(nextThread->state == NEW){
+
+                    if(currentThread != nullptr && currentThread->state == RUNNING){
+                        currentThread->state = READY;
+                        asm volatile(
+                            "mov %%rsp, %0\n"
+                            : "=r"(currentThread->rsp)
+                        );
+                        readyQueue.enqueue(currentThread->tid);
+                    }
+
+                    asm volatile("mov %%rsp, %0" : "=r"(rsp));
+
+                    for(i = 0; i < 30; i++){
+                        *(((uint64_t*)(nextThread->stack_1 + DEFAULT_HHDM_OFFSET + 0x1000 - (8 * 30))) + i) = *(((uint64_t*)rsp) + i);
+                    }
+
+
                     currentThread = nextThread;
                     currentThread->state = RUNNING;
 
@@ -105,22 +146,26 @@ extern "C"{
                     allocateToPageTable(0x00007FFFFFFFC000, currentThread->stack_3, 0x03);
                     allocateToPageTable(0x00007FFFFFFFB000, currentThread->stack_4, 0x03);
 
+                    currentThread->rsp -= (8 * 30);
+
                     asm volatile(
-                        "mov %%rsp, %0\n"
-                        : "=r"(currentThread->rsp)
+                        "mov %0, %%rsp\n"
+                        :
+                        : "r"(currentThread->rsp)
                     );
 
-                    new_thread_wrapper(intr->int_no, currentThread->function);
+                    ((InterruptData*)(currentThread->rsp + 32))->rip = (uint64_t)currentThread->function;
 
-                    currentThread->state = TERMINATED;
+                }else{
+                    print("Invalid Thread State!\n");
+                    asm("cli");
                     while(1) asm("hlt");
-
                 }
 
 
                 break;
             case PIC_KEYBOARD:
-
+                print("Keyboard IRQ!\n");
                 break;
 
             default:

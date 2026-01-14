@@ -29,15 +29,35 @@
 
 #include <limine.h>
 
+volatile char test = 0;
+
 void thr1(){
     while(1){
-        print("Thread 1\n");
+       print("Thread 1 Running\n");
     }
 }
 
 void thr2(){
     while(1){
-        print("Thread 2\n");
+        print("Thread 2 Running\n");
+    }
+}
+
+void thr3(){
+    while(1){
+        print("Thread 3 Running\n");
+    }
+}
+
+void thr4(){
+    while(1){
+        print("Thread 4 Running\n");
+    }
+}
+
+void thr5(){
+    while(1){
+        print("Thread 5 Running\n");
     }
 }
 
@@ -48,6 +68,12 @@ typedef char * string;
 int step;
 void main(){
     
+    newThread(thr1);
+    newThread(thr2);
+    newThread(thr3);
+    newThread(thr4);
+    newThread(thr5);
+
     Color border = {0,255,0};
 
     print("DuRom x86_64 V2.0\n");
@@ -173,8 +199,7 @@ void main(){
     
     print("#>");
     
-    newThread(thr1);
-    newThread(thr2);
+    
 
     while(1){
         ps2Wait(READ);
@@ -253,6 +278,9 @@ void main(){
                         }
                     }else if(!strcmp(inpBuffer, 255, "page", 4)){
                         *(long*)0 = 214;
+                    }else if(!strcmp(inpBuffer, 255, "test", 4)){
+                        printInt(test);
+                        print('\n');
                     }else if(!strcmp(inpBuffer, 255, "int", 3)){
                         asm("int $0x80");
                     }else if(!strcmp(inpBuffer, 255, "char", 4)){
@@ -427,8 +455,10 @@ void init_kernel(){
     print('\n');
 
     
-    newThread(main);
     
+    newThread(main);
+    // newThread(thr1);
+    // newThread(thr2);
     
     while(1)asm("hlt");
     
