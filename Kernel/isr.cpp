@@ -45,45 +45,30 @@ extern "C"{
         while(1) asm("hlt");
         
     }
-    uint64_t rsp;
-    int i = 0;
-
+    uint64_t cr3;
     void irq_handler(InterruptData* intr) {
         
 
         switch ((intr->int_no) - 64){
             case PIC_TIMER:
-                
 
-                if(readyQueue.isEmpty()){
+                nextThread = threadTable.search(readyQueue.dequeue());
+
+                if(nextThread == nullptr){
                     PIC_sendEOI((intr->int_no) - 64);
                     return;
                 }
-                
-                nextThread = threadTable.search(readyQueue.dequeue());
 
-            
                 if(nextThread->state == TERMINATED){
-
-                    print("Thread ");
-                    printInt(nextThread->tid);
-                    print(" Terminated.\n");
-
+                    
                     page_free(nextThread->stack_1);
                     page_free(nextThread->stack_2);
                     page_free(nextThread->stack_3);
                     page_free(nextThread->stack_4);
-                    
-                    threadTable.remove(nextThread->tid);
 
-                    if(readyQueue.isEmpty()){
-                        PIC_sendEOI((intr->int_no) - 64);
-                        return;
-                    }
-                    nextThread = threadTable.search(readyQueue.dequeue());
-                }
-                
-                if(nextThread->state == READY){
+                    threadTable.remove(nextThread->tid);
+                    
+                }else if(nextThread->state == READY){
                     
                     if(currentThread != nullptr && currentThread->state == RUNNING){
                         currentThread->state = READY;
@@ -107,30 +92,24 @@ extern "C"{
                     allocateToPageTable(0x00007FFFFFFFD000, currentThread->stack_2, 0x03);
                     allocateToPageTable(0x00007FFFFFFFC000, currentThread->stack_3, 0x03);
                     allocateToPageTable(0x00007FFFFFFFB000, currentThread->stack_4, 0x03);
+
+                    asm volatile("mov %%cr3, %0" : "=r" (cr3));
+                    asm volatile("mov %0, %%cr3" : : "r" (cr3));
                     
-                    asm volatile(
-                        "mov %0, %%rsp\n"
-                        :
-                        : "r"(currentThread->rsp)
-                    );
+                    asm volatile("mov %0, %%rsp" : : "r" (currentThread->rsp));
+
+                    PIC_sendEOI(0);
+                    return;
+
 
                 }else if(nextThread->state == NEW){
-
                     if(currentThread != nullptr && currentThread->state == RUNNING){
                         currentThread->state = READY;
                         asm volatile(
-                            "mov %%rsp, %0\n"
-                            : "=r"(currentThread->rsp)
+                            "mov %%rsp, %0": "=r"(currentThread->rsp)
                         );
                         readyQueue.enqueue(currentThread->tid);
                     }
-
-                    asm volatile("mov %%rsp, %0" : "=r"(rsp));
-
-                    for(i = 0; i < 30; i++){
-                        *(((uint64_t*)(nextThread->stack_1 + DEFAULT_HHDM_OFFSET + 0x1000 - (8 * 30))) + i) = *(((uint64_t*)rsp) + i);
-                    }
-
 
                     currentThread = nextThread;
                     currentThread->state = RUNNING;
@@ -146,26 +125,22 @@ extern "C"{
                     allocateToPageTable(0x00007FFFFFFFC000, currentThread->stack_3, 0x03);
                     allocateToPageTable(0x00007FFFFFFFB000, currentThread->stack_4, 0x03);
 
-                    currentThread->rsp -= (8 * 30);
+                    asm volatile("mov %%cr3, %0" : "=r" (cr3));
+                    asm volatile("mov %0, %%cr3" : : "r" (cr3));
 
-                    asm volatile(
-                        "mov %0, %%rsp\n"
-                        :
-                        : "r"(currentThread->rsp)
-                    );
+                    asm volatile("mov %0, %%rsp" : : "r" (currentThread->rsp));
 
-                    ((InterruptData*)(currentThread->rsp + 32))->rip = (uint64_t)currentThread->function;
+                    new_thread_wrapper(intr->int_no, currentThread->function);
 
-                }else{
-                    print("Invalid Thread State!\n");
-                    asm("cli");
+                    currentThread->state = TERMINATED;
                     while(1) asm("hlt");
+
                 }
 
 
                 break;
             case PIC_KEYBOARD:
-                print("Keyboard IRQ!\n");
+            
                 break;
 
             default:
@@ -194,5 +169,6 @@ extern "C"{
 
 void new_thread_wrapper(uint64_t int_no, void (*function)(void)){
     PIC_sendEOI(int_no - 64);
+    asm volatile("sti");
     function();
 }

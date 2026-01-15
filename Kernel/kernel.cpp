@@ -29,37 +29,18 @@
 
 #include <limine.h>
 
-volatile char test = 0;
-
 void thr1(){
-    while(1){
-       print("Thread 1 Running\n");
+    for(int i  = 0; i < 10; i++){
+       print('1');
     }
 }
 
 void thr2(){
-    while(1){
-        print("Thread 2 Running\n");
+    for(int i  = 0; i < 10; i++){
+        print('2');
     }
 }
 
-void thr3(){
-    while(1){
-        print("Thread 3 Running\n");
-    }
-}
-
-void thr4(){
-    while(1){
-        print("Thread 4 Running\n");
-    }
-}
-
-void thr5(){
-    while(1){
-        print("Thread 5 Running\n");
-    }
-}
 
 
 
@@ -70,9 +51,6 @@ void main(){
     
     newThread(thr1);
     newThread(thr2);
-    newThread(thr3);
-    newThread(thr4);
-    newThread(thr5);
 
     Color border = {0,255,0};
 
@@ -278,9 +256,6 @@ void main(){
                         }
                     }else if(!strcmp(inpBuffer, 255, "page", 4)){
                         *(long*)0 = 214;
-                    }else if(!strcmp(inpBuffer, 255, "test", 4)){
-                        printInt(test);
-                        print('\n');
                     }else if(!strcmp(inpBuffer, 255, "int", 3)){
                         asm("int $0x80");
                     }else if(!strcmp(inpBuffer, 255, "char", 4)){
