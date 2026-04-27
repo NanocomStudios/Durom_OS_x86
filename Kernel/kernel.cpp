@@ -20,6 +20,8 @@
 #include "../Memory/PMM.h"
 #include "../Memory/Paging.h"
 
+#include "../FileSystem/fileSystem.h"
+
 #include "../StdLib/queue.h"
 #include "../StdLib/rb_tree.h"
 #include "../StdLib/vector.h"
@@ -49,6 +51,10 @@ typedef char * string;
 int step;
 void main(){
     
+    Directory fs_root("");
+
+    Directory* workingDirectory = &fs_root;
+
     newThread(thr1);
     newThread(thr2);
 
@@ -175,8 +181,8 @@ void main(){
         print('\n');
     }
     
-    print("#>");
-    
+    printFilePath(workingDirectory);
+    print(" >");
     
 
     while(1){
@@ -292,6 +298,32 @@ void main(){
 
                     }else if(!strcmp(inpBuffer, 255, "stop", 4)){
                         nosound();
+                    }else if(!strcmp(inpBuffer, 255, "list", 4)){
+                        char** nameList= (fs_root.getDirectoryList())->arr;
+                        int len = (fs_root.getDirectoryList())->size();
+                        
+                        for(int i = 0; i < len; i++){
+                            print(nameList[i]);
+                            print('\n');
+                        }
+                    }else if(!strcmp(inpBuffer, 255, "mkdir", 5)){
+                        int nameLength = 0;
+                        for(int i = 6;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                            nameLength ++;
+                        }
+                        if(nameLength > 0){
+                            char* fileName = (char*)malloc(sizeof(char) * (nameLength + 1));
+                            for(int i = 6;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                                fileName[i - 6] = inpBuffer[i];
+                            }
+                            fileName[nameLength] = 0;
+                            workingDirectory->addFile(new Directory(fileName));
+                        }else{
+                            print("No file name!\n");
+                        }
+                    }else if(!strcmp(inpBuffer, 255, "input", 5)){
+                        print(inpBuffer);
+                        print("\n");
                     }else{
                         print('\'');
                         print(inpBuffer);
@@ -299,7 +331,8 @@ void main(){
                     }
 
                     inpBufferPtr = 0;
-                    print("#>");
+                    printFilePath(workingDirectory);
+                    print(" >");
                     break;
                 case '\b':
 
