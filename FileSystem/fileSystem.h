@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include "../StdLib/vector.h"
+#include "../Graphics/VGA.h"
+#include "../StdLib/Nstring.h"
 
 #define NULL 0
 
@@ -23,12 +25,16 @@ class FileSystem{
 
         Vector<char*>* getFilePath(){
             Vector<char*>* filePath = new Vector<char*>;
+
             filePath->push(name);
             FileSystem* currentDir = parentDir;
-
+            printHex((uint64_t)(parentDir));
+            
             while(currentDir != NULL){
+                print("Pushing\n");
                 filePath->push(currentDir->name);
                 currentDir = currentDir->parentDir;
+                print("Pushed\n");
             }
             return filePath;
         }
@@ -56,11 +62,8 @@ class Directory : public FileSystem{
             data.dirListHead = NULL;
             nextFile = NULL;
             prevFile = NULL;
-            parentDir = NULL;
+            parentDir = this;
             addFile(new Link(".", this));
-            addFile(new Link("a", this));
-            addFile(new Link("b", this));
-            addFile(new Link("c", this));
         }
 
         void addFile(FileSystem* file){
@@ -69,6 +72,10 @@ class Directory : public FileSystem{
             if(currentFile == NULL){
                 data.dirListHead = file;
                 file->parentDir = this;
+                if(file->type == DIR){
+                    Directory* dirFile = (Directory*)file;
+                    dirFile->addFile(new Link("..", file->parentDir));
+                }
                 return;
             }
             while(currentFile->nextFile != NULL){
@@ -78,6 +85,13 @@ class Directory : public FileSystem{
             currentFile->nextFile = file;
             file->prevFile = currentFile;
             file->parentDir = this;
+            print(file->name);
+            printHex((uint64_t)file->parentDir);
+            print('\n');
+            if(file->type == DIR){
+                Directory* dirFile = (Directory*)file;
+                dirFile->addFile(new Link("..", file->parentDir));
+            }
         }
 
         Vector<char*>* getDirectoryList(){
@@ -94,7 +108,18 @@ class Directory : public FileSystem{
         }
 
         FileSystem* getFile(char* name){
-            
+            FileSystem* currentFile = data.dirListHead;
+
+            while(currentFile != NULL){
+                if(strcmpd(name, currentFile->name)){
+                    if(currentFile->type != DIR){
+                        return 0;
+                    }
+                    return currentFile;
+                }
+                currentFile = currentFile->nextFile;
+            }
+            return 0;
         }
 };
 
@@ -112,5 +137,6 @@ class File : public FileSystem{
 };
 
 void printFilePath(FileSystem* file);
+FileSystem* getFile(char* name, FileSystem* parentDirectory);
 
 #endif

@@ -181,7 +181,7 @@ void main(){
         print('\n');
     }
     
-    printFilePath(workingDirectory);
+    // printFilePath(workingDirectory);
     print(" >");
     
 
@@ -298,9 +298,12 @@ void main(){
 
                     }else if(!strcmp(inpBuffer, 255, "stop", 4)){
                         nosound();
-                    }else if(!strcmp(inpBuffer, 255, "list", 4)){
-                        char** nameList= (fs_root.getDirectoryList())->arr;
-                        int len = (fs_root.getDirectoryList())->size();
+                    }else if(!strcmp(inpBuffer, 255, "pwd", 3)){
+                        printFilePath(workingDirectory);
+                        print('\n');
+                    }else if(!strcmp(inpBuffer, 255, "ls", 2)){
+                        char** nameList= (workingDirectory->getDirectoryList())->arr;
+                        int len = (workingDirectory->getDirectoryList())->size();
                         
                         for(int i = 0; i < len; i++){
                             print(nameList[i]);
@@ -321,6 +324,30 @@ void main(){
                         }else{
                             print("No file name!\n");
                         }
+                    }else if(!strcmp(inpBuffer, 255, "cd", 2)){
+                        int nameLength = 0;
+                        for(int i = 3;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                            nameLength ++;
+                        }
+                        if(nameLength > 0){
+                            char* fileName = (char*)malloc(sizeof(char) * (nameLength + 1));
+                            for(int i = 3;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
+                                fileName[i - 3] = inpBuffer[i];
+                            }
+                            fileName[nameLength] = 0;
+                            Directory* newDirectory = (Directory*)workingDirectory->getFile(fileName);
+                            if(newDirectory == 0){
+                                print('"');
+                                print(fileName);
+                                print("\" is not a valid directory!\n");
+                            }else{
+                                workingDirectory = newDirectory;
+                                print("Moved");
+                            }
+                            
+                        }else{
+                            print("No file name!\n");
+                        }
                     }else if(!strcmp(inpBuffer, 255, "input", 5)){
                         print(inpBuffer);
                         print("\n");
@@ -331,7 +358,7 @@ void main(){
                     }
 
                     inpBufferPtr = 0;
-                    printFilePath(workingDirectory);
+                    // printFilePath(workingDirectory);
                     print(" >");
                     break;
                 case '\b':
