@@ -226,24 +226,24 @@ int lenH(long inp){
 }
 
 void scrollScreen(){
-            for(int i = 0; i < (screenWidth * (height - 14)); i++){
-                if(bpp == 32){
-                    *((Color32*)screenRam + i) = *((Color32*)screenRam + i + (screenWidth * 14));
-                }else{
-                    *((Color*)screenRam + i) = *((Color*)screenRam + i + (screenWidth * 14));
-                }
-                
-            }
-            for(int i = (screenWidth * (height - 14)); i < (screenWidth * height); i++){
-                if(bpp == 32){
-                    *((Color32*)screenRam + i) = backColor;
-                }else{
-                    *((Color*)screenRam + i) = backColor;
-                }
-               
-            }
-            moveCsr(0, consoleHeight - 1);
-            renderScreen();
+    for(int i = 0; i < (screenWidth * (height - 14)); i++){
+        if(bpp == 32){
+            *((Color32*)screenRam + i) = *((Color32*)screenRam + i + (screenWidth * 14));
+        }else{
+            *((Color*)screenRam + i) = *((Color*)screenRam + i + (screenWidth * 14));
+        }
+        
+    }
+    for(int i = (screenWidth * (height - 14)); i < (screenWidth * height); i++){
+        if(bpp == 32){
+            *((Color32*)screenRam + i) = backColor;
+        }else{
+            *((Color*)screenRam + i) = backColor;
+        }
+        
+    }
+    moveCsr(0, consoleHeight - 1);
+    renderScreen();
 }
 // void printChar(char inp){}
 
@@ -273,11 +273,9 @@ void printChar(char inp){
         break;
     
     case '\b':
-
         if(currentCursorLoc > 0){
             csrDec();
-            print(' ');
-            csrDec();
+            drawChar(' ', ((currentCursorLoc % consoleWidth) * 9), ((currentCursorLoc / consoleWidth) * 14), foreColor, backColor);
         }
 
         break;
