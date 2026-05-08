@@ -20,12 +20,16 @@
 #include "../Memory/PMM.h"
 #include "../Memory/Paging.h"
 
+#include "../StdLib/stdio.h"
+
 #include "../FileSystem/fileSystem.h"
 
 #include "../StdLib/queue.h"
 #include "../StdLib/rb_tree.h"
 #include "../StdLib/vector.h"
 #include "../StdLib/lock.h"
+
+#include "../Shell/Shell.h"
 
 #include "../Drivers/Network/networkDriver.h"
 
@@ -60,7 +64,7 @@ void main(){
 
     Color border = {0,255,0};
 
-    print("DuRom x86_64 V2.0\n");
+    printf("DuRom x86_64 V2.0\n");
     
     string inpBuffer = (string)malloc(255);
     int inpBufferPtr = 0;
@@ -166,23 +170,23 @@ void main(){
     
     Spinlock lock;
 
-    while(0){
-        // if((inb(0x64) & (unsigned char)32) == 0){
-        //     print("Keyboard -> ");
-        // }else{
-        //     print("Mouse -> ");
-        // }
-        ps2Write(0xeb);
-        printHex(ps2Read());
-        print(' ');
-        printHex(ps2Read());
-        print(' ');
-        printHex(ps2Read());
-        print('\n');
-    }
+    // while(0){
+    //     if((inb(0x64) & (unsigned char)32) == 0){
+    //         print("Keyboard -> ");
+    //     }else{
+    //         print("Mouse -> ");
+    //     }
+    //     ps2Write(0xeb);
+    //     printf("%p %p %p\n",ps2Read(),ps2Read(),ps2Read());
+    // }
     
     // printFilePath(workingDirectory);
-    print(" >");
+
+    while(1){
+        shell();
+    }
+
+    printf(" >");
     
 
     while(1){
@@ -299,7 +303,8 @@ void main(){
                     }else if(!strcmp(inpBuffer, 255, "stop", 4)){
                         nosound();
                     }else if(!strcmp(inpBuffer, 255, "pwd", 3)){
-                        printFilePath(workingDirectory);
+                        printFilePath(workingDirectory, (Directory*)workingDirectory->parentDir);
+                        // print(workingDirectory->name);
                         print('\n');
                     }else if(!strcmp(inpBuffer, 255, "ls", 2)){
                         char** nameList= (workingDirectory->getDirectoryList())->arr;

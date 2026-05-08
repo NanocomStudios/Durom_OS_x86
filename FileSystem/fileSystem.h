@@ -23,21 +23,21 @@ class FileSystem{
         FileSystem* prevFile;
         FileSystem* parentDir;
 
-        Vector<char*>* getFilePath(){
-            Vector<char*>* filePath = new Vector<char*>;
+        // Vector<char*>* getFilePath(){
+        //     Vector<char*>* filePath = new Vector<char*>;
 
-            filePath->push(name);
-            FileSystem* currentDir = parentDir;
-            printHex((uint64_t)(parentDir));
+        //     filePath->push(name);
+        //     FileSystem* currentDir = parentDir;
+        //     printHex((uint64_t)(parentDir));
             
-            while(currentDir != NULL){
-                print("Pushing\n");
-                filePath->push(currentDir->name);
-                currentDir = currentDir->parentDir;
-                print("Pushed\n");
-            }
-            return filePath;
-        }
+        //     while(currentDir != NULL){
+        //         print("Pushing\n");
+        //         filePath->push(currentDir->name);
+        //         currentDir = currentDir->parentDir;
+        //         print("Pushed\n");
+        //     }
+        //     return filePath;
+        // }
 
 };
 
@@ -121,6 +121,7 @@ class Directory : public FileSystem{
             }
             return 0;
         }
+
 };
 
 class File : public FileSystem{
@@ -136,7 +137,7 @@ class File : public FileSystem{
         }
 };
 
-void printFilePath(FileSystem* file);
-FileSystem* getFile(char* name, FileSystem* parentDirectory);
+void printFilePath(Directory* file, Directory* abc);
+// FileSystem* getFile(char* name, FileSystem* parentDirectory);
 
 #endif
