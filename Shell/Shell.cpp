@@ -1,7 +1,6 @@
 #include "Shell.h"
 
 #include "../StdLib/malloc.h"
-#include "../StdLib/vector.h"
 
 #include "../HID/keyboard.h"
 
@@ -9,13 +8,9 @@
 
 #include <cstdint>
 
-struct Token{
-    Vector<char> lexem;
-    Token* nextToken;
-};
-
 Token* getTokenList(char* input){
     Token* tokenHead = new Token;
+    // printf("tokenHeadPtr: %p\n",(uint64_t)tokenHead);
     Token* currentToken = tokenHead;
 
     char inp = input[0];
@@ -73,7 +68,12 @@ void shell(){
 
     char inp;
 
-    while(inputPointer <= SHELL_MAX_INPUT_LENGTH){
+    while(inputPointer < SHELL_MAX_INPUT_LENGTH){
+        if(inputPointer == (SHELL_MAX_INPUT_LENGTH - 1)){
+            input[inputPointer] = 0;
+            break;
+        }
+
         inp = getChar();
         if(inp == '\n'){
             printf("\n");
@@ -91,12 +91,17 @@ void shell(){
         }
     }
 
+    printf("\nList: %s\n", input);
+
     Token* tokenHead = getTokenList(input);
 
     Token* currentToken = tokenHead;
+    Token* temp;
 
     while(currentToken != 0){
         printf("%s\n", currentToken->lexem.arr);
-        currentToken = currentToken->nextToken;
+        temp = currentToken->nextToken;
+        delete currentToken;
+        currentToken = temp;
     }
 }
