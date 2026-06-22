@@ -4,6 +4,8 @@
 #include "../Graphics/VGA.h"
 #include "../StdLib/Nmath.h"
 
+#include "../StdLib/stdio.h"
+
 
 #include <limine.h>
 #include <cstddef>
@@ -38,10 +40,11 @@ void printMemoryInfo(){
         print("Kernel Heap Base : ");
         printHex(heapBase);
         print("\nKernel Heap Length : ");
-        printInt(heapSize);
-        print("\nKernel Heap Allocated : ");
-        printInt(allocatedSize);
-        print("\n");
+        // printInt(heapSize);
+        printf("%x (%d)\n",heapSize,heapSize);
+        print("Kernel Heap Allocated : ");
+        // printInt(allocatedSize);
+        printf("%x (%d)\n",allocatedSize,allocatedSize);
 }
 
 void* malloc(uint64_t blockSize){

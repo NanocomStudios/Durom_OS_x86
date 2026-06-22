@@ -6,6 +6,8 @@
 
 #include "../StdLib/stdio.h"
 
+#include "../StdLib/binary_radix_tree.h"
+
 #include <cstdint>
 
 Token* getTokenList(char* input){
@@ -91,7 +93,7 @@ void shell(){
         }
     }
 
-    printf("\nList: %s\n", input);
+    // printf("\nList: %s\n", input);
 
     Token* tokenHead = getTokenList(input);
 

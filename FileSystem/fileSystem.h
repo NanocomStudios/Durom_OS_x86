@@ -10,6 +10,10 @@
 
 class FileSystem{
     public:
+        FileSystem* nextFile;
+        FileSystem* prevFile;
+        FileSystem* parentDir;
+
         union FileDate{
             void* data;
             FileSystem* link;
@@ -19,9 +23,7 @@ class FileSystem{
         char* name;
         enum Type{DIR, FILE, LINK} type;
 
-        FileSystem* nextFile;
-        FileSystem* prevFile;
-        FileSystem* parentDir;
+        
 
         // Vector<char*>* getFilePath(){
         //     Vector<char*>* filePath = new Vector<char*>;
@@ -137,7 +139,7 @@ class File : public FileSystem{
         }
 };
 
-void printFilePath(Directory* file, Directory* abc);
+void printFilePath(Directory* file);
 // FileSystem* getFile(char* name, FileSystem* parentDirectory);
 
 #endif

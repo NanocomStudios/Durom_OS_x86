@@ -182,11 +182,11 @@ void main(){
     
     // printFilePath(workingDirectory);
 
-    while(1){
-        shell();
-    }
-
-    printf(" >");
+    // while(1){
+    //     shell();
+    // }
+    printFilePath(workingDirectory);
+    printf(">");
     
 
     while(1){
@@ -303,9 +303,11 @@ void main(){
                     }else if(!strcmp(inpBuffer, 255, "stop", 4)){
                         nosound();
                     }else if(!strcmp(inpBuffer, 255, "pwd", 3)){
-                        printFilePath(workingDirectory, (Directory*)workingDirectory->parentDir);
-                        // print(workingDirectory->name);
-                        print('\n');
+                        // printf("Sizeof FileSystem: %d \n Sizeof Dir : %d\n", sizeof(FileSystem), sizeof(Directory));
+                        printFilePath(workingDirectory);
+                        // printf("out: %p : %p : %s\n", (void*)workingDirectory->parentDir,(void*)&(workingDirectory->parentDir), workingDirectory->name);
+                        // // print(workingDirectory->name);
+                        // print('\n');
                     }else if(!strcmp(inpBuffer, 255, "ls", 2)){
                         char** nameList= (workingDirectory->getDirectoryList())->arr;
                         int len = (workingDirectory->getDirectoryList())->size();
@@ -363,8 +365,8 @@ void main(){
                     }
 
                     inpBufferPtr = 0;
-                    // printFilePath(workingDirectory);
-                    print(" >");
+                    printFilePath(workingDirectory);
+                    print(">");
                     break;
                 case '\b':
 
