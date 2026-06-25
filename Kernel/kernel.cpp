@@ -331,6 +331,9 @@ void main(){
                         }else{
                             print("No file name!\n");
                         }
+                    }else if(!strcmp(inpBuffer, 255, "lmkdir", 6)){
+                        for (int i=0; i < 20; i++)
+                            workingDirectory->addFile(new Directory("a"));
                     }else if(!strcmp(inpBuffer, 255, "cd", 2)){
                         int nameLength = 0;
                         for(int i = 3;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
@@ -440,6 +443,7 @@ void init_kernel(){
     pmm_init();
     pagingInit();
     mallocInit(0x0000700000000000, 0x00007FFFFFFFB000 - 0x0000700000000000);
+    // malloc(4);
     initScreen();
     idt_init();
     initGUI();

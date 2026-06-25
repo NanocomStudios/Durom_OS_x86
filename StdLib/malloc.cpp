@@ -58,7 +58,7 @@ void* malloc(uint64_t blockSize){
                 //Create the first block, Initialize the RAM
 
                 for(uint64_t i = 0; i < ceiling_div(size + META_BLOCK + MEM_START, 0x1000); i++){
-                        allocateToPageTable(heapBase + (i * 0x1000), (uint64_t)page_alloc(), 0x3);
+                        allocateToPageTable(heapBase + allocatedSize, (uint64_t)page_alloc(), 0x3);
                         allocatedSize += 0x1000;
                 }
 
@@ -126,9 +126,10 @@ long getFreeBlock(uint64_t size){
                                         return -1;
                                 }else if((allocatedSize - META_BLOCK - *(long*)(ram + i) - i) < (size + META_BLOCK)){
                                         // Need to allocate more pages
-                                        for(uint64_t j = 0; j < ceiling_div(size + META_BLOCK - (heapSize - allocatedSize), 0x1000); j++){
+                                        for(uint64_t j = 0; j < ceiling_div(size + META_BLOCK, 0x1000); j++){
                                                 allocateToPageTable(heapBase + allocatedSize, (uint64_t)page_alloc(), 0x3);
                                                 allocatedSize += 0x1000;
+
                                         }
                                 }
 
