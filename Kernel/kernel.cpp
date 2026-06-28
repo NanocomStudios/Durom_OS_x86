@@ -54,7 +54,6 @@ typedef char * string;
 
 int step;
 void main(){
-    
     Directory fs_root("");
 
     Directory* workingDirectory = &fs_root;
@@ -331,9 +330,6 @@ void main(){
                         }else{
                             print("No file name!\n");
                         }
-                    }else if(!strcmp(inpBuffer, 255, "lmkdir", 6)){
-                        for (int i=0; i < 20; i++)
-                            workingDirectory->addFile(new Directory("a"));
                     }else if(!strcmp(inpBuffer, 255, "cd", 2)){
                         int nameLength = 0;
                         for(int i = 3;(inpBuffer[i] != ' ') && (inpBuffer[i] != 0);i++){
@@ -443,10 +439,13 @@ void init_kernel(){
     pmm_init();
     pagingInit();
     mallocInit(0x0000700000000000, 0x00007FFFFFFFB000 - 0x0000700000000000);
-    // malloc(4);
+    malloc(4);
     initScreen();
     idt_init();
     initGUI();
+    
+
+    printMemoryInfo();
 
     PIC_remap(32,40);
     IRQ_set_mask_all();
@@ -499,9 +498,8 @@ void init_kernel(){
 
     print("Init Complete.\n");
     print('\n');
-
     
-    
+    // main();
     newThread(main);
     // newThread(thr1);
     // newThread(thr2);

@@ -17,10 +17,17 @@
 #define MEM_START 24
 #define HEAP_START (24 + META_BLOCK)
 
+struct HeapMetaBlock{
+    uint64_t size;
+    HeapMetaBlock* nextBlock;
+    HeapMetaBlock* prevBlock;
+    char data[];
+};
+
 void mallocInit(uint64_t baseAddress, uint64_t size);
-void* malloc(uint64_t blockSize);
+void* malloc(uint64_t size);
 void free(void* ptr);
-long getFreeBlock(uint64_t size);
+void* getFreeBlock(uint64_t size);
 void printMemoryInfo();
 
 #endif
