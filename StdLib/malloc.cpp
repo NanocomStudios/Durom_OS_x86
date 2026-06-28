@@ -11,18 +11,11 @@
 #include <cstddef>
 #include <cstdint>
 
-char* ram;
-char isInit;
-
-extern char heap_start;
 
 unsigned long heapBase = 0;
 unsigned long heapSize = 0;
 
 uint64_t allocatedSize = 0;
-
-extern long page_frames_start;
-extern long ramSize;
 
 HeapMetaBlock* heapHeadBlock = 0;
 
@@ -102,8 +95,4 @@ void free(void* ptr){
         }
 
         (currentBlock->prevBlock)->nextBlock = currentBlock->nextBlock;
-}
-
-void* getFreeBlock(uint64_t size){
-        
 }
