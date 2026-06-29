@@ -5,6 +5,7 @@
 #include "../StdLib/vector.h"
 #include "../Graphics/VGA.h"
 #include "../StdLib/Nstring.h"
+#include "../StdLib/stdio.h"
 
 #define NULL 0
 
@@ -55,6 +56,23 @@ class Link : public FileSystem{
         }
 };
 
+class File : public FileSystem{
+    
+    public:
+        char isVirtual;
+
+        File(char* fileName, uint64_t fileSize = 0, void* fileData = 0, char isFileVirtual = 0){
+            type = FILE;
+            name = fileName;
+            size = fileSize;
+            data.data = fileData;
+            nextFile = NULL;
+            prevFile = NULL;
+            parentDir = NULL;
+            isVirtual = isFileVirtual;
+        }
+};
+
 class Directory : public FileSystem{
     public:
         Directory(char* fileName){
@@ -87,9 +105,9 @@ class Directory : public FileSystem{
             currentFile->nextFile = file;
             file->prevFile = currentFile;
             file->parentDir = this;
-            print(file->name);
-            printHex((uint64_t)file->parentDir);
-            print('\n');
+            // print(file->name);
+            // printHex((uint64_t)file->parentDir);
+            // print('\n');
             if(file->type == DIR){
                 Directory* dirFile = (Directory*)file;
                 dirFile->addFile(new Link("..", file->parentDir));
@@ -109,14 +127,11 @@ class Directory : public FileSystem{
             return fileNameList;
         }
 
-        FileSystem* getFile(char* name){
+        FileSystem* getFSEntry(char* name){
             FileSystem* currentFile = data.dirListHead;
 
             while(currentFile != NULL){
                 if(strcmpd(name, currentFile->name)){
-                    if(currentFile->type != DIR){
-                        return 0;
-                    }
                     return currentFile;
                 }
                 currentFile = currentFile->nextFile;
@@ -124,19 +139,52 @@ class Directory : public FileSystem{
             return 0;
         }
 
-};
+        File* getFile(char* name){
+            FileSystem* file = getFSEntry(name);
 
-class File : public FileSystem{
-    public:
-        File(char* fileName, uint64_t fileSize = 0, void* fileData = NULL){
-            type = FILE;
-            name = fileName;
-            size = fileSize;
-            data.data = fileData;
-            nextFile = NULL;
-            prevFile = NULL;
-            parentDir = NULL;
+            if(file == 0){
+                return 0;
+            }
+
+            if(file->type == DIR){
+                return 0;
+            }else if(file->type == LINK){
+                while(file->type == LINK && file->data.link != 0){
+                    file = file->data.link;
+                }
+                if(file->type == FILE){
+                    return (File*)file;
+                }else{
+                    return 0;
+                }
+            }else{
+                return (File*)file;
+            }
         }
+
+        Directory* getDirectory(char* name){
+            FileSystem* file = getFSEntry(name);
+
+            if(file == 0){
+                return 0;
+            }
+
+            if(file->type == FILE){
+                return 0;
+            }else if(file->type == LINK){
+                while(file->type == LINK && file->data.link != 0){
+                    file = file->data.link;
+                }
+                if(file->type == DIR){
+                    return (Directory*)file;
+                }else{
+                    return 0;
+                }
+            }else{
+                return (Directory*)file;
+            }
+        }
+
 };
 
 void printFilePath(Directory* file);

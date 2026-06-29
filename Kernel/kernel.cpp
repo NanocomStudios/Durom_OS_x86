@@ -58,6 +58,11 @@ void main(){
 
     Directory* workingDirectory = &fs_root;
 
+    Directory* dev = new Directory("dev");
+    dev->addFile(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1));
+
+    fs_root.addFile(dev);
+
     newThread(thr1);
     newThread(thr2);
 
@@ -326,7 +331,11 @@ void main(){
                                 fileName[i - 6] = inpBuffer[i];
                             }
                             fileName[nameLength] = 0;
-                            workingDirectory->addFile(new Directory(fileName));
+                            if(workingDirectory->getFSEntry(fileName) == 0){
+                                workingDirectory->addFile(new Directory(fileName));
+                            }else{
+                                printf("\"%s\" already exists!\n",fileName);
+                            }
                         }else{
                             print("No file name!\n");
                         }
@@ -341,14 +350,13 @@ void main(){
                                 fileName[i - 3] = inpBuffer[i];
                             }
                             fileName[nameLength] = 0;
-                            Directory* newDirectory = (Directory*)workingDirectory->getFile(fileName);
+                            Directory* newDirectory = workingDirectory->getDirectory(fileName);
                             if(newDirectory == 0){
                                 print('"');
                                 print(fileName);
                                 print("\" is not a valid directory!\n");
                             }else{
                                 workingDirectory = newDirectory;
-                                print("Moved");
                             }
                             
                         }else{

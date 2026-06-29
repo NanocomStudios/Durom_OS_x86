@@ -25,6 +25,8 @@
 #define LIGHT_BROWN {0,255,255}
 #define LIGHT_WHITE {255,255,255}
 
+
+
 class Color{
 	public:
 	unsigned char B;
@@ -52,6 +54,9 @@ class Color32{
 void clearScreen();
 void clearConsole();
 void initScreen();
+void* getFramebufferPTR();
+void* getScreenRamPTR();
+unsigned long getScreenRemSize();
 void printDisplayInfo();
 void print(const char* inp);
 void moveCsr(int col, int row);

@@ -24,6 +24,8 @@ unsigned screenWidth;
 void* screenRam;
 void* physicalScreenRam;
 
+unsigned long screenRamSize;
+
 char graphicMode;
 
 char scroll;
@@ -97,8 +99,10 @@ void initScreen(){
     bpp = framebuffer->bpp;
     pitch = framebuffer->pitch;
     graphicMode ='G';
+
+    screenRamSize = pitch * height;
     
-    screenRam = (void*)malloc(pitch * height);
+    screenRam = (void*)malloc(screenRamSize);
     
 
     consoleWidth = width / charWidth;
@@ -111,6 +115,18 @@ void initScreen(){
     clearScreen();
     scroll = 1;
     
+}
+
+void* getFramebufferPTR(){
+    return physicalScreenRam;
+}
+
+void* getScreenRamPTR(){
+    return screenRam;
+}
+
+unsigned long getScreenRemSize(){
+    return screenRamSize;
 }
 
 void printDisplayInfo(){
