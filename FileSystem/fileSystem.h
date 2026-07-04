@@ -187,7 +187,13 @@ class Directory : public FileSystem{
 
 };
 
+
+
 void printFilePath(Directory* file);
 // FileSystem* getFile(char* name, FileSystem* parentDirectory);
+Directory* initFileSystem();
+Directory* getFSRoot();
+// Directory** getWorkingDirectory();
+// void setWorkingDirectory(Directory* dir);
 
 #endif

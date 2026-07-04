@@ -54,14 +54,14 @@ typedef char * string;
 
 int step;
 void main(){
-    Directory fs_root("");
+    Directory* fs_root = getFSRoot();
 
-    Directory* workingDirectory = &fs_root;
+    Directory* workingDirectory = fs_root;
 
     Directory* dev = new Directory("dev");
     dev->addFile(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1));
 
-    fs_root.addFile(dev);
+    fs_root->addFile(dev);
 
     newThread(thr1);
     newThread(thr2);
@@ -186,9 +186,9 @@ void main(){
     
     // printFilePath(workingDirectory);
 
-    // while(1){
-    //     shell();
-    // }
+    while(1){
+        shell();
+    }
     printFilePath(workingDirectory);
     printf(">");
     
@@ -452,6 +452,7 @@ void init_kernel(){
     idt_init();
     initGUI();
     
+    initFileSystem();
 
     printMemoryInfo();
 

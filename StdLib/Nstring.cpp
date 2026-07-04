@@ -1,5 +1,6 @@
 #include "Nstring.h"
 #include "Nmath.h"
+#include "vector.h"
 #include "../Graphics/VGA.h"
 
 long strcmp(const char * inp1, long length1, const char * inp2, long length2){
@@ -53,4 +54,48 @@ char strcmpd(char* str1, char* str2){
         }
         i++;
     }
+}
+
+Vector<Vector<char>*>* tokenize(char* input, char seperator = ' '){
+
+    Vector<Vector<char>*>* tokenList = new Vector<Vector<char>*>;
+    
+    Vector<char>* lexem = new Vector<char>;
+
+    char blockMode = 0;
+    char ignorNext = 0;
+
+    for(uint64_t i = 0; input[i] != 0; i++){
+        if(ignorNext){
+            lexem->push(input[i]);
+            ignorNext = 0;
+        }else{
+            if(input[i] == seperator){
+                    if(blockMode){
+                        lexem->push(input[i]);
+                    }else{
+                        if((lexem->size() > 0)){
+                            lexem->push(0);
+                            tokenList->push(lexem);
+                            lexem = new Vector<char>;
+                        }
+                    }
+            }else if(input[i] == '\"'){
+                if((lexem->size() > 0)){
+                        lexem->push(0);
+                        tokenList->push(lexem);
+                        lexem = new Vector<char>;
+                    }
+                blockMode = (blockMode == 0) ? 1: 0;
+            }else if(input[i] == '\\'){
+                ignorNext = 1;
+            }else{
+                lexem->push(input[i]);
+            }
+        }
+    }
+    lexem->push(0);
+    tokenList->push(lexem);
+    return tokenList;
+    
 }

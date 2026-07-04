@@ -5,15 +5,15 @@
 
 #include "../StdLib/vector.h"
 
-class Token{
-    public :
-        Vector<char> lexem;
-        Token* nextToken;
+// class Token{
+//     public :
+//         Vector<char> lexem;
+//         Token* nextToken;
 
-        Token(){
-            nextToken = 0;
-        }
-};
+//         Token(){
+//             nextToken = 0;
+//         }
+// };
 
 void shell();
 

@@ -4,6 +4,9 @@
 #include "../StdLib/Nstring.h"
 #include "../StdLib/stdio.h"
 
+Directory* fs_root;
+// Directory* workingDirectory;
+
 void printFilePath(Directory* currentDir){
     Vector<char*>* filePath = new Vector<char*>;
     // hexdump((char*)currentDir, sizeof(Directory));
@@ -32,4 +35,18 @@ void printFilePath(Directory* currentDir){
         }
     }
 }
+
+Directory* initFileSystem(){
+    fs_root = new Directory("");
+    return fs_root;
+}
+
+Directory* getFSRoot(){
+    return fs_root;
+}
+
+// Directory** getWorkingDirectory(){
+//     return &workingDirectory;
+// }
+
 
