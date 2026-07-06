@@ -276,6 +276,8 @@ void print(char inp){
 
 Spinlock printLock;
 
+
+
 void printChar(char inp){
     printLock.acquire();
     switch (inp)

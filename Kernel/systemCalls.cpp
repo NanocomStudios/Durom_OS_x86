@@ -11,6 +11,9 @@ void systemCallHandler(InterruptData* intr){
 
         //     break;
         case 1:
+            // if(intr->rdi == 1){
+
+            // }
             printChar((char)intr->rbx); // rbx
             break;
         default:

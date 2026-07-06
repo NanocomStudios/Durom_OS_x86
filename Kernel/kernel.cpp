@@ -191,10 +191,11 @@ void main(){
     // printFilePath(workingDirectory);
 
     // while(1){
-    //     shell();
+        shell();
+        while(1);
     // }
-    printFilePath(workingDirectory);
-    printf(">");
+    // printFilePath(workingDirectory);
+    // printf(">");
     
 
     while(1){

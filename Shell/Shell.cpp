@@ -1,4 +1,5 @@
 #include "Shell.h"
+#include "ShellCommands.h"
 
 #include "../StdLib/malloc.h"
 
@@ -11,6 +12,13 @@
 #include "../FileSystem/fileSystem.h"
 
 #include <cstdint>
+
+Trie <void(*)(int,char**)> commandList;
+
+void initShell(){
+    commandList.insert("", shell_do_nothing);
+    commandList.insert("echo", shell_echo);
+}
 
 // Token* getTokenList(char* input){
 //     Token* tokenHead = new Token;
@@ -66,66 +74,93 @@
 // }
 
 void shell(){
+    initShell();
     Directory* fs_rot = getFSRoot();
     Directory* workingDirectory = fs_rot;
 
-    printFilePath(workingDirectory);
-    printf(">");
+    
     char input[SHELL_MAX_INPUT_LENGTH];
-    int inputPointer = 0;
 
-    char inp;
+    while(1){
+        printFilePath(workingDirectory);
+        printf(">");
 
-    while(inputPointer < SHELL_MAX_INPUT_LENGTH){
-        if(inputPointer == (SHELL_MAX_INPUT_LENGTH - 1)){
-            input[inputPointer] = 0;
-            break;
-        }
+        int inputPointer = 0;
 
-        inp = getChar();
-        if(inp == '\n'){
-            printf("\n");
-            input[inputPointer] = 0;
-            break;
-        }else if(inp == '\b'){
-            if(inputPointer > 0){
-                printf("\b");
-                inputPointer--;
+        char inp;
+
+        while(inputPointer < SHELL_MAX_INPUT_LENGTH){
+            if(inputPointer == (SHELL_MAX_INPUT_LENGTH - 1)){
+                input[inputPointer] = 0;
+                break;
             }
-        }else{
-            printf("%c", inp);
-            input[inputPointer] = inp;
-            inputPointer++;
+
+            inp = getChar();
+            if(inp == '\n'){
+                printf("\n");
+                input[inputPointer] = 0;
+                break;
+            }else if(inp == '\b'){
+                if(inputPointer > 0){
+                    printf("\b");
+                    inputPointer--;
+                }
+            }else{
+                printf("%c", inp);
+                input[inputPointer] = inp;
+                inputPointer++;
+            }
         }
-    }
 
-    // Token* tokenHead = getTokenList(input);
+        // Token* tokenHead = getTokenList(input);
 
-    // Token* currentToken = tokenHead;
-    // Token* temp;
+        // Token* currentToken = tokenHead;
+        // Token* temp;
 
-    // while(currentToken != 0){
-    //     printf("%s\n", currentToken->lexem.arr);
-    //     temp = currentToken->nextToken;
-    //     delete currentToken;
-    //     currentToken = temp;
-    // }
+        // while(currentToken != 0){
+        //     printf("%s\n", currentToken->lexem.arr);
+        //     temp = currentToken->nextToken;
+        //     delete currentToken;
+        //     currentToken = temp;
+        // }
 
-    Vector<Vector<char>*>* tokenList = tokenize(input, ' ');
-    
-    printf("%d\n", (tokenList->arr[0])->arr[0]);
-    if(input[0] == '.' || input[0] == '/'){
-        // Execute file
-    }else{
-        //Shell command
+        Vector<Vector<char>*>* tokenList = tokenize(input, ' ');
         
+        // printf("%d\n", (tokenList->arr[0])->arr[0]);
+        uint64_t tokenListSize = tokenList->size();
 
+        char** argv = (char**)malloc(sizeof(char*) * tokenListSize);
+
+        for(uint64_t i = 0; i < tokenListSize; i++){
+            argv[i] = (tokenList->arr[i])->arr;
+        }
+
+        
+        if(input[0] == '.' || input[0] == '/'){
+            // Execute file
+        }else{
+            //Shell command
+            void(*func)(int,char**);
+            func = commandList.search(argv[0]);
+            if(func){
+                func(tokenListSize, argv);
+            }else{
+                printf("\"%s\" is not a valid shell command!\n", argv[0]);
+            }
+        }
+
+        free(argv);
+
+        for(uint64_t i = 0; i < tokenListSize; i++){
+            delete tokenList->arr[i];
+        }
+        delete tokenList;
+
+        
+        // for(int i = 0; i < tokenList->size(); i++){
+        //     printf("%s\n", (tokenList->arr[i])->arr);
+        //     delete tokenList->arr[i];
+        // }
+        // delete tokenList;
     }
-
-    
-    // for(int i = 0; i < tokenList->size(); i++){
-    //     printf("%s\n", (tokenList->arr[i])->arr);
-    //     delete tokenList->arr[i];
-    // }
-    // delete tokenList;
 }
