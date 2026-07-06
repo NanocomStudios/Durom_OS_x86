@@ -29,6 +29,8 @@
 #include "../StdLib/vector.h"
 #include "../StdLib/lock.h"
 
+#include "../StdLib/binary_radix_tree.h"
+
 #include "../Shell/Shell.h"
 
 #include "../Drivers/Network/networkDriver.h"
@@ -62,6 +64,8 @@ void main(){
     dev->addFile(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1));
 
     fs_root->addFile(dev);
+
+    Trie<int> trie;
 
     newThread(thr1);
     newThread(thr2);
@@ -186,9 +190,9 @@ void main(){
     
     // printFilePath(workingDirectory);
 
-    while(1){
-        shell();
-    }
+    // while(1){
+    //     shell();
+    // }
     printFilePath(workingDirectory);
     printf(">");
     
@@ -363,8 +367,17 @@ void main(){
                             print("No file name!\n");
                         }
                     }else if(!strcmp(inpBuffer, 255, "input", 5)){
-                        print(inpBuffer);
+                        printf("%d",trie.insert("Hello", 28));
+                        printf("%d",trie.insert("Hell", 23));
+                        printf("%d",trie.insert("abc", 21));
+                        printf("%d",trie.insert("test123", 20));
+                        printf("\n%d", trie.search("Hell"));
+                        printf("\n%d", trie.search("Hello"));
                         print("\n");
+                    // }else if(!strcmp(inpBuffer, 255, "lstrie", 6)){
+                    //     trie.printTree();
+
+                    //     print("\n");
                     }else{
                         print('\'');
                         print(inpBuffer);

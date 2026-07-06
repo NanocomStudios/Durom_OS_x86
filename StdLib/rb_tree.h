@@ -2,6 +2,9 @@
 #define RB_TREE_H
 
 #include "cppstd.h"
+#include "stdio.h"
+
+#define NULL 0
 
 //https://www.geeksforgeeks.org/cpp/red-black-tree-in-cpp/
 
@@ -361,6 +364,24 @@ public:
     bool isEmpty(){
         return(root == nullptr ? 1:0);
     }
+
+    // void ListTree(Node* rootNode = NULL, int depth = 0, void (*func)() = NULL, char printKey = 0){
+    //     if(rootNode == NULL){
+    //         ListTree(root, 0, func, printKey);
+    //     }
+
+    //     if(rootNode->left != NULL){
+    //         ListTree(rootNode->left, depth + 1, func, printKey);
+    //     }
+
+    //     printf("%c", rootNode->key_data);
+
+    //     func(rootNode->value_data);
+
+    //     if(rootNode->right != NULL){
+    //         ListTree(rootNode->left, depth + 1, func, printKey);
+    //     }
+    // }
 
 };
 
