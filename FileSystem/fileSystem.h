@@ -195,5 +195,6 @@ Directory* initFileSystem();
 Directory* getFSRoot();
 // Directory** getWorkingDirectory();
 // void setWorkingDirectory(Directory* dir);
+Directory* getDirectoryEntry(char* input, Directory* workingDirectory);
 
 #endif

@@ -59,6 +59,12 @@ void main(){
     Directory* fs_root = getFSRoot();
 
     Directory* workingDirectory = fs_root;
+    Directory* usr = new Directory("usr");
+    Directory* home = new Directory("home");
+    Directory* user1 = new Directory("dulara");
+    home->addFile(user1);
+    usr->addFile(home);
+    fs_root->addFile(usr);
 
     Directory* dev = new Directory("dev");
     dev->addFile(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1));

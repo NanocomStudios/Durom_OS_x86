@@ -13,11 +13,14 @@
 
 #include <cstdint>
 
-Trie <void(*)(int,char**)> commandList;
+Trie <void(*)(int,char**,Directory**)> commandList;
 
 void initShell(){
     commandList.insert("", shell_do_nothing);
     commandList.insert("echo", shell_echo);
+    commandList.insert("cd", shell_cd);
+    commandList.insert("ls", shell_ls);
+    commandList.insert("pwd", shell_pwd);
 }
 
 // Token* getTokenList(char* input){
@@ -140,10 +143,10 @@ void shell(){
             // Execute file
         }else{
             //Shell command
-            void(*func)(int,char**);
+            void(*func)(int,char**,Directory**);
             func = commandList.search(argv[0]);
             if(func){
-                func(tokenListSize, argv);
+                func(tokenListSize, argv, &workingDirectory);
             }else{
                 printf("\"%s\" is not a valid shell command!\n", argv[0]);
             }
