@@ -109,3 +109,17 @@ void shell_xxd(int argc, char** argv, Directory** workingDirectory){
         printf("Insufficiant argument count!\n");
     }
 }
+
+void shell_write(int argc, char** argv, Directory** workingDirectory){
+    char buffer[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    if(argc > 1){
+        File* file = getFileEntry(argv[1], *workingDirectory);
+        if(file){
+            uint64_t len = file->write(buffer, 15);
+        }else{
+            printf("\"%s\" file not found!\n", argv[1]);
+        }
+    }else{
+        printf("Insufficiant argument count!\n");
+    }
+}

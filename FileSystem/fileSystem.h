@@ -103,13 +103,15 @@ class File : public FileSystem{
 
         uint64_t write(char* buffer, uint64_t length, uint64_t skip = 0){
             uint64_t write_length = 0;
-            writer_lock.acquire();
+            // writer_lock.acquire();
 
-            for(write_length = 0; ((write_length < length) && (write_length < size + skip)); write_length++){
-                ((char*)(data.data))[write_length + skip] = buffer[write_length];
+            if(isVirtual == 1){
+                for(write_length = 0; ((write_length < length) && (write_length < (size + skip))); write_length++){
+                    ((char*)(data.data))[write_length + skip] = buffer[write_length];
+                }
             }
-
-            writer_lock.release();
+            
+            // writer_lock.release();
         }
 };
 
