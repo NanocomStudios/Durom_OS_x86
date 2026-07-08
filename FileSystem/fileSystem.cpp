@@ -10,7 +10,7 @@ Directory* fs_root;
 void printFilePath(Directory* currentDir){
     Vector<char*>* filePath = new Vector<char*>;
     // hexdump((char*)currentDir, sizeof(Directory));
-    Directory* parentDir = (Directory*)(currentDir->parentDir);
+    Directory* parentDir = static_cast<Directory*>(currentDir->parentDir);
 
     // printf("%p : %p : %s\n", (void*)(currentDir->parentDir),(void*)&(currentDir->parentDir), currentDir->name);
     // printHex((uint64_t)parentDir);
@@ -23,7 +23,7 @@ void printFilePath(Directory* currentDir){
     while(parentDir != currentDir){
         filePath->push(currentDir->name);
         currentDir = parentDir;
-        parentDir = (Directory*)(currentDir->parentDir);
+        parentDir = static_cast<Directory*>(currentDir->parentDir);
     }
     if(filePath->size() == 0){
         printf("/");

@@ -23,7 +23,7 @@ void shell_cd(int argc, char** argv, Directory** workingDirectory){
         if(argv[1][0] == 0){
             return;
         }
-        Directory* tmpDirectory = (Directory*)getDirectoryEntry(argv[1], *workingDirectory);
+        Directory* tmpDirectory = static_cast<Directory*>(getDirectoryEntry(argv[1], *workingDirectory));
         if(!tmpDirectory){
             printf("\"%s\" directory not found!\n", argv[1]);
             return;
@@ -37,11 +37,11 @@ void shell_ls_print_list(Directory* workingDirectory, char file_info_flag){
     FileSystem* currentFile = workingDirectory->data.dirListHead;
 
     while(currentFile != NULL){
-        if(currentFile->type == currentFile->FILE){
+        if(currentFile->type == FS_FILE){
             printf("F :");
-        }else if(currentFile->type == currentFile->DIR){
+        }else if(currentFile->type == FS_DIR){
             printf("D :");
-        }else if(currentFile->type == currentFile->LINK){
+        }else if(currentFile->type == FS_LINK){
             printf("L :");
         }
 
@@ -111,11 +111,12 @@ void shell_xxd(int argc, char** argv, Directory** workingDirectory){
 }
 
 void shell_write(int argc, char** argv, Directory** workingDirectory){
-    char buffer[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    char buffer[] = {1,2,3,4,5,6,7,8,9,10};
     if(argc > 1){
         File* file = getFileEntry(argv[1], *workingDirectory);
         if(file){
-            uint64_t len = file->write(buffer, 15);
+            uint64_t len = file->write(buffer, 10);
+            printf("%d bytes written.\n",len);
         }else{
             printf("\"%s\" file not found!\n", argv[1]);
         }

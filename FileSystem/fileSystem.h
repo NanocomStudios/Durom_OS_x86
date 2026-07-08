@@ -10,22 +10,28 @@
 
 #define NULL 0
 
+#define FS_DIR 0
+#define FS_FILE 1
+#define FS_LINK 2
+
+class FileSystem;
+
+union FileData{
+    void* data;
+    FileSystem* link;
+    FileSystem* dirListHead;
+};
+
 class FileSystem{
     public:
+        FileData data;
+        uint64_t size;
+        char* name;
+        uint64_t type;
+        
         FileSystem* nextFile;
         FileSystem* prevFile;
         FileSystem* parentDir;
-
-        union FileDate{
-            void* data;
-            FileSystem* link;
-            FileSystem* dirListHead;
-        } data;
-        uint64_t size;
-        char* name;
-        enum Type{DIR, FILE, LINK} type;
-
-        
 
         // Vector<char*>* getFilePath(){
         //     Vector<char*>* filePath = new Vector<char*>;
@@ -48,25 +54,25 @@ class FileSystem{
 class Link : public FileSystem{
     public:
         Link(char* fileName, FileSystem* file){
-            type = LINK;
+            type = FS_LINK;
             name = fileName;
             data.link = file;
             nextFile = NULL;
             prevFile = NULL;
             parentDir = NULL;
+            
         }
 };
 
 class File : public FileSystem{
-    private:
-        Spinlock mutex;
-        Spinlock writer_lock;
-        uint64_t reader_count;
     public:
-        char isVirtual;
+        uint64_t isVirtual;
+        Spinlock* mutex;
+        Spinlock* writer_lock;
+        uint64_t reader_count;
 
         File(char* fileName, uint64_t fileSize = 0, void* fileData = 0, char isFileVirtual = 0){
-            type = FILE;
+            type = FS_FILE;
             name = fileName;
             size = fileSize;
             data.data = fileData;
@@ -75,50 +81,58 @@ class File : public FileSystem{
             parentDir = NULL;
             isVirtual = isFileVirtual;
             reader_count = 0;
+            mutex = new Spinlock;
+            writer_lock = new Spinlock;
+        }
+
+        ~File(){
+            delete mutex;
+            delete writer_lock;
         }
 
         uint64_t read(char* buffer, uint64_t length, uint64_t skip = 0){
             uint64_t read_length = 0;
 
-            mutex.acquire();
-            // reader_count++;
-            // if(reader_count == 1){
-            //     writer_lock.acquire();
-            // }
-            mutex.release();
+            mutex->acquire();
+            reader_count++;
+            if(reader_count == 1){
+                writer_lock->acquire();
+            }
+            mutex->release();
 
             for(read_length = 0; (read_length < length) && (read_length < (size - skip)); read_length++){
                 buffer[read_length] = ((char*)(data.data))[read_length + skip];
             }
 
-            mutex.acquire();
-            // reader_count --;
-            // if(reader_count == 0){
-            //     writer_lock.release();
-            // }
-            mutex.release();
+            mutex->acquire();
+            reader_count --;
+            if(reader_count == 0){
+                writer_lock->release();
+            }
+            mutex->release();
 
             return read_length;
         }
 
         uint64_t write(char* buffer, uint64_t length, uint64_t skip = 0){
             uint64_t write_length = 0;
-            // writer_lock.acquire();
+            writer_lock->acquire();
 
             if(isVirtual == 1){
-                for(write_length = 0; ((write_length < length) && (write_length < (size + skip))); write_length++){
+                for(write_length = 0; ((write_length < length) && (write_length < (size - skip))); write_length++){
                     ((char*)(data.data))[write_length + skip] = buffer[write_length];
                 }
             }
             
-            // writer_lock.release();
+            writer_lock->release();
+            return write_length;
         }
 };
 
 class Directory : public FileSystem{
     public:
         Directory(char* fileName){
-            type = DIR;
+            type = FS_DIR;
             size = 0;
             name = fileName;
             data.dirListHead = NULL;
@@ -134,9 +148,9 @@ class Directory : public FileSystem{
             if(currentFile == NULL){
                 data.dirListHead = file;
                 file->parentDir = this;
-                if(file->type == DIR){
-                    Directory* dirFile = (Directory*)file;
-                    dirFile->addFile(new Link("..", file->parentDir));
+                if(file->type == FS_DIR){
+                    Directory* dirFile = static_cast<Directory*>(file);
+                    dirFile->addFile(static_cast<FileSystem*>(new Link("..", file->parentDir)));
                 }
                 return;
             }
@@ -150,9 +164,9 @@ class Directory : public FileSystem{
             // print(file->name);
             // printHex((uint64_t)file->parentDir);
             // print('\n');
-            if(file->type == DIR){
-                Directory* dirFile = (Directory*)file;
-                dirFile->addFile(new Link("..", file->parentDir));
+            if(file->type == FS_DIR){
+                Directory* dirFile = static_cast<Directory*>(file);
+                dirFile->addFile(static_cast<FileSystem*>(new Link("..", file->parentDir)));
             }
         }
 
@@ -188,19 +202,19 @@ class Directory : public FileSystem{
                 return 0;
             }
 
-            if(file->type == DIR){
+            if(file->type == FS_DIR){
                 return 0;
-            }else if(file->type == LINK){
-                while(file->type == LINK && file->data.link != 0){
+            }else if(file->type == FS_LINK){
+                while(file->type == FS_LINK && file->data.link != 0){
                     file = file->data.link;
                 }
-                if(file->type == FILE){
-                    return (File*)file;
+                if(file->type == FS_FILE){
+                    return static_cast<File*>(file);
                 }else{
                     return 0;
                 }
             }else{
-                return (File*)file;
+                return static_cast<File*>(file);
             }
         }
 
@@ -211,19 +225,19 @@ class Directory : public FileSystem{
                 return 0;
             }
 
-            if(file->type == FILE){
+            if(file->type == FS_FILE){
                 return 0;
-            }else if(file->type == LINK){
-                while(file->type == LINK && file->data.link != 0){
+            }else if(file->type == FS_LINK){
+                while(file->type == FS_LINK && file->data.link != 0){
                     file = file->data.link;
                 }
-                if(file->type == DIR){
-                    return (Directory*)file;
+                if(file->type == FS_DIR){
+                    return static_cast<Directory*>(file);
                 }else{
                     return 0;
                 }
             }else{
-                return (Directory*)file;
+                return static_cast<Directory*>(file);
             }
         }
 

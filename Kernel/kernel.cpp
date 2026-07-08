@@ -62,12 +62,12 @@ void main(){
     Directory* usr = new Directory("usr");
     Directory* home = new Directory("home");
     Directory* user1 = new Directory("dulara");
-    home->addFile(user1);
-    usr->addFile(home);
-    fs_root->addFile(usr);
+    home->addFile(static_cast<FileSystem*>(user1));
+    usr->addFile(static_cast<FileSystem*>(home));
+    fs_root->addFile(static_cast<FileSystem*>(usr));
 
     Directory* dev = new Directory("dev");
-    dev->addFile(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1));
+    dev->addFile(static_cast<FileSystem*>(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1)));
 
     char* test = (char*)malloc(10);
     test[0] = 0;
@@ -80,9 +80,9 @@ void main(){
     test[7] = 7;
     test[8] = 8;
     test[9] = 9;
-dev->addFile(new File("test",10, test, 1));
+dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
 
-    fs_root->addFile(dev);
+    fs_root->addFile(static_cast<FileSystem*>(dev));
 
     Trie<int> trie;
 
