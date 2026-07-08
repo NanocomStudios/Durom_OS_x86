@@ -10,5 +10,8 @@ void shell_ls(int argc, char** argv, Directory** workingDirectory);
 void shell_pwd(int argc, char** argv, Directory** workingDirectory);
 void shell_xxd(int argc, char** argv, Directory** workingDirectory);
 void shell_write(int argc, char** argv, Directory** workingDirectory);
+void shell_pci(int argc, char** argv, Directory** workingDirectory);
+void shell_display(int argc, char** argv, Directory** workingDirectory);
+void shell_memory(int argc, char** argv, Directory** workingDirectory);
 
 #endif

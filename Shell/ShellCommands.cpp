@@ -4,6 +4,10 @@
 #include "../StdLib/Nstring.h"
 #include "../StdLib/vector.h"
 
+#include "../IO/PCI.h"
+#include "../Graphics/VGA.h"
+#include "../StdLib/malloc.h"
+
 void shell_do_nothing(int argc, char** argv, Directory** workingDirectory){
 }
 
@@ -96,12 +100,19 @@ void shell_pwd(int argc, char** argv, Directory** workingDirectory){
 }
 
 void shell_xxd(int argc, char** argv, Directory** workingDirectory){
-    char buffer[1024];
+    uint64_t skip = 0;
+    char buffer[512];
     if(argc > 1){
         File* file = getFileEntry(argv[1], *workingDirectory);
         if(file){
-            uint64_t len = file->read(buffer, 1024);
-            hexdump(buffer, len);
+            while(1){
+                uint64_t len = file->read(buffer, 512, skip);
+                hexdump(buffer, len);
+                skip += len;
+                if(len < 512){
+                    break;
+                }
+            }
         }else{
             printf("\"%s\" file not found!\n", argv[1]);
         }
@@ -111,11 +122,11 @@ void shell_xxd(int argc, char** argv, Directory** workingDirectory){
 }
 
 void shell_write(int argc, char** argv, Directory** workingDirectory){
-    char buffer[] = {1,2,3,4,5,6,7,8,9,10};
+    unsigned char buffer[] = {255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0};
     if(argc > 1){
         File* file = getFileEntry(argv[1], *workingDirectory);
         if(file){
-            uint64_t len = file->write(buffer, 10);
+            uint64_t len = file->write((char*)buffer, sizeof(buffer) / sizeof(char));
             printf("%d bytes written.\n",len);
         }else{
             printf("\"%s\" file not found!\n", argv[1]);
@@ -123,4 +134,16 @@ void shell_write(int argc, char** argv, Directory** workingDirectory){
     }else{
         printf("Insufficiant argument count!\n");
     }
+}
+
+void shell_pci(int argc, char** argv, Directory** workingDirectory){
+    printPciList();
+}
+
+void shell_display(int argc, char** argv, Directory** workingDirectory){
+    printDisplayInfo();
+}
+
+void shell_memory(int argc, char** argv, Directory** workingDirectory){
+    printMemoryInfo();
 }

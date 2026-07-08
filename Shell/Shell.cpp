@@ -23,6 +23,9 @@ void initShell(){
     commandList.insert("pwd", shell_pwd);
     commandList.insert("xxd", shell_xxd);
     commandList.insert("write", shell_write);
+    commandList.insert("pci", shell_pci);
+    commandList.insert("display", shell_display);
+    commandList.insert("memory", shell_memory);
 }
 
 // Token* getTokenList(char* input){

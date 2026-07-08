@@ -210,8 +210,8 @@ dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
     // printFilePath(workingDirectory);
 
     // while(1){
-        shell();
-        while(1);
+        // shell();
+        // while(1);
     // }
     // printFilePath(workingDirectory);
     // printf(">");
@@ -398,6 +398,44 @@ dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
                     //     trie.printTree();
 
                     //     print("\n");
+                    }else if(!strcmp(inpBuffer, 255, "crash", 5)){
+                        allocateToPageTable(0x1000, (uint64_t)page_alloc(), 0x3);
+                        char* mem = (char*)0x1000;
+                        mem[0] = 0xf3;
+                        mem[1] = 0x0f;
+                        mem[2] = 0x1e;
+                        mem[3] = 0xfa;
+                        mem[4] = 0x55;
+                        mem[5] = 0x48;
+                        mem[6] = 0x89;
+                        mem[7] = 0xe5;
+                        mem[8] = 0x53;
+                        mem[9] = 0xba;
+                        mem[10] = 0x61;
+                        mem[11] = 0x00;
+                        mem[12] = 0x00;
+                        mem[13] = 0x00;
+                        mem[14] = 0x48;
+                        mem[15] = 0xc7;
+                        mem[16] = 0xc0;
+                        mem[17] = 0x01;
+                        mem[18] = 0x00;
+                        mem[19] = 0x00;
+                        mem[20] = 0x00;
+                        mem[21] = 0x48;
+                        mem[22] = 0x89;
+                        mem[23] = 0xd3;
+                        mem[24] = 0xcd;
+                        mem[25] = 0x80;
+                        mem[26] = 0x90;
+                        mem[27] = 0x48;
+                        mem[28] = 0x8b;
+                        mem[29] = 0x5d;
+                        mem[30] = 0xf8;
+                        mem[31] = 0xc9;
+                        mem[32] = 0xc3;
+
+                        asm volatile("call 0x1000");
                     }else{
                         print('\'');
                         print(inpBuffer);

@@ -66,12 +66,12 @@ class Link : public FileSystem{
 
 class File : public FileSystem{
     public:
-        uint64_t isVirtual;
+        uint64_t isMemoryMapped;
         Spinlock* mutex;
         Spinlock* writer_lock;
         uint64_t reader_count;
 
-        File(char* fileName, uint64_t fileSize = 0, void* fileData = 0, char isFileVirtual = 0){
+        File(char* fileName, uint64_t fileSize = 0, void* fileData = 0, char isFileMemoryMapped = 0){
             type = FS_FILE;
             name = fileName;
             size = fileSize;
@@ -79,7 +79,7 @@ class File : public FileSystem{
             nextFile = NULL;
             prevFile = NULL;
             parentDir = NULL;
-            isVirtual = isFileVirtual;
+            isMemoryMapped = isFileMemoryMapped;
             reader_count = 0;
             mutex = new Spinlock;
             writer_lock = new Spinlock;
@@ -118,7 +118,7 @@ class File : public FileSystem{
             uint64_t write_length = 0;
             writer_lock->acquire();
 
-            if(isVirtual == 1){
+            if(isMemoryMapped == 1){
                 for(write_length = 0; ((write_length < length) && (write_length < (size - skip))); write_length++){
                     ((char*)(data.data))[write_length + skip] = buffer[write_length];
                 }
@@ -131,6 +131,8 @@ class File : public FileSystem{
 
 class Directory : public FileSystem{
     public:
+        uint64_t isVirtual;
+        
         Directory(char* fileName){
             type = FS_DIR;
             size = 0;
