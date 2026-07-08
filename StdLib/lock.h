@@ -1,3 +1,5 @@
+#ifndef SPINLOCK_H
+#define SPINLOCK_H
 #include <atomic>
 
 // Optimize this
@@ -38,3 +40,5 @@ class Spinlock{
             }
         }
 };
+
+#endif

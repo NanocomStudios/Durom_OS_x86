@@ -8,5 +8,6 @@ void shell_echo(int argc, char** argv, Directory** workingDirectory);
 void shell_cd(int argc, char** argv, Directory** workingDirectory);
 void shell_ls(int argc, char** argv, Directory** workingDirectory);
 void shell_pwd(int argc, char** argv, Directory** workingDirectory);
+void shell_xxd(int argc, char** argv, Directory** workingDirectory);
 
 #endif

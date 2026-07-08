@@ -76,6 +76,41 @@ Directory* getDirectoryEntry(char* input, Directory* workingDirectory){
     }
 }
 
+File* getFileEntry(char* input, Directory* workingDirectory){
+
+    Vector<Vector<char>*>* tokenList = tokenize(input, '/');
+
+    Directory* tmpDirectory = workingDirectory;
+
+    if(input[0] == '/'){
+        tmpDirectory = getFSRoot();
+    }
+
+    char invalid = 0;
+    uint64_t i = 0;
+
+    for(; i < tokenList->size() - 1; i++){
+        if(!invalid){
+            if(tokenList->arr[i]->arr[0] != 0){
+                tmpDirectory = tmpDirectory->getDirectory(tokenList->arr[i]->arr);
+                    if(!tmpDirectory){
+                        invalid = 1; // to continue deleting the token list
+                    }
+            }
+        }
+        delete tokenList->arr[i];
+    }
+    if(!invalid){
+        File* tmpFile = tmpDirectory->getFile(tokenList->arr[i]->arr);
+        delete tokenList;
+        return tmpFile;
+    }else{
+        delete tokenList;
+        return 0;
+    }
+
+}
+
 // Directory** getWorkingDirectory(){
 //     return &workingDirectory;
 // }

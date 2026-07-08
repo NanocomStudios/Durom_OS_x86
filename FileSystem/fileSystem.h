@@ -6,6 +6,7 @@
 #include "../Graphics/VGA.h"
 #include "../StdLib/Nstring.h"
 #include "../StdLib/stdio.h"
+#include "../StdLib/lock.h"
 
 #define NULL 0
 
@@ -57,7 +58,10 @@ class Link : public FileSystem{
 };
 
 class File : public FileSystem{
-    
+    private:
+        Spinlock mutex;
+        Spinlock writer_lock;
+        uint64_t reader_count;
     public:
         char isVirtual;
 
@@ -70,6 +74,42 @@ class File : public FileSystem{
             prevFile = NULL;
             parentDir = NULL;
             isVirtual = isFileVirtual;
+            reader_count = 0;
+        }
+
+        uint64_t read(char* buffer, uint64_t length, uint64_t skip = 0){
+            uint64_t read_length = 0;
+
+            mutex.acquire();
+            // reader_count++;
+            // if(reader_count == 1){
+            //     writer_lock.acquire();
+            // }
+            mutex.release();
+
+            for(read_length = 0; (read_length < length) && (read_length < (size - skip)); read_length++){
+                buffer[read_length] = ((char*)(data.data))[read_length + skip];
+            }
+
+            mutex.acquire();
+            // reader_count --;
+            // if(reader_count == 0){
+            //     writer_lock.release();
+            // }
+            mutex.release();
+
+            return read_length;
+        }
+
+        uint64_t write(char* buffer, uint64_t length, uint64_t skip = 0){
+            uint64_t write_length = 0;
+            writer_lock.acquire();
+
+            for(write_length = 0; ((write_length < length) && (write_length < size + skip)); write_length++){
+                ((char*)(data.data))[write_length + skip] = buffer[write_length];
+            }
+
+            writer_lock.release();
         }
 };
 
@@ -188,7 +228,6 @@ class Directory : public FileSystem{
 };
 
 
-
 void printFilePath(Directory* file);
 // FileSystem* getFile(char* name, FileSystem* parentDirectory);
 Directory* initFileSystem();
@@ -196,5 +235,6 @@ Directory* getFSRoot();
 // Directory** getWorkingDirectory();
 // void setWorkingDirectory(Directory* dir);
 Directory* getDirectoryEntry(char* input, Directory* workingDirectory);
+File* getFileEntry(char* input, Directory* workingDirectory);
 
 #endif

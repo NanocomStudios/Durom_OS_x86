@@ -21,6 +21,7 @@ void initShell(){
     commandList.insert("cd", shell_cd);
     commandList.insert("ls", shell_ls);
     commandList.insert("pwd", shell_pwd);
+    commandList.insert("xxd", shell_xxd);
 }
 
 // Token* getTokenList(char* input){

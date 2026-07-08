@@ -94,3 +94,18 @@ void shell_pwd(int argc, char** argv, Directory** workingDirectory){
     printFilePath(*workingDirectory);
     printf("\n");
 }
+
+void shell_xxd(int argc, char** argv, Directory** workingDirectory){
+    char buffer[1024];
+    if(argc > 1){
+        File* file = getFileEntry(argv[1], *workingDirectory);
+        if(file){
+            uint64_t len = file->read(buffer, 1024);
+            hexdump(buffer, len);
+        }else{
+            printf("\"%s\" file not found!\n", argv[1]);
+        }
+    }else{
+        printf("Insufficiant argument count!\n");
+    }
+}

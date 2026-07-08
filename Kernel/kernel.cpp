@@ -69,6 +69,19 @@ void main(){
     Directory* dev = new Directory("dev");
     dev->addFile(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1));
 
+    char* test = (char*)malloc(10);
+    test[0] = 0;
+    test[1] = 1;
+    test[2] = 2;
+    test[3] =3;
+    test[4] = 4;
+    test[5] = 5;
+    test[6] = 6;
+    test[7] = 7;
+    test[8] = 8;
+    test[9] = 9;
+dev->addFile(new File("test",10, test, 1));
+
     fs_root->addFile(dev);
 
     Trie<int> trie;
