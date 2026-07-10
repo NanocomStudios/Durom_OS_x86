@@ -59,12 +59,13 @@ void main(){
     Directory* fs_root = getFSRoot();
 
     Directory* workingDirectory = fs_root;
-    Directory* usr = new Directory("usr");
-    Directory* home = new Directory("home");
-    Directory* user1 = new Directory("dulara");
-    home->addFile(static_cast<FileSystem*>(user1));
-    usr->addFile(static_cast<FileSystem*>(home));
-    fs_root->addFile(static_cast<FileSystem*>(usr));
+    
+    // Directory* usr = new Directory("usr");
+    // Directory* home = new Directory("home");
+    // Directory* user1 = new Directory("dulara");
+    // home->addFile(static_cast<FileSystem*>(user1));
+    // usr->addFile(static_cast<FileSystem*>(home));
+    // fs_root->addFile(static_cast<FileSystem*>(usr));
 
     Directory* dev = new Directory("dev");
     dev->addFile(static_cast<FileSystem*>(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1)));
@@ -210,8 +211,8 @@ dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
     // printFilePath(workingDirectory);
 
     // while(1){
-        // shell();
-        // while(1);
+        shell();
+        while(1);
     // }
     // printFilePath(workingDirectory);
     // printf(">");

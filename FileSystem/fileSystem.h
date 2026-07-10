@@ -7,12 +7,17 @@
 #include "../StdLib/Nstring.h"
 #include "../StdLib/stdio.h"
 #include "../StdLib/lock.h"
+#include "../StdLib/malloc.h"
 
 #define NULL 0
 
 #define FS_DIR 0
 #define FS_FILE 1
 #define FS_LINK 2
+
+extern "C"{
+    void *memcpy(void *__restrict dest, const void *__restrict src, std::size_t n);
+}
 
 class FileSystem;
 
@@ -22,12 +27,12 @@ union FileData{
     FileSystem* dirListHead;
 };
 
-class FileSystem{
+class [[gnu::packed]] FileSystem{
     public:
         FileData data;
         uint64_t size;
         char* name;
-        uint64_t type;
+        char type;
         
         FileSystem* nextFile;
         FileSystem* prevFile;
@@ -55,25 +60,51 @@ class Link : public FileSystem{
     public:
         Link(char* fileName, FileSystem* file){
             type = FS_LINK;
-            name = fileName;
+
+            uint64_t fileNameLength = 1;
+            char c = fileName[0];
+            while(c > 0){
+                c = fileName[fileNameLength];
+                fileNameLength++;
+            }
+
+            name = (char*)malloc(fileNameLength);
+            memcpy(name, fileName, fileNameLength);
+
+            // name = fileName;
             data.link = file;
             nextFile = NULL;
             prevFile = NULL;
             parentDir = NULL;
             
         }
+
+        ~Link(){
+            free(name);
+        }
 };
 
 class File : public FileSystem{
     public:
-        uint64_t isMemoryMapped;
+        char isMemoryMapped;
         Spinlock* mutex;
         Spinlock* writer_lock;
         uint64_t reader_count;
 
         File(char* fileName, uint64_t fileSize = 0, void* fileData = 0, char isFileMemoryMapped = 0){
             type = FS_FILE;
-            name = fileName;
+            
+            uint64_t fileNameLength = 1;
+            char c = fileName[0];
+            while(c > 0){
+                c = fileName[fileNameLength];
+                fileNameLength++;
+            }
+
+            name = (char*)malloc(fileNameLength);
+            memcpy(name, fileName, fileNameLength);
+
+            //name = fileName;
             size = fileSize;
             data.data = fileData;
             nextFile = NULL;
@@ -86,6 +117,7 @@ class File : public FileSystem{
         }
 
         ~File(){
+            free(name);
             delete mutex;
             delete writer_lock;
         }
@@ -131,17 +163,31 @@ class File : public FileSystem{
 
 class Directory : public FileSystem{
     public:
-        uint64_t isVirtual;
+        char isVirtual;
         
         Directory(char* fileName){
             type = FS_DIR;
             size = 0;
-            name = fileName;
+
+            uint64_t fileNameLength = 1;
+            char c = fileName[0];
+            while(c > 0){
+                c = fileName[fileNameLength];
+                fileNameLength++;
+            }
+
+            name = (char*)malloc(fileNameLength);
+            memcpy(name, fileName, fileNameLength);
+
+            // name = fileName;
             data.dirListHead = NULL;
             nextFile = NULL;
             prevFile = NULL;
             parentDir = this;
             addFile(new Link(".", this));
+        }
+        ~Directory(){
+            free(name);
         }
 
         void addFile(FileSystem* file){

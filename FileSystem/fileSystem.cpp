@@ -4,7 +4,9 @@
 #include "../StdLib/Nstring.h"
 #include "../StdLib/stdio.h"
 
-Directory* fs_root;
+#include <limine.h>
+
+Directory* fs_root = 0;
 // Directory* workingDirectory;
 
 void printFilePath(Directory* currentDir){
@@ -36,8 +38,38 @@ void printFilePath(Directory* currentDir){
     }
 }
 
+namespace{
+    __attribute__((used, section(".limine_requests")))
+    volatile limine_module_request module_request = {
+        .id = LIMINE_MODULE_REQUEST_ID,
+        .revision = 0
+    };
+}
+
 Directory* initFileSystem(){
+    if(fs_root){
+        return fs_root;
+    }
     fs_root = new Directory("");
+
+    if(module_request.response == NULL || module_request.response->module_count == 0){
+        return fs_root;
+    }
+
+    Directory* data = new Directory("data");
+
+    int module_count = module_request.response->module_count;
+    printf("File System: %d modules found\n",module_count);
+
+    for(int i = 0; i < module_count; i++){
+        limine_file* fileInfo = module_request.response->modules[i];
+        printf("Module [%d]:\n Base address = %x\n File size = %d\n Module String=%s\n",i,fileInfo->address, fileInfo->size, fileInfo->string);
+
+        char* file = (char*)(fileInfo->address);
+        printf(" First File Name: %s\n", file);
+    }
+
+    fs_root->addFile(data);
     return fs_root;
 }
 
