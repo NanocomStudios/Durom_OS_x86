@@ -3,6 +3,7 @@
 #include "../StdLib/vector.h"
 #include "../StdLib/Nstring.h"
 #include "../StdLib/stdio.h"
+#include "TAR.h"
 
 #include <limine.h>
 
@@ -65,8 +66,24 @@ Directory* initFileSystem(){
         limine_file* fileInfo = module_request.response->modules[i];
         printf("Module [%d]:\n Base address = %x\n File size = %d\n Module String=%s\n",i,fileInfo->address, fileInfo->size, fileInfo->string);
 
-        char* file = (char*)(fileInfo->address);
-        printf(" First File Name: %s\n", file);
+        TAR_Header* file = (TAR_Header*)(fileInfo->address);
+
+        int x = 0;
+        while(file->file_name[0] != 0 && x < 20){
+            uint64_t fileSize = asciiOctToInt(file->size, 12);
+            printf("%c: %s : %d bytes\n", file->typeflag, file->file_name, fileSize);
+
+            uint64_t nextFile = (uint64_t)file + ((fileSize / 512) + 1) * 512;
+
+            if(fileSize % 512){
+                nextFile += 512;
+            }
+
+            file = (TAR_Header*)(nextFile);
+            x++;
+
+        }
+
     }
 
     fs_root->addFile(data);

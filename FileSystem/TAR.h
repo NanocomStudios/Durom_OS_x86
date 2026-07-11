@@ -5,9 +5,13 @@
 #include "../StdLib/Nstring.h"
 #include "fileSystem.h"
 
-#define TAR_FILE_TYPE_DEFAULT 0
+#define TAR_FILE_TYPE_FILE '0'
+#define TAR_FILE_TYPE_DIRECTORY '5'
+#define TAR_FILE_TYPE_LONG_NAME 'L'
 
 class [[gnu::packed]] TAR_Header{
+    public:
+
     char file_name[100];
     char mode[8];
     char uid[8];
@@ -25,20 +29,9 @@ class [[gnu::packed]] TAR_Header{
     char device_minor_id[8];
     char file_name_prefix[155];
 
-    public:
-        char isValidTARHeader();
-        uint64_t read(char* buffer, uint64_t length, uint64_t skip = 0);
-        uint64_t write(char* buffer, uint64_t length, uint64_t skip = 0);
+    
+    char isValidTARHeader();
 };
 
-class TAR_FS{
-    TAR_Header* firstHeader;
-
-    public:
-        TAR_FS(TAR_Header* header){
-            firstHeader = header;
-        }
-
-        
-};
+uint64_t asciiOctToInt(char* input, uint64_t size);
 #endif
