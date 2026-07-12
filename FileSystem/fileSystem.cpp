@@ -57,7 +57,7 @@ Directory* initFileSystem(){
         return fs_root;
     }
 
-    Directory* data = new Directory("data");
+    Directory* boot = new Directory("boot");
 
     int module_count = module_request.response->module_count;
     printf("File System: %d modules found\n",module_count);
@@ -69,9 +69,29 @@ Directory* initFileSystem(){
         TAR_Header* file = (TAR_Header*)(fileInfo->address);
 
         int x = 0;
-        while(file->file_name[0] != 0 && x < 20){
+        while(file->file_name[0] != 0){
             uint64_t fileSize = asciiOctToInt(file->size, 12);
-            printf("%c: %s : %d bytes\n", file->typeflag, file->file_name, fileSize);
+
+            Vector<Vector<char>*>* tokenList = tokenize(file->file_name, '/');
+
+            Directory* tmp;
+            Directory* parent = boot;
+            
+            for(uint64_t i = 0; i < tokenList->size() - 1; i++){
+                tmp = parent->getDirectory(((tokenList->arr)[i])->arr);
+                if(tmp == 0){
+                    tmp = new Directory(((tokenList->arr)[i])->arr);
+                    parent->addFile(tmp);
+                }
+                // delete tokenList->arr[i];
+                parent = tmp;
+            }
+
+            if(file->typeflag == '0' || file->typeflag == 0){
+                parent->addFile(new File((tokenList->arr[tokenList->size() - 1])->arr, fileSize, (void*)(((uint64_t)file) + 512), 1));
+            }
+
+            // printf("%c: %s : %d bytes\n", file->typeflag, file->file_name, fileSize);
 
             uint64_t nextFile = (uint64_t)file + ((fileSize / 512) + 1) * 512;
 
@@ -80,13 +100,12 @@ Directory* initFileSystem(){
             }
 
             file = (TAR_Header*)(nextFile);
-            x++;
 
         }
 
     }
 
-    fs_root->addFile(data);
+    fs_root->addFile(boot);
     return fs_root;
 }
 
