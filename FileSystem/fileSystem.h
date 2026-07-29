@@ -84,7 +84,7 @@ class Link : public FileSystem{
         }
 };
 
-class File : public FileSystem{
+class [[gnu::packed]] File : public FileSystem{
     public:
         char isMemoryMapped;
         Spinlock* mutex;
@@ -131,7 +131,6 @@ class File : public FileSystem{
                 writer_lock->acquire();
             }
             mutex->release();
-
             for(read_length = 0; (read_length < length) && (read_length < (size - skip)); read_length++){
                 buffer[read_length] = ((char*)(data.data))[read_length + skip];
             }
@@ -161,7 +160,7 @@ class File : public FileSystem{
         }
 };
 
-class Directory : public FileSystem{
+class [[gnu::packed]] Directory : public FileSystem{
     public:
         char isVirtual;
         
