@@ -150,13 +150,13 @@ void shell_memory(int argc, char** argv, Directory** workingDirectory){
 }
 
 void shell_exec(int argc, char** argv, Directory** workingDirectory){
-    uint64_t skip = 0;
-    char buffer[512];
     if(argc > 1){
         File* file = getFileEntry(argv[1], *workingDirectory);
         if(file){
-            file->read(buffer, 512, skip);
-            loadELFFile(buffer);
+            void (*function)() = (void (*)())loadELFFile(file);
+            if(function){
+                function();
+            }
         }else{
             printf("\"%s\" file not found!\n", argv[1]);
         }

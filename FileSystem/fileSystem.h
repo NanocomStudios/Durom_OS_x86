@@ -122,7 +122,7 @@ class [[gnu::packed]] File : public FileSystem{
             delete writer_lock;
         }
 
-        uint64_t read(char* buffer, uint64_t length, uint64_t skip = 0){
+        uint64_t read(void* buffer, uint64_t length, uint64_t skip = 0){
             uint64_t read_length = 0;
 
             mutex->acquire();
@@ -132,7 +132,7 @@ class [[gnu::packed]] File : public FileSystem{
             }
             mutex->release();
             for(read_length = 0; (read_length < length) && (read_length < (size - skip)); read_length++){
-                buffer[read_length] = ((char*)(data.data))[read_length + skip];
+                ((char*)buffer)[read_length] = ((char*)(data.data))[read_length + skip];
             }
 
             mutex->acquire();
@@ -145,13 +145,13 @@ class [[gnu::packed]] File : public FileSystem{
             return read_length;
         }
 
-        uint64_t write(char* buffer, uint64_t length, uint64_t skip = 0){
+        uint64_t write(void* buffer, uint64_t length, uint64_t skip = 0){
             uint64_t write_length = 0;
             writer_lock->acquire();
 
             if(isMemoryMapped == 1){
                 for(write_length = 0; ((write_length < length) && (write_length < (size - skip))); write_length++){
-                    ((char*)(data.data))[write_length + skip] = buffer[write_length];
+                    ((char*)(data.data))[write_length + skip] = ((char*)buffer)[write_length];
                 }
             }
             

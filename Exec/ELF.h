@@ -2,6 +2,7 @@
 #define ELF_H
 
 #include <cstdint>
+#include "../FileSystem/fileSystem.h"
 
 #define ELF_ISA_x86 0x03
 #define ELF_ISA_x86_64 0x3E
@@ -55,6 +56,6 @@ struct ELF_ProgramHeader{
     uint64_t alignment;
 }__attribute__((packed));
 
-uint64_t loadELFFile(void* file);
+void* loadELFFile(File* file);
 
 #endif
