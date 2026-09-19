@@ -83,6 +83,10 @@ class Trie{
         }
     }
 
+    uint64_t getMaxKeyLength(uint64_t current, uint64_t max){
+        
+    }
+
     // void printTree(TrieNode<ValueType>* node = 0){
     //     if(node == 0){
     //         trieHead.ListTree(0,0,printTree,1);

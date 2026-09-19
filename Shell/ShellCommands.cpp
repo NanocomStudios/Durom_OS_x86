@@ -164,3 +164,27 @@ void shell_exec(int argc, char** argv, Directory** workingDirectory){
         printf("Insufficiant argument count!\n");
     }
 }
+
+void shell_cat(int argc, char** argv, Directory** workingDirectory){
+    uint64_t skip = 0;
+    char buffer[513];
+    buffer[512] = 0;
+    if(argc > 1){
+        File* file = getFileEntry(argv[1], *workingDirectory);
+        if(file){
+            while(1){
+                uint64_t len = file->read(buffer, 512, skip);
+                if(len < 512){
+                    buffer[len] = 0;
+                    printf("%s", buffer);
+                    break;
+                }
+                skip += len;
+            }
+        }else{
+            printf("\"%s\" file not found!\n", argv[1]);
+        }
+    }else{
+        printf("Insufficiant argument count!\n");
+    }
+}

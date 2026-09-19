@@ -27,6 +27,7 @@ void initShell(){
     commandList.insert("display", shell_display);
     commandList.insert("memory", shell_memory);
     commandList.insert("exec", shell_exec);
+    commandList.insert("cat", shell_cat);
 }
 
 // Token* getTokenList(char* input){
