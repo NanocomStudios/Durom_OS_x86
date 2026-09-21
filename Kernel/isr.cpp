@@ -8,11 +8,17 @@
 #include "../Memory/Paging.h"
 #include "../Memory/PMM.h"
 
+#include "../StdLib/vector.h"
+#include "../StdLib/stdio.h"
+#include "../Drivers/driver.h"
+
 extern Queue <uint64_t> readyQueue;
 extern RedBlackTree <uint64_t, ThreadInformationBlock*> threadTable;
 
 ThreadInformationBlock* currentThread;
 ThreadInformationBlock* nextThread;
+
+Vector <Driver*>* driver_irq_list[16]={0};
 
 extern "C"{
     
@@ -46,6 +52,7 @@ extern "C"{
         
     }
     uint64_t cr3;
+
     void irq_handler(InterruptData* intr) {
         
 
@@ -144,10 +151,10 @@ extern "C"{
                 break;
 
             default:
-            if(((intr->int_no) - 64) < 16){
-                    print("PIC ");
-                    printInt((intr->int_no) - 64);
-                    print("!\n");
+                if(((intr->int_no) - 64) < 16){
+                    // print("PIC ");
+                    // printInt((intr->int_no) - 64);
+                    // print("!\n");
                 }else{
                     if(((intr->int_no) - 32) == 0x80){
                         systemCallHandler(intr);
@@ -160,6 +167,17 @@ extern "C"{
         }
 
         if(((intr->int_no) - 64) < 16){
+
+            Vector<Driver*>* irq_list = driver_irq_list[(intr->int_no) - 64];
+
+            if(irq_list != 0){
+                if(irq_list->size() > 0){
+                    for(int i = 0; i < irq_list->size(); i++){
+                        ((irq_list->arr)[i])->interruptHandler();
+                    }
+                }
+            }
+
             PIC_sendEOI((intr->int_no) - 64);
         }
 
@@ -171,4 +189,14 @@ void new_thread_wrapper(uint64_t int_no, void (*function)(void)){
     PIC_sendEOI(int_no - 64);
     asm volatile("sti");
     function();
+}
+
+void registerDriverInterrupt(Driver* driver, uint8_t irq){
+    if(irq >= 0 && irq < 16){
+        printf("Registering IRQ %d\n",irq);
+        if(driver_irq_list[irq] == 0){
+            driver_irq_list[irq] = new Vector<Driver*>;
+        }
+        driver_irq_list[irq]->push(driver);
+    }
 }

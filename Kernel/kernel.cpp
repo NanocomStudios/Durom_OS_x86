@@ -533,8 +533,9 @@ void init_kernel(){
     
     setTimer(1000, 0);
 
-    IRQ_clear_mask(PIC_TIMER);
-    IRQ_clear_mask(PIC_KEYBOARD);
+    // IRQ_clear_mask(PIC_TIMER);
+    // IRQ_clear_mask(PIC_KEYBOARD);
+    IRQ_clear_mask_all();
     sti();
     
     

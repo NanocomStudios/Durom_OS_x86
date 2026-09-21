@@ -3,7 +3,7 @@
 
 #pragma pack(1)
 
-struct pciNode{
+struct [[gnu::packed]] pciNode{
     unsigned char bus;
     unsigned char slot;
     unsigned char func;
@@ -15,7 +15,7 @@ struct pciNode{
     pciNode* next;
 };
 
-struct pciHeader{
+struct [[gnu::packed]] pciHeader{
     unsigned short vendorID;
     unsigned short deviceID;
     unsigned short command;
@@ -55,4 +55,5 @@ short getClassCount(unsigned char classCode);
 pciNode* getClassCategory(unsigned char classCode);
 pciNode* getPciNodeList(unsigned char classCode, unsigned char subClass, unsigned char progIF);
 pciHeader* getPciHeader(pciNode* node);
+
 #endif
