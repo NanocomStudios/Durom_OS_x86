@@ -208,8 +208,6 @@ void intel_8254x :: interruptHandler(){
     }
 }
 
-
-
 void intel_8254x :: receive_packets(){
     uint32_t idx = rx_next;
 
@@ -252,8 +250,8 @@ void intel_8254x :: receive_packets(){
         if (eop) {
             // This is the last descriptor of the packet
             // Forward the packet to your network stack
-            hexdump((char*)buffer, buffer_len);
-            printf("\n");
+            // hexdump((char*)buffer, buffer_len);
+            // printf("\n");
             free(buffer);
             buffer = nullptr;
             buffer_len = 0;
