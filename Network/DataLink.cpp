@@ -13,6 +13,6 @@ void decodeEthernetPacket(void* buffer){
             // decodeIPv4(buffer + sizeof(Ethernet), eth->sourceMac);
             break;
         default:
-
+            break;
     }
 }
