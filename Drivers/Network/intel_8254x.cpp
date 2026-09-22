@@ -1,6 +1,7 @@
 #include "../../StdLib/malloc.h"
 #include "../../StdLib/stdio.h"
 #include "../../IO/io.h"
+#include "../../Graphics/VGA.h"
 
 #include "../../Memory/PMM.h"
 #include "../../Memory/Paging.h"
@@ -193,7 +194,7 @@ void intel_8254x :: interruptHandler(){
 
     if (cause & E1000_IMS_RXT) { // Packets received
         // printf("Packets\n");
-        // receive_packets();  // Call the function responsible for receiving
+        receive_packets();  // Call the function responsible for receiving
                             // packets and sending them to the network stack
     }
 
@@ -205,4 +206,63 @@ void intel_8254x :: interruptHandler(){
             printf("Link change detected: Link down!\n");
         }
     }
+}
+
+
+
+void intel_8254x :: receive_packets(){
+    uint32_t idx = rx_next;
+
+    void* buffer = nullptr; // use this to store the buffer.
+    size_t buffer_len = 0; 
+
+    Receive_Descriptor* receive_ring_l = (Receive_Descriptor*)((uint64_t)receive_ring + DEFAULT_HHDM_OFFSET);
+
+    while (receive_ring_l[idx].status & RX_STATUS_DD) {
+        // This descriptor has been filled
+        
+        bool eop = receive_ring_l[idx].status & RX_STATUS_EOP;
+        uint16_t len = receive_ring_l[idx].length;
+        void* data = (void*)(receive_ring_l[idx].buffer_address + DEFAULT_HHDM_OFFSET);
+        
+        // Handle multiple-descriptor packets
+        if (buffer == nullptr){ // This is the first descriptor of the packet
+            buffer = malloc(len); // use your kernel's heap allocator
+            buffer_len = len;
+            memcpy(buffer, data, len);
+        }else{
+            // Its the next part of the packet, add it to the packet
+            void* new_buffer = malloc(buffer_len + len); // allocate a bigger buffer
+            memcpy(new_buffer, buffer, buffer_len); // copy the previous data
+            free(buffer); // free the old buffer
+    
+            // copy the new data
+            memcpy((void*)((uint64_t)new_buffer + buffer_len), data, len);
+            
+            // Set the new buffer into the variables
+            buffer_len += len;
+            buffer = new_buffer;
+        }
+    
+        // Set status to 0 (To give ownership back to the controller)
+        receive_ring_l[idx].status = 0; 
+
+        idx = (idx + 1) % NUM_OF_RX_DESCRIPTORS;
+
+        if (eop) {
+            // This is the last descriptor of the packet
+            // Forward the packet to your network stack
+            hexdump((char*)buffer, buffer_len);
+            printf("\n");
+            free(buffer);
+            buffer = nullptr;
+            buffer_len = 0;
+        }
+    }
+
+    // Give the controller more free descriptors by updating RDT
+    uint32_t tail = (idx == 0) ? NUM_OF_RX_DESCRIPTORS - 1 : idx - 1;
+    write_register(I8254_REG_RDT, tail);
+
+    rx_next = idx;
 }

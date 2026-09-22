@@ -76,6 +76,15 @@
 #define TX_CMD_VLE  0b01000000
 #define TX_CMD_IDE  0b10000000
 
+#define RX_STATUS_DD    0b00000001
+#define RX_STATUS_EOP   0b00000010
+#define RX_STATUS_IXSM  0b00000100
+#define RX_STATUS_RSV   0b00001000
+#define RX_STATUS_VP    0b00010000
+#define RX_STATUS_TCPCS 0b00100000
+#define RX_STATUS_IPCS  0b01000000
+#define RX_STATUS_PIF   0b10000000
+
 
 
 #define NUM_OF_TX_DESCRIPTORS 256
@@ -101,8 +110,8 @@ struct [[gnu::packed]] Receive_Descriptor{
     uint64_t buffer_address;
     uint16_t length;
     uint16_t checksum;
-    uint16_t status;
-    uint16_t error;
+    uint8_t status;
+    uint8_t error;
     uint16_t special;
 };
 
@@ -112,6 +121,7 @@ class [[gnu::packed]] intel_8254x : public NetworkDriver{
         uint64_t io_addr;
         uint8_t mmio_mode;
         uint8_t MAC_ADDRESS[6];
+        uint8_t rx_next = 0;
         Transmit_Descriptor* transmit_ring;
         Receive_Descriptor* receive_ring;
 
@@ -129,6 +139,7 @@ class [[gnu::packed]] intel_8254x : public NetworkDriver{
     void send_data(void* data, uint32_t size, bool EOP);
     uint64_t send(void* data, uint64_t length);
     void interruptHandler();
+    void receive_packets();
 
 };
 
