@@ -2,13 +2,14 @@
 #define FILESYSTEM_H
 
 #include <cstdint>
+#include "../Drivers/driver.h"
 #include "../StdLib/vector.h"
 #include "../Graphics/VGA.h"
 #include "../StdLib/Nstring.h"
 #include "../StdLib/stdio.h"
 #include "../StdLib/lock.h"
 #include "../StdLib/malloc.h"
-#include "../Drivers/driver.h"
+
 
 #define NULL 0
 
@@ -170,10 +171,11 @@ class [[gnu::packed]] DriverFile : public FileSystem{
 
         DriverFile(Driver* driver){
             type = FS_FILE;
+            drv = driver;
 
-            name = drv->deeName;
+            name = drv->devName;
             size = 0;
-            data.data = fileData;
+            data.data = 0;
             nextFile = NULL;
             prevFile = NULL;
             parentDir = NULL;
