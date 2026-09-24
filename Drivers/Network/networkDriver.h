@@ -10,8 +10,14 @@ class [[gnu::packed]] NetworkDriver : public Driver{
         virtual void init() = 0;
         virtual uint64_t send(void* data, uint64_t length) = 0;
         virtual void interruptHandler() = 0;
+        uint64_t devRead(void* buffer, uint64_t length){
+            return 0;
+        }
+        uint64_t devWrite(void* buffer, uint64_t length){
+            return 0;
+        }
 };
 
-NetworkDriver* networkDriverInit();
+void networkDriverInit(Vector<Driver*> *drivers);
 
 #endif

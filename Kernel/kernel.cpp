@@ -14,6 +14,7 @@
 #include "../Storage/hdd.h"
 #include "../Storage/fat32.h"
 #include "../IO/PCI.h"
+#include "../Drivers/driver.h"
 #include "../Drivers/PIC/PIC.h"
 #include "../Drivers/PIC/timer.h"
 #include "../Drivers/Audio/pc_speaker.h"
@@ -68,6 +69,8 @@ void main(){
     // fs_root->addFile(static_cast<FileSystem*>(usr));
 
     Directory* dev = new Directory("dev");
+    fs_root->addFile(static_cast<FileSystem*>(dev));
+    
     dev->addFile(static_cast<FileSystem*>(new File("screen",getScreenRemSize(), getFramebufferPTR(), 1)));
 
     char* test = (char*)malloc(10);
@@ -81,9 +84,10 @@ void main(){
     test[7] = 7;
     test[8] = 8;
     test[9] = 9;
-dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
+    
+    dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
 
-    fs_root->addFile(static_cast<FileSystem*>(dev));
+    addDriversToDev();
 
     Trie<int> trie;
 
@@ -475,10 +479,6 @@ dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
         
     }
     return;
-}
-
-void init_drivers(){
-    (long)networkDriverInit();
 }
 
 namespace {

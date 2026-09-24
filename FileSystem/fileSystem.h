@@ -8,6 +8,7 @@
 #include "../StdLib/stdio.h"
 #include "../StdLib/lock.h"
 #include "../StdLib/malloc.h"
+#include "../Drivers/driver.h"
 
 #define NULL 0
 
@@ -153,6 +154,69 @@ class [[gnu::packed]] File : public FileSystem{
                 for(write_length = 0; ((write_length < length) && (write_length < (size - skip))); write_length++){
                     ((char*)(data.data))[write_length + skip] = ((char*)buffer)[write_length];
                 }
+            }
+            
+            writer_lock->release();
+            return write_length;
+        }
+};
+
+class [[gnu::packed]] DriverFile : public FileSystem{
+    public:
+        Spinlock* mutex;
+        Spinlock* writer_lock;
+        uint64_t reader_count;
+        Driver* drv;
+
+        DriverFile(Driver* driver){
+            type = FS_FILE;
+
+            name = drv->deeName;
+            size = 0;
+            data.data = fileData;
+            nextFile = NULL;
+            prevFile = NULL;
+            parentDir = NULL;
+            reader_count = 0;
+            mutex = new Spinlock;
+            writer_lock = new Spinlock;
+        }
+
+        ~DriverFile(){
+            free(name);
+            delete mutex;
+            delete writer_lock;
+        }
+
+        uint64_t read(void* buffer, uint64_t length, uint64_t skip = 0){
+            uint64_t read_length = 0;
+
+            mutex->acquire();
+            reader_count++;
+            if(reader_count == 1){
+                writer_lock->acquire();
+            }
+            mutex->release();
+            for(read_length = 0; (read_length < length) && (read_length < (size - skip)); read_length++){
+                // ((char*)buffer)[read_length] = ((char*)(data.data))[read_length + skip];
+            }
+
+            mutex->acquire();
+            reader_count --;
+            if(reader_count == 0){
+                writer_lock->release();
+            }
+            mutex->release();
+
+            return read_length;
+        }
+
+        uint64_t write(void* buffer, uint64_t length, uint64_t skip = 0){
+            uint64_t write_length = 0;
+            writer_lock->acquire();
+
+            for(write_length = 0; ((write_length < length) && (write_length < (size - skip))); write_length++){
+                // ((char*)(data.data))[write_length + skip] = ((char*)buffer)[write_length];
             }
             
             writer_lock->release();

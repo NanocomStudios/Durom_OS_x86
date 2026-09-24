@@ -6,6 +6,7 @@
 #include "../../Memory/PMM.h"
 #include "../../Memory/Paging.h"
 
+#include "../driver.h"
 
 #include "intel_8254x.h"
 
@@ -70,6 +71,9 @@ uint64_t intel_8254x :: eeprom_read(uint8_t addr){
 }
 
 intel_8254x :: intel_8254x(uint64_t io_base_addr, uint8_t mmio = 1){
+    type = NETWORK_DRIVER;
+    devMode = 1;
+    
     io_addr = io_base_addr;
     mmio_mode = mmio;
 
