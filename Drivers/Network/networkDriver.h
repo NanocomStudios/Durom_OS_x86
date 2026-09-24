@@ -14,7 +14,8 @@ class [[gnu::packed]] NetworkDriver : public Driver{
             return 0;
         }
         uint64_t devWrite(void* buffer, uint64_t length){
-            return 0;
+            send((void*)buffer, length);
+            return length;
         }
 };
 
