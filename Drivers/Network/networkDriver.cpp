@@ -6,8 +6,14 @@
 #include "../../Kernel/isr.h"
 #include "../../Graphics/VGA.h"
 #include "../../StdLib/malloc.h"
+#include "../../StdLib/vector.h"
+
+Vector<NetworkDriver*>* NetworkDriverList = 0;
 
 void networkDriverInit(Vector<Driver*> *drivers){
+    
+    NetworkDriverList = new Vector<NetworkDriver*>;
+
     pciNode* networkDeviceList = getClassCategory(0x02);
     uint64_t networkDeviceCount = getClassCount(0x02);
     if(networkDeviceCount == 0){
@@ -55,6 +61,7 @@ void networkDriverInit(Vector<Driver*> *drivers){
                                 driver->devName[0] = 'e';
                                 driver->devName[1] = 't';
                                 driver->devName[2] = 'h';
+                                driver->interfaceID = networkDeviceIndex;
                                 int devID = networkDeviceIndex;
 
                                 for(long i = 0; i < nameLength - 1; i++){
@@ -63,6 +70,7 @@ void networkDriverInit(Vector<Driver*> *drivers){
                                 }
                                 driver->devName[nameLength - 1] = 0;
 
+                                driver->driverID = drivers->size();
                                 drivers->push(driver);
                                 if(header->interruptLine != 255){
                                     printf(" Interrupt mapping :- IRQ %d to Pin %d\n",header->interruptLine, header->interruptPin);

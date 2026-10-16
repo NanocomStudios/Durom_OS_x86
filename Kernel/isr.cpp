@@ -5,6 +5,7 @@
 #include "../StdLib/queue.h"
 #include "../StdLib/rb_tree.h"
 #include "kernel.h"
+#include "system.h"
 #include "../Memory/Paging.h"
 #include "../Memory/PMM.h"
 
@@ -18,7 +19,13 @@ extern RedBlackTree <uint64_t, ThreadInformationBlock*> threadTable;
 ThreadInformationBlock* currentThread;
 ThreadInformationBlock* nextThread;
 
+uint64_t timer = 0;
+
 Vector <Driver*>* driver_irq_list[16]={0};
+
+uint64_t getTime(){
+    return timer;
+}
 
 extern "C"{
     
@@ -58,7 +65,7 @@ extern "C"{
 
         switch ((intr->int_no) - 64){
             case PIC_TIMER:
-
+                timer++;
                 nextThread = threadTable.search(readyQueue.dequeue());
 
                 if(nextThread == nullptr){

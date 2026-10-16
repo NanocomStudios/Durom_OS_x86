@@ -1,5 +1,5 @@
-#ifndef DATALINK_H
-#define DATALINK_H
+#ifndef DATALINKLAYER_H
+#define DATALINKLAYER_H
 
 #include <stdint.h>
 

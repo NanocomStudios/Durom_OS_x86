@@ -13,6 +13,7 @@ enum DriverType{
 
 class [[gnu::packed]] Driver{
     public:
+        uint64_t driverID;
         DriverType type;
         uint8_t devMode = 0;
         char* devName = 0;

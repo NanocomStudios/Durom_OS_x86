@@ -6,6 +6,8 @@
 #include "../../Memory/PMM.h"
 #include "../../Memory/Paging.h"
 
+#include "../../Network/network.h"
+
 #include "../driver.h"
 
 #include "intel_8254x.h"
@@ -256,7 +258,12 @@ void intel_8254x :: receive_packets(){
             // Forward the packet to your network stack
             // hexdump((char*)buffer, buffer_len);
             // printf("\n");
-            free(buffer);
+            
+            NetworkPacket* packet = new NetworkPacket;
+            packet->length = buffer_len;
+            packet->data = buffer;
+            pushToPacketQueue(packet);
+
             buffer = nullptr;
             buffer_len = 0;
         }

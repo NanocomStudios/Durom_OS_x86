@@ -20,6 +20,7 @@
 #include "../Drivers/Audio/pc_speaker.h"
 #include "../Memory/PMM.h"
 #include "../Memory/Paging.h"
+#include "../Network/network.h"
 
 #include "../StdLib/stdio.h"
 
@@ -88,6 +89,8 @@ void main(){
     dev->addFile(static_cast<FileSystem*>(new File("test",10, test, 1)));
 
     addDriversToDev();
+
+    initNetworkStack();
 
     Trie<int> trie;
 
@@ -548,9 +551,6 @@ void init_kernel(){
 
     // asm volatile("movq %0, %%rsp" :: "r"(0x00007FFFFFFFF000));
 
-    pciInit();
-    init_drivers();
-
     if (executable_address_request.response == nullptr) {
                 while(1);
         }
@@ -578,9 +578,13 @@ void init_kernel(){
     printHex(rsp);
     print('\n');
 
+    pciInit();
+    init_drivers();
+
     print("Init Complete.\n");
     print('\n');
     
+
     // main();
     newThread(main);
     // newThread(thr1);

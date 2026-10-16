@@ -1,5 +1,5 @@
-#include "DataLink.h"
-#include "Operations.h"
+#include "dataLinkLayer.h"
+#include "operations.h"
 
 void decodeEthernetPacket(void* buffer){
     
