@@ -120,7 +120,6 @@ class [[gnu::packed]] intel_8254x : public NetworkDriver{
     private:
         uint64_t io_addr;
         uint8_t mmio_mode;
-        uint8_t MAC_ADDRESS[6];
         uint8_t rx_next = 0;
         Transmit_Descriptor* transmit_ring;
         Receive_Descriptor* receive_ring;

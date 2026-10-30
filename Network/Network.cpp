@@ -6,6 +6,8 @@
 #include "../StdLib/rb_tree.h"
 #include "../StdLib/stdio.h"
 #include "../StdLib/malloc.h"
+#include "../StdLib/vector.h"
+#include "../StdLib/rb_tree.h"
 #include "../Kernel/scheduler.h"
 #include "../Kernel/system.h"
 
@@ -26,8 +28,12 @@ void networkStackThread(){
             asm("hlt");
         }else{
             NetworkPacket* packet = packetQueue->dequeue();
+
+            Vector<NetworkDriver*>* NetworkDriverList = getNetworkDriversList();
+            printf("%d interfaces",NetworkDriverList->size());
+            NetworkDriver* interface = (NetworkDriverList->arr)[packet->interface];
             
-            
+            decodeEthernetPacket(packet->data, packet->length, interface);
 
             free(packet->data);
             delete packet;

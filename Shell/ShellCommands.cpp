@@ -4,6 +4,8 @@
 #include "../StdLib/Nstring.h"
 #include "../StdLib/vector.h"
 
+#include "../Drivers/Network/networkDriver.h"
+
 #include "../IO/PCI.h"
 #include "../Graphics/VGA.h"
 #include "../StdLib/malloc.h"
@@ -187,4 +189,15 @@ void shell_cat(int argc, char** argv, Directory** workingDirectory){
     }else{
         printf("Insufficiant argument count!\n");
     }
+}
+
+void shell_arp(int argc, char** argv, Directory** workingDirectory){
+    Vector<NetworkDriver*>* NetworkDriverList = getNetworkDriversList();
+    if(NetworkDriverList == 0) return;
+
+    for(uint64_t i = 0; i < NetworkDriverList->size(); i++){
+        NetworkDriver* interface = (NetworkDriverList->arr)[i];
+        printf("%d\n",interface->interfaceID);
+    }
+
 }

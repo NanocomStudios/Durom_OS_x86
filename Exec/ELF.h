@@ -56,6 +56,11 @@ struct ELF_ProgramHeader{
     uint64_t alignment;
 }__attribute__((packed));
 
+// struct ELF_Descriptor{
+//     uint64_t id;
+
+// };
+
 void* loadELFFile(File* file);
 
 #endif

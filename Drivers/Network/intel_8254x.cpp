@@ -1,5 +1,6 @@
 #include "../../StdLib/malloc.h"
 #include "../../StdLib/stdio.h"
+#include "../../StdLib/rb_tree.h"
 #include "../../IO/io.h"
 #include "../../Graphics/VGA.h"
 
@@ -18,6 +19,11 @@ extern "C"{
 uint8_t send_buff[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x20,0x03,0x25,0x61,0x03,0x40,0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
 
 void intel_8254x :: init(){
+    IP_ADDRESS[0] = 192;
+    IP_ADDRESS[1] = 168;
+    IP_ADDRESS[2] = 56;
+    IP_ADDRESS[3] = 10;
+    ARPTable = new RedBlackTree<uint32_t, ARP_Entry*>;
     reset_nic();
     setup_transmit_ring();
     setup_receive_ring();
@@ -260,6 +266,7 @@ void intel_8254x :: receive_packets(){
             // printf("\n");
             
             NetworkPacket* packet = new NetworkPacket;
+            packet->interface = interfaceID;
             packet->length = buffer_len;
             packet->data = buffer;
             pushToPacketQueue(packet);

@@ -22,8 +22,6 @@ void networkDriverInit(Vector<Driver*> *drivers){
         return;
     }
 
-    uint64_t networkDeviceIndex = 0;
-
     for(int i = 0; i < networkDeviceCount; i++){
         if(networkDeviceList[i].classCode != 0x02 || networkDeviceList[i].subClass != 0x00 || networkDeviceList[i].progIF != 0x00){
             continue;
@@ -49,6 +47,8 @@ void networkDriverInit(Vector<Driver*> *drivers){
 
                             printf(" IO_ADDR :- %X, with MMIO :- %d\n", addr,mmio);
                             if(addr){
+                                uint64_t networkDeviceIndex = NetworkDriverList->size();
+
                                 driver = new intel_8254x(addr, mmio);
                                 driver->init();
 
@@ -72,11 +72,12 @@ void networkDriverInit(Vector<Driver*> *drivers){
 
                                 driver->driverID = drivers->size();
                                 drivers->push(driver);
+                                NetworkDriverList->push(driver);
                                 if(header->interruptLine != 255){
                                     printf(" Interrupt mapping :- IRQ %d to Pin %d\n",header->interruptLine, header->interruptPin);
                                     registerDriverInterrupt(driver, header->interruptLine);
                                 }
-                                networkDeviceIndex++;
+                                
 
                                 //return driver;
                             }
@@ -111,4 +112,8 @@ void networkDriverInit(Vector<Driver*> *drivers){
         }
     }
     free(networkDeviceList);
+}
+
+Vector<NetworkDriver*> *getNetworkDriversList(){
+    return NetworkDriverList;
 }

@@ -2,8 +2,10 @@
 #define NETWORK_H
 
 #include <stdint.h>
+#include "../Drivers/Network/networkDriver.h"
 
 struct [[gnu::packed]] NetworkPacket{
+    uint64_t interface;
     uint64_t length;
     void* data;
 };
