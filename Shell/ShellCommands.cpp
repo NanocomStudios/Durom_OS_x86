@@ -3,8 +3,10 @@
 #include "../FileSystem/fileSystem.h"
 #include "../StdLib/Nstring.h"
 #include "../StdLib/vector.h"
+#include "../StdLib/rb_tree.h"
 
 #include "../Drivers/Network/networkDriver.h"
+#include "../Network/dataLinkLayer.h"
 
 #include "../IO/PCI.h"
 #include "../Graphics/VGA.h"
@@ -197,7 +199,16 @@ void shell_arp(int argc, char** argv, Directory** workingDirectory){
 
     for(uint64_t i = 0; i < NetworkDriverList->size(); i++){
         NetworkDriver* interface = (NetworkDriverList->arr)[i];
-        printf("%d\n",interface->interfaceID);
+        (interface->ARPTable)->loopTree(printARPEntry);
     }
 
+}
+
+uint8_t ip[4] = {192,168,56,1};
+
+void shell_arp_req(int argc, char** argv, Directory** workingDirectory){
+    Vector<NetworkDriver*>* NetworkDriverList = getNetworkDriversList();
+            
+    NetworkDriver* interface = (NetworkDriverList->arr)[0];
+    requestARP(ip, interface);
 }

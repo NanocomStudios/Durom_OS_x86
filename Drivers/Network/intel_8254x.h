@@ -2,6 +2,7 @@
 #define INTEL_8254X_H
 #include "networkDriver.h"
 #include "stdint.h"
+#include "../../StdLib/lock.h"
 
 #define I8254_REG_CTRL  0x0
 #define I8254_REG_STATUS  0x8
@@ -123,22 +124,23 @@ class [[gnu::packed]] intel_8254x : public NetworkDriver{
         uint8_t rx_next = 0;
         Transmit_Descriptor* transmit_ring;
         Receive_Descriptor* receive_ring;
+        Spinlock* sendLock;
 
 
     public:
-    void init();
-    intel_8254x(uint64_t io_base_addr, uint8_t mmio);
-    void write_register(unsigned short register, unsigned int value);
-    unsigned int read_register(unsigned short register);
-    uint64_t eeprom_read(uint8_t addr);
-    void reset_nic();
-    void setup_transmit_ring();
-    void setup_receive_ring();
-    void enable_interrupts();
-    void send_data(void* data, uint32_t size, bool EOP);
-    uint64_t send(void* data, uint64_t length);
-    void interruptHandler();
-    void receive_packets();
+        void init();
+        intel_8254x(uint64_t io_base_addr, uint8_t mmio);
+        void write_register(unsigned short register, unsigned int value);
+        unsigned int read_register(unsigned short register);
+        uint64_t eeprom_read(uint8_t addr);
+        void reset_nic();
+        void setup_transmit_ring();
+        void setup_receive_ring();
+        void enable_interrupts();
+        void send_data(void* data, uint32_t size, bool EOP);
+        uint64_t send(void* data, uint64_t length);
+        void interruptHandler();
+        void receive_packets();
 
 };
 

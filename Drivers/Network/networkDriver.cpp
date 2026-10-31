@@ -117,3 +117,17 @@ void networkDriverInit(Vector<Driver*> *drivers){
 Vector<NetworkDriver*> *getNetworkDriversList(){
     return NetworkDriverList;
 }
+
+void printARPEntry(uint32_t ipAddress, ARP_Entry* entry){
+    uint8_t* ip = (uint8_t*)(&ipAddress);
+    printf("%d.%d.%d.%d   %X:%X:%X:%X:%X:%X   ", ip[0], ip[1], ip[2], ip[3], entry->MAC_ADDRESS[0], entry->MAC_ADDRESS[1], entry->MAC_ADDRESS[2], entry->MAC_ADDRESS[3], entry->MAC_ADDRESS[4], entry->MAC_ADDRESS[5]);
+    if(entry->status == ARP_STATUS_ACTIVE){
+        printf("Active\n");
+    }else if(entry->status == ARP_STATUS_UNREACHABLE){
+        printf("Unreachable\n");
+    }else if(entry->status == ARP_STATUS_WAITING){
+        printf("Waiting\n");
+    }else{
+        printf("-\n");
+    }
+}

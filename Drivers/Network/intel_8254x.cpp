@@ -23,7 +23,6 @@ void intel_8254x :: init(){
     IP_ADDRESS[1] = 168;
     IP_ADDRESS[2] = 56;
     IP_ADDRESS[3] = 10;
-    ARPTable = new RedBlackTree<uint32_t, ARP_Entry*>;
     reset_nic();
     setup_transmit_ring();
     setup_receive_ring();
@@ -90,6 +89,8 @@ intel_8254x :: intel_8254x(uint64_t io_base_addr, uint8_t mmio = 1){
             allocateToPageTable(io_addr + DEFAULT_HHDM_OFFSET + (i * 4096), io_addr + (i * 4096), 0b10 | 0b1000 | 0b10000); // Writable, Write through, Cache Disabled
         }
     }
+    ARPTable = new RedBlackTree<uint32_t, ARP_Entry*>;
+    sendLock = new Spinlock;
 
 }
 
@@ -120,7 +121,7 @@ void intel_8254x :: reset_nic(){
     
     // Write the MAC address to RAL/RAH 0.
     uint32_t writeL = ((uint32_t)b1 << 16) | b0;
-    uint32_t writeH = b2;
+    uint32_t writeH = b2 | (1 << 31);
     
     write_register(E1000_REG_RAL0, writeL);
     write_register(E1000_REG_RAH0, writeH);
@@ -192,12 +193,14 @@ void intel_8254x :: send_data(void* data, uint32_t size, bool EOP){
 
 uint64_t intel_8254x :: send(void* data, uint64_t length){
     size_t sent = 0;
+    sendLock->acquire();
     // split the data into chunks and send them
     for (; sent < length;){
         int to_send = (length - sent < SIZE_OF_TX_DESCRIPTOR_BUFFER) ? (length - sent) : SIZE_OF_TX_DESCRIPTOR_BUFFER;
         send_data((void*)((uint64_t)data + sent), to_send, to_send == (length - sent));
         sent += to_send;
     }
+    sendLock->release();
     return sent;
 }
 

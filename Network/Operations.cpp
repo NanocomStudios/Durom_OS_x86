@@ -27,8 +27,8 @@ uint16_t calculateChecksum(void* header, int length){
     }
 
     if(length == 1){
-        tmp[1] = 0;
-        tmp[0] = *arr;
+        tmp[1] = *arr;
+        tmp[0] = 0;
 
         sum += *(uint16_t*)(tmp);
     }

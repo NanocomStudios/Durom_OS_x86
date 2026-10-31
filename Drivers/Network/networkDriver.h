@@ -12,6 +12,7 @@
 
 #define ARP_STATUS_UNREACHABLE 0
 #define ARP_STATUS_ACTIVE 1
+#define ARP_STATUS_WAITING 2
 
 
 struct [[gnu::packed]] ARP_Entry{
@@ -27,6 +28,8 @@ class [[gnu::packed]] NetworkDriver : public Driver{
         uint8_t IP_ADDRESS[4];
         uint8_t status;
         uint8_t MAC_ADDRESS[6];
+        uint8_t GATEWAY[4];
+        uint8_t SUBNET_MASK[4];
         RedBlackTree<uint32_t, ARP_Entry*>* ARPTable;
         virtual void init() = 0;
         virtual uint64_t send(void* data, uint64_t length) = 0;
@@ -42,5 +45,6 @@ class [[gnu::packed]] NetworkDriver : public Driver{
 
 void networkDriverInit(Vector<Driver*> *drivers);
 Vector<NetworkDriver*> *getNetworkDriversList();
+void printARPEntry(uint32_t ipAddress, ARP_Entry* entry);
 
 #endif

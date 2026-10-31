@@ -28,9 +28,9 @@ void networkStackThread(){
             asm("hlt");
         }else{
             NetworkPacket* packet = packetQueue->dequeue();
-
+            
             Vector<NetworkDriver*>* NetworkDriverList = getNetworkDriversList();
-            printf("%d interfaces",NetworkDriverList->size());
+            
             NetworkDriver* interface = (NetworkDriverList->arr)[packet->interface];
             
             decodeEthernetPacket(packet->data, packet->length, interface);
