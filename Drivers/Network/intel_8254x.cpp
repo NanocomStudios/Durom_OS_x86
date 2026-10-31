@@ -21,8 +21,8 @@ uint8_t send_buff[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x20,0x03,0x25,0x61,0x03,0x
 void intel_8254x :: init(){
     IP_ADDRESS[0] = 192;
     IP_ADDRESS[1] = 168;
-    IP_ADDRESS[2] = 56;
-    IP_ADDRESS[3] = 10;
+    IP_ADDRESS[2] = 1;
+    IP_ADDRESS[3] = 30;
     ARPTable = new RedBlackTree<uint32_t, ARP_Entry*>;
     reset_nic();
     setup_transmit_ring();
@@ -120,7 +120,7 @@ void intel_8254x :: reset_nic(){
     
     // Write the MAC address to RAL/RAH 0.
     uint32_t writeL = ((uint32_t)b1 << 16) | b0;
-    uint32_t writeH = b2;
+    uint32_t writeH = b2 | (1 << 31);
     
     write_register(E1000_REG_RAL0, writeL);
     write_register(E1000_REG_RAH0, writeH);

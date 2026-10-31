@@ -365,6 +365,25 @@ public:
         return(root == nullptr ? 1:0);
     }
 
+    void loopTreeLoop(Node* rootNode, int depth, void (*func)(KeyType, ValueType)){
+
+        if(rootNode == 0) return;
+
+        if(rootNode->left != NULL){
+            loopTreeLoop(rootNode->left, depth + 1, func);
+        }
+
+        func(rootNode->key_data, rootNode->value_data);
+
+        if(rootNode->right != NULL){
+            loopTreeLoop(rootNode->right, depth + 1, func);
+        }
+    }
+
+    void loopTree(void (*func)(KeyType, ValueType)){
+        loopTreeLoop(root, 0, func);
+    }
+
     // void ListTree(Node* rootNode = NULL, int depth = 0, void (*func)() = NULL, char printKey = 0){
     //     if(rootNode == NULL){
     //         ListTree(root, 0, func, printKey);

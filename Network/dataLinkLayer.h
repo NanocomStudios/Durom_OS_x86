@@ -7,6 +7,8 @@
 #define ETHERNET_TYPE_ARP   0x0608
 #define ETHERNET_TYPE_IPV4  0x0080
 
+#define ETHERNET_MIN_PACKET_SIZE 60
+
 #define ARP_HARDWARE_ETHERNET   0x0100  // 00 01
 
 #define ARP_PROTOCOL_IPV4       0x0008  // 80 00
@@ -38,6 +40,7 @@ struct [[gnu::packed]] ARP{
 void decodeEthernetPacket(void* buffer, uint64_t length, NetworkDriver* interface);
 void decodeARPPacket(void* buffer, uint64_t length, NetworkDriver* interface);
 void arpReply(uint8_t* senderMAC, uint8_t* senderIP, NetworkDriver* interface);
+void requestARP(uint8_t* ipAddress, NetworkDriver* interface);
 int addEthernetHeader(void* buffer, uint8_t* destinationMAC, uint16_t type, uint16_t length, NetworkDriver* interface);
 
 #endif

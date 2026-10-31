@@ -29,6 +29,7 @@ void initShell(){
     commandList.insert("exec", shell_exec);
     commandList.insert("cat", shell_cat);
     commandList.insert("arp", shell_arp);
+    commandList.insert("arpreq", shell_arp_req);
 }
 
 // Token* getTokenList(char* input){

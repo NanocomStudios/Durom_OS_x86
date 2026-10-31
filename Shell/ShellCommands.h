@@ -16,5 +16,6 @@ void shell_memory(int argc, char** argv, Directory** workingDirectory);
 void shell_exec(int argc, char** argv, Directory** workingDirectory);
 void shell_cat(int argc, char** argv, Directory** workingDirectory);
 void shell_arp(int argc, char** argv, Directory** workingDirectory);
+void shell_arp_req(int argc, char** argv, Directory** workingDirectory);
 
 #endif
